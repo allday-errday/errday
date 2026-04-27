@@ -11,30 +11,28 @@ function isPublicRoute(pathname: string) {
 }
 
 export async function updateSession(request: NextRequest) {
-  const { anonKey, url } = getSupabaseEnv();
-  const pathname = request.nextUrl.pathname;
-  const isPublic = isPublicRoute(pathname);
+  try {
+    const { anonKey, url } = getSupabaseEnv();
+    const pathname = request.nextUrl.pathname;
+    const isPublic = isPublicRoute(pathname);
 
-  if (!url || !anonKey) {
-    if (isPublic) {
-      return NextResponse.next({ request });
+    if (!url || !anonKey) {
+      if (isPublic) {
+        return NextResponse.next({ request });
+      }
+
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/login";
+      loginUrl.searchParams.set("next", pathname);
+      loginUrl.searchParams.set("error", "missing-supabase-env");
+      return NextResponse.redirect(loginUrl);
     }
 
-    const loginUrl = request.nextUrl.clone();
-    loginUrl.pathname = "/login";
-    loginUrl.searchParams.set("next", pathname);
-    loginUrl.searchParams.set("error", "missing-supabase-env");
-    return NextResponse.redirect(loginUrl);
-  }
+    let supabaseResponse = NextResponse.next({
+      request,
+    });
 
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
-
-  const supabase = createServerClient(
-    url,
-    anonKey,
-    {
+    const supabase = createServerClient(url, anonKey, {
       cookies: {
         getAll() {
           return request.cookies.getAll();
@@ -53,26 +51,29 @@ export async function updateSession(request: NextRequest) {
           });
         },
       },
-    },
-  );
+    });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user && !isPublic) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", pathname);
-    return NextResponse.redirect(url);
+    if (!user && !isPublic) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      url.searchParams.set("next", pathname);
+      return NextResponse.redirect(url);
+    }
+
+    if (user && (pathname === "/login" || pathname === "/signup")) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/today";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+
+    return supabaseResponse;
+  } catch (error) {
+    console.error("Middleware session update failed", error);
+    return NextResponse.next({ request });
   }
-
-  if (user && (pathname === "/login" || pathname === "/signup")) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/today";
-    url.search = "";
-    return NextResponse.redirect(url);
-  }
-
-  return supabaseResponse;
 }
