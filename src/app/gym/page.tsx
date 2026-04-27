@@ -1,90 +1,124 @@
+import Link from "next/link";
+import { ExerciseRow } from "@/components/gym/exercise-row";
+import { WorkoutTimer } from "@/components/gym/workout-timer";
 import { PageHeader } from "@/components/page-header";
 import { SubmitButton } from "@/components/submit-button";
 import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/dates";
-import { listWorkouts } from "@/lib/db/gym";
-import { removeWorkout } from "./actions";
-import { WorkoutForm, WorkoutSetForm } from "./gym-forms";
+import {
+  getActiveWorkoutSession,
+  getRecentWorkoutsWithSets,
+} from "@/lib/db/gym";
+import { startEmptyWorkout } from "./actions";
+
+const cards = [
+  {
+    href: "/gym/workout/new",
+    title: "Start Empty Workout",
+    description: "Build a session from scratch.",
+  },
+  {
+    href: "/gym/exercises",
+    title: "Exercise Library",
+    description: "Browse base and custom movements.",
+  },
+  {
+    href: "/gym/templates",
+    title: "Templates",
+    description: "Save repeatable training days.",
+  },
+  {
+    href: "/gym/history",
+    title: "Recent Workouts",
+    description: "Review your completed sessions.",
+  },
+];
 
 export default async function GymPage() {
   const { supabase, user } = await requireUser();
-  const workouts = await listWorkouts(supabase, user.id);
+  const [activeSession, workouts] = await Promise.all([
+    getActiveWorkoutSession(supabase, user.id),
+    getRecentWorkoutsWithSets(supabase, user.id, 5),
+  ]);
+  const activeWorkout = workouts.find(
+    (workout) => workout.id === activeSession?.workout_id,
+  );
 
   return (
     <div>
-      <PageHeader
-        subtitle="Track workouts, exercises, sets and progress."
-        title="Gym"
-      />
+      <PageHeader subtitle="Train hard. Track clean." title="Gym" />
 
-      <section className="mb-5 rounded-lg border border-white/10 bg-[#151515] p-5">
-        <h2 className="mb-4 text-lg font-semibold text-white">Start Workout</h2>
-        <WorkoutForm />
-      </section>
-
-      <section className="mb-5 rounded-lg border border-white/10 bg-[#151515] p-5">
-        <h2 className="mb-4 text-lg font-semibold text-white">Add Set</h2>
-        {workouts.length === 0 ? (
-          <p className="text-sm leading-6 text-zinc-400">
-            Create a workout first, then add exercise sets to it.
+      {activeSession ? (
+        <section className="mb-5 rounded-lg border border-[#22c55e]/30 bg-[#101810] p-5 shadow-2xl shadow-[#22c55e]/10">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-[#22c55e]">
+                Active Workout
+              </p>
+              <h2 className="mt-1 text-2xl font-black text-white">
+                {activeWorkout?.name ?? "Workout"}
+              </h2>
+            </div>
+            <WorkoutTimer startedAt={activeSession.started_at} />
+          </div>
+          <Link
+            className="mt-4 flex min-h-12 items-center justify-center rounded-full bg-white px-4 text-sm font-black text-black"
+            href={`/gym/workout/${activeSession.workout_id}`}
+          >
+            Continue Workout
+          </Link>
+        </section>
+      ) : (
+        <section className="mb-5 rounded-lg border border-white/10 bg-[#151515] p-5">
+          <h2 className="text-lg font-semibold text-white">Ready to train?</h2>
+          <p className="mt-2 text-sm leading-6 text-zinc-400">
+            Start a quick empty workout or build one from the exercise library.
           </p>
-        ) : (
-          <WorkoutSetForm workouts={workouts} />
-        )}
+          <form action={startEmptyWorkout} className="mt-4">
+            <SubmitButton pendingLabel="Starting...">
+              Start Empty Workout
+            </SubmitButton>
+          </form>
+        </section>
+      )}
+
+      <section className="mb-5 grid grid-cols-2 gap-3">
+        {cards.map((card) => (
+          <Link
+            className="rounded-lg border border-white/10 bg-[#151515] p-4 shadow-lg shadow-black/20 transition hover:border-[#22c55e]/50"
+            href={card.href}
+            key={card.href}
+          >
+            <h2 className="text-base font-bold text-white">{card.title}</h2>
+            <p className="mt-2 text-xs leading-5 text-zinc-500">
+              {card.description}
+            </p>
+          </Link>
+        ))}
       </section>
 
       <section className="rounded-lg border border-white/10 bg-[#151515] p-5">
-        <h2 className="text-lg font-semibold text-white">Recent Workouts</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-white">Recent Workouts</h2>
+          <Link className="text-sm font-semibold text-[#22c55e]" href="/gym/history">
+            View all
+          </Link>
+        </div>
         {workouts.length === 0 ? (
-          <p className="mt-3 text-sm leading-6 text-zinc-400">
-            No workouts yet. Create your first manual workout above.
+          <p className="text-sm leading-6 text-zinc-400">
+            No workouts yet. Start one and your history will show here.
           </p>
         ) : (
-          <div className="mt-4 space-y-4">
+          <div className="space-y-3">
             {workouts.map((workout) => (
-              <article className="rounded-lg bg-black/20 p-4" key={workout.id}>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-semibold text-white">{workout.name}</p>
-                    <p className="mt-1 text-sm text-zinc-500">
-                      {formatDate(workout.date)}
-                    </p>
-                  </div>
-                  <form action={removeWorkout}>
-                    <input name="id" type="hidden" value={workout.id} />
-                    <SubmitButton pendingLabel="Deleting..." variant="danger">
-                      Delete
-                    </SubmitButton>
-                  </form>
-                </div>
-                {workout.note ? (
-                  <p className="mt-3 text-sm leading-6 text-zinc-400">
-                    {workout.note}
-                  </p>
-                ) : null}
-                {workout.workout_sets.length > 0 ? (
-                  <div className="mt-4 space-y-2">
-                    {workout.workout_sets.map((set) => (
-                      <div
-                        className="rounded-lg border border-white/10 p-3 text-sm text-zinc-300"
-                        key={set.id}
-                      >
-                        <p className="font-medium text-white">
-                          {set.set_number}. {set.exercise_name}
-                        </p>
-                        <p className="mt-1 text-zinc-500">
-                          {set.reps ?? "-"} reps · {set.weight_kg ?? "-"} kg ·
-                          RPE {set.rpe ?? "-"}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="mt-4 text-sm text-zinc-500">
-                    No sets added yet.
-                  </p>
-                )}
-              </article>
+              <ExerciseRow
+                href={`/gym/workout/${workout.id}`}
+                imageKey="workout"
+                key={workout.id}
+                name={workout.name}
+                primaryMuscle={formatDate(workout.date)}
+                progressText={`${workout.workout_sets.length} sets logged`}
+              />
             ))}
           </div>
         )}

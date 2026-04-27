@@ -102,6 +102,7 @@ export interface WorkoutSet {
   id: string;
   workout_id: string;
   user_id: string;
+  exercise_id: string | null;
   exercise_name: string;
   set_number: number;
   reps: number | null;
@@ -112,6 +113,74 @@ export interface WorkoutSet {
 }
 
 export type WorkoutSetInsert = Omit<WorkoutSet, "id" | "created_at">;
+
+export interface Exercise {
+  id: string;
+  user_id: string | null;
+  name: string;
+  slug: string;
+  primary_muscle: string;
+  secondary_muscles: string[];
+  equipment: string;
+  category: string;
+  instructions: string | null;
+  image_key: string | null;
+  is_custom: boolean;
+  created_at: string;
+}
+
+export type ExerciseInsert = Omit<Exercise, "id" | "created_at">;
+
+export interface WorkoutTemplate {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string | null;
+  created_at: string;
+}
+
+export type WorkoutTemplateInsert = Omit<
+  WorkoutTemplate,
+  "id" | "created_at"
+>;
+
+export interface WorkoutTemplateExercise {
+  id: string;
+  template_id: string;
+  exercise_id: string;
+  position: number;
+  target_sets: number;
+  target_reps: string | null;
+  note: string | null;
+  created_at: string;
+}
+
+export interface ActiveWorkoutSession {
+  id: string;
+  user_id: string;
+  workout_id: string | null;
+  started_at: string;
+  ended_at: string | null;
+  status: "active" | "completed" | "cancelled";
+  created_at: string;
+}
+
+export interface WorkoutExercise {
+  id: string;
+  workout_id: string;
+  user_id: string;
+  exercise_id: string;
+  position: number;
+  target_sets: number;
+  target_reps: string | null;
+  note: string | null;
+  created_at: string;
+}
+
+export type WorkoutExerciseInsert = Omit<
+  WorkoutExercise,
+  "id" | "created_at"
+>;
 
 export interface HabitLog {
   id: string;
@@ -125,5 +194,14 @@ export interface HabitLog {
 export type HabitLogInsert = Omit<HabitLog, "id" | "created_at">;
 
 export type WorkoutWithSets = Workout & {
+  workout_sets: WorkoutSet[];
+};
+
+export type WorkoutExerciseWithExercise = WorkoutExercise & {
+  exercises: Exercise | null;
+};
+
+export type WorkoutWithDetails = Workout & {
+  workout_exercises: WorkoutExerciseWithExercise[];
   workout_sets: WorkoutSet[];
 };

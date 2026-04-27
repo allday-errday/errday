@@ -25,6 +25,17 @@ Errday is a private personal all-day tracker for fitness, nutrition, sleep, jour
 
 This version supports Supabase email/password authentication and manual tracking only.
 
+Gym v1 includes:
+
+- Exercise library with seeded global exercises
+- Custom exercise creation
+- Empty workout starts
+- Workout builder with exercise selection
+- Active workout screen with timer, exercise rows and set entry
+- Add exercises during an active workout
+- Workout history with sets, exercises and estimated volume
+- Basic workout templates list and creation
+
 Not included yet:
 
 - External nutrition APIs
@@ -71,6 +82,14 @@ If you already applied `0001_initial_schema.sql` before the authenticated table 
 ```text
 supabase/migrations/0002_authenticated_grants.sql
 ```
+
+For the Gym v1 exercise library, workout templates and active workout sessions, run:
+
+```text
+supabase/migrations/0003_gym_exercise_library.sql
+```
+
+Apply migrations manually in order through the Supabase SQL Editor. Copy the full SQL file contents, paste into a new SQL Editor query, and run it.
 
 ## Local development
 

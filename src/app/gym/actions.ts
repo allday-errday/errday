@@ -1,8 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
-import { createWorkout, createWorkoutSet, deleteWorkout } from "@/lib/db/gym";
+import { todayDateString } from "@/lib/dates";
+import { createCustomExercise } from "@/lib/db/exercises";
+import {
+  addExerciseToWorkout,
+  createWorkout,
+  createWorkoutFromExercises,
+  createWorkoutSet,
+  createWorkoutTemplate,
+  deleteWorkout,
+  finishActiveWorkoutSession,
+  startActiveWorkoutSession,
+} from "@/lib/db/gym";
 import type { ActionState } from "@/lib/forms";
 import {
   formString,
@@ -10,6 +22,7 @@ import {
   nullableString,
   numberValue,
 } from "@/lib/forms";
+import type { Exercise } from "@/types/database";
 
 export async function saveWorkout(
   _previousState: ActionState,
@@ -63,6 +76,7 @@ export async function saveWorkoutSet(
     await createWorkoutSet(supabase, {
       workout_id: workoutId,
       user_id: user.id,
+      exercise_id: nullableString(formData, "exercise_id"),
       exercise_name: exerciseName,
       set_number: setNumber,
       reps: integerValue(formData, "reps"),
@@ -79,6 +93,7 @@ export async function saveWorkoutSet(
 
   revalidatePath("/gym");
   revalidatePath("/today");
+  revalidatePath(`/gym/workout/${workoutId}`);
   return { status: "success", message: "Set added." };
 }
 
@@ -91,4 +106,136 @@ export async function removeWorkout(formData: FormData) {
     revalidatePath("/gym");
     revalidatePath("/today");
   }
+}
+
+export async function startEmptyWorkout() {
+  const { supabase, user } = await requireUser();
+  const workout = await createWorkout(supabase, {
+    user_id: user.id,
+    date: todayDateString(),
+    name: "Workout",
+    note: null,
+  });
+  await startActiveWorkoutSession(supabase, user.id, workout.id);
+  revalidatePath("/gym");
+  redirect(`/gym/workout/${workout.id}`);
+}
+
+export async function startWorkoutFromSelection(formData: FormData) {
+  const { supabase, user } = await requireUser();
+  const exerciseIds = formData
+    .getAll("exercise_id")
+    .filter((value): value is string => typeof value === "string");
+  const name = formString(formData, "name") || "Workout";
+
+  if (exerciseIds.length === 0) {
+    redirect("/gym/workout/new?error=select-exercise");
+  }
+
+  const workout = await createWorkoutFromExercises(supabase, user.id, {
+    date: todayDateString(),
+    name,
+    exercises: exerciseIds.map((exerciseId) => ({
+      exercise_id: exerciseId,
+      target_sets: 4,
+    })),
+  });
+
+  await startActiveWorkoutSession(supabase, user.id, workout.id);
+  revalidatePath("/gym");
+  redirect(`/gym/workout/${workout.id}`);
+}
+
+export async function addExerciseToCurrentWorkout(formData: FormData) {
+  const { supabase, user } = await requireUser();
+  const workoutId = formString(formData, "workout_id");
+  const exerciseId = formString(formData, "exercise_id");
+
+  const { data, error } = await supabase
+    .from("exercises")
+    .select("*")
+    .eq("id", exerciseId)
+    .or(`user_id.is.null,user_id.eq.${user.id}`)
+    .single<Exercise>();
+
+  if (error) {
+    throw error;
+  }
+
+  await addExerciseToWorkout(supabase, user.id, workoutId, data);
+  revalidatePath(`/gym/workout/${workoutId}`);
+}
+
+export async function finishWorkout(formData: FormData) {
+  const { supabase, user } = await requireUser();
+  const sessionId = formString(formData, "session_id");
+
+  if (sessionId) {
+    await finishActiveWorkoutSession(supabase, user.id, sessionId);
+  }
+
+  revalidatePath("/gym");
+  revalidatePath("/gym/history");
+  redirect("/gym/history");
+}
+
+export async function saveCustomExercise(
+  _previousState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const { supabase, user } = await requireUser();
+  const name = formString(formData, "name");
+  const primaryMuscle = formString(formData, "primary_muscle");
+
+  if (!name || !primaryMuscle) {
+    return { status: "error", message: "Name and primary muscle are required." };
+  }
+
+  try {
+    await createCustomExercise(supabase, user.id, {
+      name,
+      primary_muscle: primaryMuscle,
+      equipment: formString(formData, "equipment") || "bodyweight",
+      category: formString(formData, "category") || "strength",
+      instructions: nullableString(formData, "instructions"),
+    });
+  } catch (error) {
+    return {
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "Could not create exercise.",
+    };
+  }
+
+  revalidatePath("/gym/exercises");
+  return { status: "success", message: "Custom exercise created." };
+}
+
+export async function saveWorkoutTemplate(
+  _previousState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const { supabase, user } = await requireUser();
+  const name = formString(formData, "name");
+
+  if (!name) {
+    return { status: "error", message: "Template name is required." };
+  }
+
+  try {
+    await createWorkoutTemplate(supabase, {
+      user_id: user.id,
+      name,
+      description: nullableString(formData, "description"),
+    });
+  } catch (error) {
+    return {
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "Could not create template.",
+    };
+  }
+
+  revalidatePath("/gym/templates");
+  return { status: "success", message: "Template created." };
 }
