@@ -1,0 +1,44 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type {
+  BodyWeightLogInsert,
+  Profile,
+  ProfileInsert,
+} from "@/types/database";
+
+export async function getProfile(supabase: SupabaseClient, userId: string) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .maybeSingle<Profile>();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function upsertProfile(
+  supabase: SupabaseClient,
+  profile: ProfileInsert,
+) {
+  const { error } = await supabase.from("profiles").upsert(profile);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function upsertBodyWeightLog(
+  supabase: SupabaseClient,
+  log: BodyWeightLogInsert,
+) {
+  const { error } = await supabase
+    .from("body_weight_logs")
+    .upsert(log, { onConflict: "user_id,date" });
+
+  if (error) {
+    throw error;
+  }
+}

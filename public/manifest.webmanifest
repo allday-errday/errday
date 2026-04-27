@@ -1,0 +1,10 @@
+{
+  "name": "Errday",
+  "short_name": "Errday",
+  "description": "Personal all-day tracker for fitness, nutrition, sleep and journaling.",
+  "start_url": "/today",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#22c55e",
+  "orientation": "portrait"
+}
