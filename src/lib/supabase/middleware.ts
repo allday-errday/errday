@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { getSupabaseEnv } from "./env";
 
 const publicRoutes = ["/login", "/signup", "/auth/callback"];
 
@@ -10,13 +11,29 @@ function isPublicRoute(pathname: string) {
 }
 
 export async function updateSession(request: NextRequest) {
+  const { anonKey, url } = getSupabaseEnv();
+  const pathname = request.nextUrl.pathname;
+  const isPublic = isPublicRoute(pathname);
+
+  if (!url || !anonKey) {
+    if (isPublic) {
+      return NextResponse.next({ request });
+    }
+
+    const loginUrl = request.nextUrl.clone();
+    loginUrl.pathname = "/login";
+    loginUrl.searchParams.set("next", pathname);
+    loginUrl.searchParams.set("error", "missing-supabase-env");
+    return NextResponse.redirect(loginUrl);
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
+    url,
+    anonKey,
     {
       cookies: {
         getAll() {
@@ -42,9 +59,6 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const pathname = request.nextUrl.pathname;
-  const isPublic = isPublicRoute(pathname);
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
