@@ -10,12 +10,12 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     title: "Errday",
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#22c55e",
+  themeColor: "#d946ef",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",

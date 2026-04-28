@@ -32,7 +32,7 @@ export default async function SleepPage() {
               <article className="rounded-lg bg-black/20 p-4" key={log.id}>
                 <div className="flex items-center justify-between">
                   <p className="font-semibold text-white">{formatDate(log.date)}</p>
-                  <p className="font-bold text-[#22c55e]">
+                  <p className="font-bold text-[#d946ef]">
                     {Number(log.sleep_hours)}h
                   </p>
                 </div>

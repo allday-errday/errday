@@ -13,7 +13,7 @@ type SetInputRowProps = {
 };
 
 const inputClassName =
-  "h-12 w-full rounded-none border border-white/10 bg-[#050505] px-2 text-center text-lg font-semibold text-white outline-none transition placeholder:text-zinc-700 focus:border-[#22c55e]";
+  "h-12 w-full rounded-none border border-white/10 bg-[#050505] px-2 text-center text-lg font-semibold text-white outline-none transition placeholder:text-zinc-700 focus:border-[#d946ef]";
 
 export function SetInputRow({
   exerciseId,

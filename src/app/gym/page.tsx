@@ -36,10 +36,10 @@ export default async function GymPage() {
     <div className="gym-screen -mx-4 -mt-[calc(1.25rem+env(safe-area-inset-top))] min-h-dvh bg-[#050505] px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))]">
       <header className="mb-6 flex items-center justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-[#22c55e]">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-[#d946ef]">
             Errday Gym
           </p>
-          <h1 className="mt-2 text-4xl font-black text-white">Workout</h1>
+          <h1 className="mt-2 text-4xl font-black text-[#0b0b10]">Workout</h1>
         </div>
         <Link
           className="grid size-11 place-items-center rounded-full border border-white/10 bg-[#111111] text-xl font-black text-white"
@@ -52,8 +52,8 @@ export default async function GymPage() {
 
       <section className="mb-7">
         <div className="mb-4 flex items-end justify-between">
-          <h2 className="text-xl font-black text-white">Weekly snapshot</h2>
-          <Link className="text-sm font-bold text-[#22c55e]" href="/gym/history">
+          <h2 className="text-xl font-black text-[#0b0b10]">Weekly snapshot</h2>
+          <Link className="text-sm font-bold text-[#d946ef]" href="/gym/history">
             See more
           </Link>
         </div>
@@ -68,10 +68,10 @@ export default async function GymPage() {
       </section>
 
       {activeSession ? (
-        <section className="mb-6 rounded-3xl border border-[#22c55e]/30 bg-[#101810] p-5 shadow-2xl shadow-[#22c55e]/10">
+        <section className="mb-6 rounded-3xl border border-[#d946ef]/30 bg-[#101810] p-5 shadow-2xl shadow-[#d946ef]/10">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-semibold text-[#22c55e]">
+              <p className="text-sm font-semibold text-[#d946ef]">
                 Active Workout
               </p>
               <h2 className="mt-1 text-2xl font-black text-white">
@@ -81,7 +81,7 @@ export default async function GymPage() {
             <WorkoutTimer startedAt={activeSession.started_at} />
           </div>
           <Link
-            className="mt-4 flex min-h-12 items-center justify-center rounded-full bg-white px-4 text-sm font-black text-black"
+            className="mt-4 flex min-h-12 items-center justify-center rounded-full bg-[#d946ef] px-4 text-sm font-black text-black"
             href={`/gym/workout/${activeSession.workout_id}`}
           >
             Continue Workout
@@ -93,7 +93,7 @@ export default async function GymPage() {
           className="fixed inset-x-5 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-sm"
         >
           <button
-            className="flex min-h-16 w-full items-center justify-center gap-3 rounded-full bg-white px-5 text-lg font-black text-black shadow-2xl shadow-black/40"
+            className="flex min-h-16 w-full items-center justify-center gap-3 rounded-full bg-[#0b0b10] px-5 text-lg font-black text-white shadow-2xl shadow-black/30"
             type="submit"
           >
             <span className="text-2xl">+</span>
@@ -104,9 +104,9 @@ export default async function GymPage() {
 
       <section className="mb-7">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-black text-white">Your program</h2>
+          <h2 className="text-xl font-black text-[#0b0b10]">Your program</h2>
           <Link
-            className="text-sm font-bold text-[#22c55e]"
+            className="text-sm font-bold text-[#d946ef]"
             href="/gym/templates"
           >
             Templates
@@ -115,7 +115,7 @@ export default async function GymPage() {
         <div className="grid gap-3">
           {gymPresets.map((preset) => (
             <Link
-              className="flex items-center gap-4 rounded-3xl border border-white/10 bg-[#111111] p-4 shadow-lg shadow-black/20 transition hover:border-[#22c55e]/50"
+              className="flex items-center gap-4 rounded-3xl border border-white/10 bg-[#111111] p-4 shadow-lg shadow-black/20 transition hover:border-[#d946ef]/50"
               href={`/gym/workout/new?preset=${preset.slug}`}
               key={preset.slug}
             >
@@ -148,7 +148,7 @@ export default async function GymPage() {
 
       {templates.length > 0 ? (
         <section className="mb-7">
-          <h2 className="mb-4 text-xl font-black text-white">Saved</h2>
+          <h2 className="mb-4 text-xl font-black text-[#0b0b10]">Saved</h2>
           <div className="space-y-3">
             {templates.map((template) => (
               <article
@@ -170,7 +170,7 @@ export default async function GymPage() {
       <section className="rounded-3xl border border-white/10 bg-[#111111] p-5">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-black text-white">Recent Workouts</h2>
-          <Link className="text-sm font-semibold text-[#22c55e]" href="/gym/history">
+          <Link className="text-sm font-semibold text-[#d946ef]" href="/gym/history">
             View all
           </Link>
         </div>
@@ -200,7 +200,7 @@ export default async function GymPage() {
 function SnapshotMetric({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-2xl font-black text-white">{value}</p>
+      <p className="text-2xl font-black text-[#0b0b10]">{value}</p>
       <p className="mt-1 text-sm text-zinc-500">{label}</p>
     </div>
   );

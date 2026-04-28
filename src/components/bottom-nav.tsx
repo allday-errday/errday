@@ -25,7 +25,7 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md border-t border-white/10 bg-[#080808]/95 px-3 pb-[calc(0.65rem+env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl">
+    <nav className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md border-t border-white/10 bg-[#080808]/95 px-3 pb-[calc(0.65rem+env(safe-area-inset-bottom))] pt-2 shadow-2xl shadow-black/25 backdrop-blur-xl">
       <div className="grid grid-cols-5 gap-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -35,7 +35,7 @@ export function BottomNav() {
               aria-current={isActive ? "page" : undefined}
               className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg text-xs font-medium transition ${
                 isActive
-                  ? "bg-[#22c55e] text-black"
+                  ? "bg-[#d946ef] text-black"
                   : "text-zinc-500 hover:bg-white/5 hover:text-zinc-100"
               }`}
               href={item.href}

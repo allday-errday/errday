@@ -36,7 +36,7 @@ export default async function JournalPage() {
                   <p className="font-semibold text-white">
                     {formatDate(entry.date)}
                   </p>
-                  <p className="text-sm text-[#22c55e]">
+                  <p className="text-sm text-[#d946ef]">
                     Mood {entry.mood ?? "-"} / 5
                   </p>
                 </div>

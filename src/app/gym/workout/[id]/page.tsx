@@ -50,16 +50,16 @@ export default async function WorkoutPage({
 
   return (
     <div className="gym-screen -mx-4 -mt-[calc(1.25rem+env(safe-area-inset-top))] min-h-dvh bg-[#050505] px-4 pb-[calc(7.5rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))]">
-      <header className="sticky top-0 z-20 -mx-4 mb-5 bg-[#050505]/95 px-4 py-3 backdrop-blur-xl">
+      <header className="sticky top-0 z-20 -mx-4 mb-5 border-b border-zinc-200 bg-white/95 px-4 py-3 backdrop-blur-xl">
         <div className="flex items-center justify-between gap-3">
           <Link
-            className="grid size-11 place-items-center rounded-full text-3xl leading-none text-white"
+            className="grid size-11 place-items-center rounded-full text-3xl leading-none text-[#0b0b10]"
             href="/gym"
             aria-label="Back to gym"
           >
             v
           </Link>
-          <div className="flex items-center gap-2 text-[#22c55e]">
+          <div className="flex items-center gap-2 text-[#d946ef]">
             <span className="text-2xl">o</span>
             <WorkoutTimer startedAt={startedAt} />
           </div>
@@ -70,7 +70,7 @@ export default async function WorkoutPage({
             </form>
           ) : (
             <Link
-              className="rounded-full bg-[#0f5f32] px-4 py-3 text-sm font-black text-white"
+              className="rounded-full bg-[#d946ef] px-4 py-3 text-sm font-black text-black"
               href="/gym/history"
             >
               Done
@@ -79,7 +79,7 @@ export default async function WorkoutPage({
         </div>
       </header>
 
-      <section className="mb-7 rounded-3xl border border-white/15 bg-[#050505] p-5">
+      <section className="mb-7 rounded-3xl border border-white/15 bg-[#111111] p-5">
         <div className="grid grid-cols-3 divide-x divide-white/10 text-center">
           <WorkoutMetric
             label="Duration"
@@ -118,11 +118,11 @@ export default async function WorkoutPage({
                     name={exercise?.name ?? "Exercise"}
                   />
                   <div className="min-w-0 flex-1">
-                    <h2 className="truncate text-2xl font-semibold text-white">
+                    <h2 className="truncate text-2xl font-semibold text-[#0b0b10]">
                       {exercise?.name ?? "Exercise"}
                     </h2>
                     {isExpanded ? (
-                      <p className="mt-3 text-base text-white">
+                      <p className="mt-3 text-base text-[#0b0b10]">
                         {exercise?.instructions ?? "Track clean reps and weight."}
                       </p>
                     ) : (
@@ -131,12 +131,12 @@ export default async function WorkoutPage({
                       </p>
                     )}
                   </div>
-                  <div className="text-2xl font-black text-[#22c55e]">...</div>
+                  <div className="text-2xl font-black text-[#d946ef]">...</div>
                 </div>
 
                 {isExpanded ? (
                   <div>
-                    <p className="mb-5 text-lg font-semibold text-[#22c55e]">
+                    <p className="mb-5 text-lg font-semibold text-[#d946ef]">
                       Rest Timer: 2min
                     </p>
                     <div className="grid grid-cols-[3rem_1fr_1fr_3rem] gap-3 text-xs font-bold uppercase text-zinc-500">
@@ -151,13 +151,13 @@ export default async function WorkoutPage({
                           className="grid grid-cols-[3rem_1fr_1fr_3rem] items-center gap-3"
                           key={set.id}
                         >
-                          <span className="text-2xl font-semibold text-white">
+                          <span className="text-2xl font-semibold text-[#0b0b10]">
                             {set.set_number}
                           </span>
-                          <div className="border border-white/10 bg-[#050505] px-2 py-3 text-center text-xl font-semibold text-white">
+                          <div className="border border-white/10 bg-[#111111] px-2 py-3 text-center text-xl font-semibold text-white">
                             {set.weight_kg ?? "-"}
                           </div>
-                          <div className="border border-white/10 bg-[#050505] px-2 py-3 text-center text-xl font-semibold text-white">
+                          <div className="border border-white/10 bg-[#111111] px-2 py-3 text-center text-xl font-semibold text-white">
                             {set.reps ?? "-"}
                           </div>
                           <div className="grid size-12 place-items-center rounded-full bg-[#252525] text-xl text-white">
@@ -187,7 +187,7 @@ export default async function WorkoutPage({
         <h2 className="text-xl font-black text-white">Add Exercises</h2>
         <form className="mt-4">
           <input
-            className="min-h-12 w-full rounded-2xl border border-white/10 bg-[#101010] px-4 text-base text-white outline-none focus:border-[#22c55e]"
+            className="min-h-12 w-full rounded-2xl border border-white/10 bg-[#101010] px-4 text-base text-white outline-none focus:border-[#d946ef]"
             defaultValue={query}
             name="q"
             placeholder="Search exercises"
@@ -220,7 +220,7 @@ export default async function WorkoutPage({
       </section>
 
       <a
-        className="fixed inset-x-5 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto flex min-h-16 max-w-sm items-center justify-center rounded-full bg-white text-lg font-black text-black shadow-2xl shadow-black"
+        className="fixed inset-x-5 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto flex min-h-16 max-w-sm items-center justify-center rounded-full bg-[#0b0b10] text-lg font-black text-white shadow-2xl shadow-black/30"
         href="#add-exercises"
       >
         Add Exercises

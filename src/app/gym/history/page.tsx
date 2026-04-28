@@ -47,7 +47,7 @@ export default async function GymHistoryPage() {
                       {formatDate(workout.date)}
                     </p>
                   </div>
-                  <p className="text-sm font-bold text-[#22c55e]">
+                  <p className="text-sm font-bold text-[#d946ef]">
                     {totalSets} sets
                   </p>
                 </div>

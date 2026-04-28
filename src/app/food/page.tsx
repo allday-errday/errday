@@ -24,7 +24,7 @@ export default async function FoodPage() {
         <FoodForm />
       </section>
 
-      <section className="mb-5 rounded-lg border border-[#22c55e]/30 bg-[#121712] p-5">
+      <section className="mb-5 rounded-lg border border-[#d946ef]/30 bg-[#121712] p-5">
         <h2 className="text-lg font-semibold text-white">Today&apos;s Totals</h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
           <Metric label="Calories" value={`${totals.calories} kcal`} />
@@ -54,7 +54,7 @@ export default async function FoodPage() {
                       {entry.meal_type} · {formatDate(entry.date)}
                     </p>
                   </div>
-                  <p className="font-bold text-[#22c55e]">
+                  <p className="font-bold text-[#d946ef]">
                     {entry.calories} kcal
                   </p>
                 </div>

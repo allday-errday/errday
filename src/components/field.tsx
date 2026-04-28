@@ -15,7 +15,7 @@ export function Field({ children, label }: FieldProps) {
 }
 
 export function inputClassName(className = "") {
-  return `min-h-12 rounded-lg border border-white/10 bg-[#0d0d0d] px-3 text-base text-white outline-none transition placeholder:text-zinc-600 focus:border-[#22c55e]/70 ${className}`;
+  return `min-h-12 rounded-lg border border-white/10 bg-[#0d0d0d] px-3 text-base text-white outline-none transition placeholder:text-zinc-600 focus:border-[#d946ef]/70 ${className}`;
 }
 
 export type TextInputProps = ComponentProps<"input">;

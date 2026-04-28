@@ -88,7 +88,7 @@ export default async function TodayPage() {
     <div>
       <PageHeader title="Errday" subtitle="All day. Errday." />
 
-      <section className="mb-7 rounded-lg border border-[#22c55e]/30 bg-[#121712] p-5 shadow-2xl shadow-[#22c55e]/10">
+      <section className="mb-7 rounded-lg border border-[#d946ef]/30 bg-[#121712] p-5 shadow-2xl shadow-[#d946ef]/10">
         <div className="flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-medium text-zinc-400">Today Score</p>
@@ -96,7 +96,7 @@ export default async function TodayPage() {
               {score}
             </p>
           </div>
-          <div className="mb-2 rounded-full bg-[#22c55e] px-3 py-1 text-xs font-bold text-black">
+          <div className="mb-2 rounded-full bg-[#d946ef] px-3 py-1 text-xs font-bold text-black">
             Live
           </div>
         </div>
@@ -153,7 +153,7 @@ export default async function TodayPage() {
                 <h3 className="font-semibold text-white">{item.title}</h3>
                 <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
               </div>
-              <span className="size-2 rounded-full bg-[#22c55e]" />
+              <span className="size-2 rounded-full bg-[#d946ef]" />
             </Link>
           ))}
         </div>

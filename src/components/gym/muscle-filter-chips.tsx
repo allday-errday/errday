@@ -30,7 +30,7 @@ export function MuscleFilterChips({
           <Link
             className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition ${
               active
-                ? "bg-[#22c55e] text-black"
+                ? "bg-[#d946ef] text-black"
                 : "border border-white/10 bg-[#151515] text-zinc-300"
             }`}
             href={href}

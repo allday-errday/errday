@@ -32,7 +32,7 @@ export default async function ExerciseLibraryPage({
 
       <form className="mb-4">
         <input
-          className="min-h-12 w-full rounded-lg border border-white/10 bg-[#101010] px-4 text-base text-white outline-none focus:border-[#22c55e]"
+          className="min-h-12 w-full rounded-lg border border-white/10 bg-[#101010] px-4 text-base text-white outline-none focus:border-[#d946ef]"
           defaultValue={query}
           name="q"
           placeholder="Search exercises"

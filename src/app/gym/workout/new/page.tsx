@@ -76,7 +76,7 @@ function CustomWorkoutBuilder({
 
       <form className="mb-4">
         <input
-          className="min-h-12 w-full rounded-2xl border border-white/10 bg-[#101010] px-4 text-base text-white outline-none focus:border-[#22c55e]"
+          className="min-h-12 w-full rounded-2xl border border-white/10 bg-[#101010] px-4 text-base text-white outline-none focus:border-[#d946ef]"
           defaultValue={query}
           name="q"
           placeholder="Search exercises"
@@ -103,7 +103,7 @@ function CustomWorkoutBuilder({
           <label className="grid gap-2 text-sm font-medium text-zinc-300">
             Workout name
             <input
-              className="min-h-12 rounded-2xl border border-white/10 bg-[#0d0d0d] px-3 text-base text-white outline-none focus:border-[#22c55e]"
+              className="min-h-12 rounded-2xl border border-white/10 bg-[#0d0d0d] px-3 text-base text-white outline-none focus:border-[#d946ef]"
               defaultValue="Workout"
               name="name"
             />
@@ -117,7 +117,7 @@ function CustomWorkoutBuilder({
               key={exercise.id}
             >
               <input
-                className="size-5 accent-[#22c55e]"
+                className="size-5 accent-[#d946ef]"
                 name="exercise_id"
                 type="checkbox"
                 value={exercise.id}
@@ -165,19 +165,19 @@ function PresetWorkoutStart({
 
   return (
     <div>
-      <header className="sticky top-0 z-20 -mx-4 mb-5 border-b border-white/10 bg-[#050505]/95 px-4 py-3 backdrop-blur-xl">
+      <header className="sticky top-0 z-20 -mx-4 mb-5 border-b border-zinc-200 bg-white/95 px-4 py-3 backdrop-blur-xl">
         <div className="grid grid-cols-3 items-center">
           <Link
             aria-label="Back to gym"
-            className="text-3xl leading-none text-[#22c55e]"
+            className="text-3xl leading-none text-[#d946ef]"
             href="/gym"
           >
             &lt;
           </Link>
-          <p className="text-center text-lg font-black text-white">Workout</p>
+          <p className="text-center text-lg font-black text-[#0b0b10]">Workout</p>
           <Link
             aria-label="Open exercise library"
-            className="text-right text-2xl leading-none text-[#22c55e]"
+            className="text-right text-2xl leading-none text-[#d946ef]"
             href="/gym/exercises"
           >
             ...
@@ -186,7 +186,7 @@ function PresetWorkoutStart({
       </header>
 
       <section className="mb-5">
-        <h1 className="text-4xl font-black lowercase text-white">
+        <h1 className="text-4xl font-black lowercase text-[#0b0b10]">
           {preset.name}
         </h1>
         <p className="mt-3 text-lg font-bold text-zinc-500">
@@ -194,7 +194,7 @@ function PresetWorkoutStart({
         </p>
       </section>
 
-      <section className="mb-7 rounded-3xl border border-white/15 bg-[#050505] p-5">
+      <section className="mb-7 rounded-3xl border border-white/15 bg-[#111111] p-5">
         <div className="grid grid-cols-3 divide-x divide-white/10 text-center">
           <PresetMetric label="Total Sets" value={`${totalSets}`} />
           <PresetMetric label="Duration" value={`~${preset.durationMinutes} min`} />
@@ -220,7 +220,7 @@ function PresetWorkoutStart({
                 name={exercise.name}
               />
               <div className="min-w-0 flex-1">
-                <h2 className="truncate text-xl font-semibold text-white">
+                <h2 className="truncate text-xl font-semibold text-[#0b0b10]">
                   {exercise.name}
                 </h2>
                 <p className="mt-1 text-base text-zinc-500">
@@ -233,7 +233,7 @@ function PresetWorkoutStart({
 
         <div className="fixed inset-x-5 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-sm">
           <button
-            className="flex min-h-16 w-full items-center justify-center rounded-full bg-white px-5 text-lg font-black text-black shadow-2xl shadow-black/40"
+            className="flex min-h-16 w-full items-center justify-center rounded-full bg-[#0b0b10] px-5 text-lg font-black text-white shadow-2xl shadow-black/30"
             type="submit"
           >
             Start workout
