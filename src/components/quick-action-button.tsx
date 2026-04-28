@@ -6,7 +6,7 @@ type QuickActionButtonProps = {
 };
 
 const className =
-  "flex min-h-14 items-center rounded-lg border border-white/10 bg-[#151515] px-4 text-left text-sm font-semibold text-white shadow-lg shadow-black/20 transition hover:border-[#d946ef]/60 hover:bg-[#1c1c1c] active:scale-[0.98]";
+  "flex min-h-14 items-center rounded-xl border border-zinc-200 bg-white px-4 text-left text-sm font-semibold text-zinc-800 shadow-sm shadow-zinc-200/70 transition hover:border-fuchsia-200 hover:bg-fuchsia-50/40 hover:shadow-md hover:shadow-fuchsia-100/60 active:scale-[0.98]";
 
 export function QuickActionButton({ href, label }: QuickActionButtonProps) {
   if (href) {

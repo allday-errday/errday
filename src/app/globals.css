@@ -55,30 +55,36 @@ body [class*="bg-[#151515]"],
 body [class*="bg-[#171717]"],
 body [class*="bg-[#1c1c1c]"],
 body [class*="bg-[#1d1d1d]"] {
-  background-color: #0b0b10 !important;
+  background-color: #ffffff !important;
 }
 
 body [class*="bg-[#121712]"],
 body [class*="bg-[#101810]"] {
-  background-color: #181026 !important;
+  background: linear-gradient(180deg, #ffffff 0%, #faf5ff 100%) !important;
 }
 
 body .bg-black\/20,
 body .bg-black\/25,
 body .bg-black\/70,
 body .bg-white\/5 {
-  background-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: #f5f3ff !important;
+}
+
+body .text-white,
+body .text-zinc-100,
+body .text-zinc-300 {
+  color: #111827 !important;
 }
 
 body .text-zinc-400,
 body .text-zinc-500,
 body .text-zinc-600 {
-  color: #9ca3af !important;
+  color: #6b7280 !important;
 }
 
 body .border-white\/10,
 body .border-white\/20 {
-  border-color: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(148, 163, 184, 0.28) !important;
 }
 
 body .shadow-black,
@@ -88,7 +94,7 @@ body .shadow-black\/25 {
 }
 
 body [class*="hover:bg-white/5"]:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
+  background-color: #ede9fe !important;
 }
 
 body [class*="bg-[#d946ef]"] {
@@ -134,31 +140,31 @@ body [class*="shadow-[#d946ef]"] {
 .gym-screen [class*="bg-[#171717]"],
 .gym-screen [class*="bg-[#1c1c1c]"],
 .gym-screen [class*="bg-[#1d1d1d]"] {
-  background-color: #111111 !important;
+  background-color: #ffffff !important;
 }
 
 .gym-screen .bg-black\/20,
 .gym-screen .bg-black\/25,
 .gym-screen .bg-black\/70,
 .gym-screen .bg-white\/5 {
-  background-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: #f5f3ff !important;
 }
 
 .gym-screen .text-white,
 .gym-screen .text-zinc-100,
 .gym-screen .text-zinc-300 {
-  color: #ffffff !important;
+  color: #111827 !important;
 }
 
 .gym-screen .text-zinc-400,
 .gym-screen .text-zinc-500,
 .gym-screen .text-zinc-600 {
-  color: #8b8b92 !important;
+  color: #6b7280 !important;
 }
 
 .gym-screen .border-white\/10,
 .gym-screen .border-white\/20 {
-  border-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(148, 163, 184, 0.28) !important;
 }
 
 .gym-screen .shadow-black,
@@ -168,5 +174,5 @@ body [class*="shadow-[#d946ef]"] {
 }
 
 .gym-screen [class*="hover:bg-white/5"]:hover {
-  background-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: #ede9fe !important;
 }

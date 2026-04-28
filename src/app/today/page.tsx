@@ -88,11 +88,11 @@ export default async function TodayPage() {
     <div>
       <PageHeader title="Errday" subtitle="All day. Errday." />
 
-      <section className="mb-7 rounded-lg border border-[#d946ef]/30 bg-[#121712] p-5 shadow-2xl shadow-[#d946ef]/10">
+      <section className="mb-7 rounded-2xl border border-fuchsia-200 bg-gradient-to-br from-fuchsia-50 via-white to-violet-50 p-5 shadow-lg shadow-fuchsia-100/60">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-zinc-400">Today Score</p>
-            <p className="mt-2 text-6xl font-black tracking-normal text-white">
+            <p className="text-sm font-semibold text-fuchsia-700">Today Score</p>
+            <p className="mt-2 text-6xl font-black tracking-normal text-zinc-900">
               {score}
             </p>
           </div>
@@ -100,7 +100,7 @@ export default async function TodayPage() {
             Live
           </div>
         </div>
-        <p className="mt-4 text-sm leading-6 text-zinc-300">
+        <p className="mt-4 text-sm leading-6 text-zinc-600">
           {score >= 80
             ? "Solid day. Keep the streak alive."
             : "Log the basics and let the day come into focus."}
@@ -145,13 +145,13 @@ export default async function TodayPage() {
         <div className="space-y-3">
           {overviewItems.map((item) => (
             <Link
-              className="flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-[#151515] p-4"
+              className="flex items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/60 transition hover:border-fuchsia-200 hover:shadow-md hover:shadow-fuchsia-100/60"
               href={item.href}
               key={item.title}
             >
               <div>
-                <h3 className="font-semibold text-white">{item.title}</h3>
-                <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
+                <h3 className="font-semibold text-zinc-900">{item.title}</h3>
+                <p className="mt-1 text-sm text-zinc-600">{item.detail}</p>
               </div>
               <span className="size-2 rounded-full bg-[#d946ef]" />
             </Link>
