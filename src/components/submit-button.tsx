@@ -19,9 +19,9 @@ export function SubmitButton({
     primary:
       "bg-[#d946ef] text-black hover:bg-[#ec4899] disabled:bg-[#701a75] disabled:text-black/50",
     secondary:
-      "border border-white/10 bg-[#151515] text-white hover:bg-[#1c1c1c] disabled:text-zinc-600",
+      "border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-50 disabled:text-zinc-400",
     danger:
-      "border border-red-500/30 bg-red-500/10 text-red-100 hover:bg-red-500/20 disabled:text-red-100/50",
+      "border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 disabled:text-red-300",
   };
 
   return (

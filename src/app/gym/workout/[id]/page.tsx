@@ -13,7 +13,11 @@ import {
   getActiveWorkoutSession,
   getWorkoutWithSets,
 } from "@/lib/db/gym";
-import { addExerciseToCurrentWorkout, finishWorkout } from "../../actions";
+import {
+  addExerciseToCurrentWorkout,
+  discardWorkout,
+  finishWorkout,
+} from "../../actions";
 
 type WorkoutPageProps = {
   params: Promise<{ id: string }>;
@@ -49,7 +53,7 @@ export default async function WorkoutPage({
   const library = await searchExercises(supabase, user.id, query, { muscle });
 
   return (
-    <div className="gym-screen -mx-4 -mt-[calc(1.25rem+env(safe-area-inset-top))] min-h-dvh bg-[#050505] px-4 pb-[calc(7.5rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))]">
+    <div className="gym-screen -mx-4 -mt-[calc(1.25rem+env(safe-area-inset-top))] min-h-dvh bg-white px-4 pb-[calc(7.5rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))]">
       <header className="sticky top-0 z-20 -mx-4 mb-5 border-b border-zinc-200 bg-white/95 px-4 py-3 backdrop-blur-xl">
         <div className="flex items-center justify-between gap-3">
           <Link
@@ -64,10 +68,22 @@ export default async function WorkoutPage({
             <WorkoutTimer startedAt={startedAt} />
           </div>
           {isActive ? (
-            <form action={finishWorkout}>
-              <input name="session_id" type="hidden" value={activeSession.id} />
-              <SubmitButton pendingLabel="Finishing...">Finish</SubmitButton>
-            </form>
+            <div className="flex items-center gap-2">
+              <form action={discardWorkout}>
+                <input name="workout_id" type="hidden" value={workout.id} />
+                <input name="session_id" type="hidden" value={activeSession.id} />
+                <button
+                  className="min-h-12 rounded-lg border border-red-200 bg-red-50 px-3 text-xs font-semibold text-red-700 transition hover:bg-red-100"
+                  type="submit"
+                >
+                  Discard
+                </button>
+              </form>
+              <form action={finishWorkout}>
+                <input name="session_id" type="hidden" value={activeSession.id} />
+                <SubmitButton pendingLabel="Finishing...">Finish</SubmitButton>
+              </form>
+            </div>
           ) : (
             <Link
               className="rounded-full bg-[#d946ef] px-4 py-3 text-sm font-black text-black"
@@ -79,8 +95,8 @@ export default async function WorkoutPage({
         </div>
       </header>
 
-      <section className="mb-7 rounded-3xl border border-white/15 bg-[#111111] p-5">
-        <div className="grid grid-cols-3 divide-x divide-white/10 text-center">
+      <section className="mb-7 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
+        <div className="grid grid-cols-3 divide-x divide-zinc-200 text-center">
           <WorkoutMetric
             label="Duration"
             value={<WorkoutTimer startedAt={startedAt} />}
@@ -92,7 +108,7 @@ export default async function WorkoutPage({
 
       <section className="space-y-8">
         {workout.workout_exercises.length === 0 ? (
-          <div className="rounded-3xl border border-white/10 bg-[#151515] p-5">
+          <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
             <p className="text-sm leading-6 text-zinc-400">
               No exercises yet. Use Add Exercises to build this workout.
             </p>
@@ -154,13 +170,13 @@ export default async function WorkoutPage({
                           <span className="text-2xl font-semibold text-[#0b0b10]">
                             {set.set_number}
                           </span>
-                          <div className="border border-white/10 bg-[#111111] px-2 py-3 text-center text-xl font-semibold text-white">
+                          <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-3 text-center text-xl font-semibold text-zinc-900">
                             {set.weight_kg ?? "-"}
                           </div>
-                          <div className="border border-white/10 bg-[#111111] px-2 py-3 text-center text-xl font-semibold text-white">
+                          <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-2 py-3 text-center text-xl font-semibold text-zinc-900">
                             {set.reps ?? "-"}
                           </div>
-                          <div className="grid size-12 place-items-center rounded-full bg-[#252525] text-xl text-white">
+                          <div className="grid size-12 place-items-center rounded-full bg-zinc-900 text-sm font-semibold text-white">
                             OK
                           </div>
                         </div>
@@ -181,13 +197,13 @@ export default async function WorkoutPage({
       </section>
 
       <section
-        className="mt-10 rounded-3xl border border-white/10 bg-[#151515] p-4"
+        className="mt-10 rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/70"
         id="add-exercises"
       >
-        <h2 className="text-xl font-black text-white">Add Exercises</h2>
+        <h2 className="text-xl font-black text-zinc-900">Add Exercises</h2>
         <form className="mt-4">
           <input
-            className="min-h-12 w-full rounded-2xl border border-white/10 bg-[#101010] px-4 text-base text-white outline-none focus:border-[#d946ef]"
+            className="min-h-12 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 text-base text-zinc-900 outline-none focus:border-[#d946ef]"
             defaultValue={query}
             name="q"
             placeholder="Search exercises"
@@ -220,7 +236,7 @@ export default async function WorkoutPage({
       </section>
 
       <a
-        className="fixed inset-x-5 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto flex min-h-16 max-w-sm items-center justify-center rounded-full bg-[#0b0b10] text-lg font-black text-white shadow-2xl shadow-black/30"
+        className="fixed inset-x-5 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto flex min-h-16 max-w-sm items-center justify-center rounded-full bg-zinc-900 text-lg font-black text-white shadow-xl shadow-zinc-300/60"
         href="#add-exercises"
       >
         Add Exercises
@@ -239,7 +255,7 @@ function WorkoutMetric({
   return (
     <div className="px-2">
       <p className="text-sm text-zinc-500">{label}</p>
-      <div className="mt-2 text-xl font-black text-white">{value}</div>
+      <div className="mt-2 text-xl font-black text-zinc-900">{value}</div>
     </div>
   );
 }

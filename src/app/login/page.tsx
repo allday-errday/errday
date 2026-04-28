@@ -14,7 +14,7 @@ export default function LoginPage() {
           Log in to keep tracking your all-day basics.
         </p>
       </header>
-      <section className="rounded-lg border border-white/10 bg-[#151515] p-5">
+      <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
         <LoginForm />
       </section>
     </div>

@@ -32,7 +32,7 @@ export default async function ExerciseLibraryPage({
 
       <form className="mb-4">
         <input
-          className="min-h-12 w-full rounded-lg border border-white/10 bg-[#101010] px-4 text-base text-white outline-none focus:border-[#d946ef]"
+          className="min-h-12 w-full rounded-lg border border-zinc-200 bg-zinc-50 px-4 text-base text-zinc-900 outline-none focus:border-[#d946ef]"
           defaultValue={query}
           name="q"
           placeholder="Search exercises"
@@ -56,8 +56,8 @@ export default async function ExerciseLibraryPage({
         ))}
       </section>
 
-      <section className="rounded-lg border border-white/10 bg-[#151515] p-5">
-        <h2 className="mb-4 text-lg font-semibold text-white">
+      <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
+        <h2 className="mb-4 text-lg font-semibold text-zinc-900">
           Add Custom Exercise
         </h2>
         <CustomExerciseForm />

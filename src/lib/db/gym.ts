@@ -226,6 +226,25 @@ export async function finishActiveWorkoutSession(
   }
 }
 
+export async function cancelActiveWorkoutSession(
+  supabase: SupabaseClient,
+  userId: string,
+  sessionId: string,
+) {
+  const { error } = await supabase
+    .from("active_workout_sessions")
+    .update({
+      ended_at: new Date().toISOString(),
+      status: "cancelled",
+    })
+    .eq("id", sessionId)
+    .eq("user_id", userId);
+
+  if (error) {
+    throw error;
+  }
+}
+
 export async function getActiveWorkoutSession(
   supabase: SupabaseClient,
   userId: string,

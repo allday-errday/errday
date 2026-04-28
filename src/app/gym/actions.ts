@@ -7,6 +7,7 @@ import { todayDateString } from "@/lib/dates";
 import { createCustomExercise } from "@/lib/db/exercises";
 import {
   addExerciseToWorkout,
+  cancelActiveWorkoutSession,
   createWorkout,
   createWorkoutFromExercises,
   createWorkoutSet,
@@ -177,6 +178,27 @@ export async function finishWorkout(formData: FormData) {
   revalidatePath("/gym");
   revalidatePath("/gym/history");
   redirect("/gym/history");
+}
+
+export async function discardWorkout(formData: FormData) {
+  const { supabase, user } = await requireUser();
+  const workoutId = formString(formData, "workout_id");
+  const sessionId = formString(formData, "session_id");
+
+  if (!workoutId) {
+    redirect("/gym");
+  }
+
+  if (sessionId) {
+    await cancelActiveWorkoutSession(supabase, user.id, sessionId);
+  }
+
+  await deleteWorkout(supabase, user.id, workoutId);
+
+  revalidatePath("/gym");
+  revalidatePath("/gym/history");
+  revalidatePath("/today");
+  redirect("/gym");
 }
 
 export async function saveCustomExercise(

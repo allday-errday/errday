@@ -15,15 +15,15 @@ export default async function JournalPage() {
         title="Journal"
       />
 
-      <section className="mb-5 rounded-lg border border-white/10 bg-[#151515] p-5">
-        <h2 className="mb-4 text-lg font-semibold text-white">
+      <section className="mb-5 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
+        <h2 className="mb-4 text-lg font-semibold text-zinc-900">
           Today&apos;s Check-in
         </h2>
         <JournalForm />
       </section>
 
-      <section className="rounded-lg border border-white/10 bg-[#151515] p-5">
-        <h2 className="text-lg font-semibold text-white">Latest Entries</h2>
+      <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
+        <h2 className="text-lg font-semibold text-zinc-900">Latest Entries</h2>
         {entries.length === 0 ? (
           <p className="mt-3 text-sm leading-6 text-zinc-400">
             No journal entries yet. Add a quick reflection above.
@@ -31,9 +31,12 @@ export default async function JournalPage() {
         ) : (
           <div className="mt-4 space-y-3">
             {entries.map((entry) => (
-              <article className="rounded-lg bg-black/20 p-4" key={entry.id}>
+              <article
+                className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-4"
+                key={entry.id}
+              >
                 <div className="flex items-center justify-between">
-                  <p className="font-semibold text-white">
+                  <p className="font-semibold text-zinc-900">
                     {formatDate(entry.date)}
                   </p>
                   <p className="text-sm text-[#d946ef]">
@@ -44,7 +47,7 @@ export default async function JournalPage() {
                   Energy {entry.energy ?? "-"} · Stress {entry.stress ?? "-"}
                 </p>
                 {entry.content ? (
-                  <p className="mt-3 text-sm leading-6 text-zinc-300">
+                  <p className="mt-3 text-sm leading-6 text-zinc-700">
                     {entry.content}
                   </p>
                 ) : null}

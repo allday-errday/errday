@@ -16,7 +16,7 @@ export default async function GymHistoryPage() {
       />
 
       {workouts.length === 0 ? (
-        <section className="rounded-lg border border-white/10 bg-[#151515] p-5">
+        <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
           <p className="text-sm leading-6 text-zinc-400">
             No workouts yet. Start a workout and it will appear here.
           </p>
@@ -36,13 +36,13 @@ export default async function GymHistoryPage() {
 
             return (
               <Link
-                className="block rounded-lg border border-white/10 bg-[#151515] p-4"
+                className="block rounded-xl border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/70 transition hover:border-fuchsia-200 hover:shadow-md hover:shadow-fuchsia-100/60"
                 href={`/gym/workout/${workout.id}`}
                 key={workout.id}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="font-bold text-white">{workout.name}</h2>
+                    <h2 className="font-bold text-zinc-900">{workout.name}</h2>
                     <p className="mt-1 text-sm text-zinc-500">
                       {formatDate(workout.date)}
                     </p>
@@ -67,9 +67,9 @@ export default async function GymHistoryPage() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-black/20 p-3">
+    <div className="rounded-lg border border-zinc-200 bg-zinc-50/70 p-3">
       <p className="text-xs text-zinc-500">{label}</p>
-      <p className="mt-1 font-bold text-white">{value}</p>
+      <p className="mt-1 font-bold text-zinc-900">{value}</p>
     </div>
   );
 }
