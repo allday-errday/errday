@@ -120,3 +120,40 @@ export async function logout() {
   await supabase.auth.signOut();
   redirect("/login");
 }
+
+export async function saveReminderSettings(
+  _previousState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const { supabase, user } = await requireUser();
+  const remindersEnabled = formString(formData, "reminders_enabled") === "on";
+  const gymRestEndReminderEnabled =
+    formString(formData, "gym_rest_end_reminder_enabled") === "on";
+
+  try {
+    await upsertProfile(supabase, {
+      id: user.id,
+      reminders_enabled: remindersEnabled,
+      meal_reminder_time: nullableString(formData, "meal_reminder_time"),
+      supplement_reminder_time: nullableString(formData, "supplement_reminder_time"),
+      gym_reminder_time: nullableString(formData, "gym_reminder_time"),
+      gym_rest_end_reminder_enabled: gymRestEndReminderEnabled,
+      sleep_reminder_time: nullableString(formData, "sleep_reminder_time"),
+      journal_reminder_time: nullableString(formData, "journal_reminder_time"),
+    });
+  } catch (error) {
+    return {
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "Could not save reminders.",
+    };
+  }
+
+  revalidatePath("/settings");
+  revalidatePath("/today");
+
+  return {
+    status: "success",
+    message: "Reminder settings saved.",
+  };
+}

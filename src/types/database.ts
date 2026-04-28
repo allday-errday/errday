@@ -22,6 +22,13 @@ export interface Profile {
   protein_target_g: number | null;
   carbs_target_g: number | null;
   fat_target_g: number | null;
+  reminders_enabled: boolean | null;
+  meal_reminder_time: string | null;
+  supplement_reminder_time: string | null;
+  gym_reminder_time: string | null;
+  gym_rest_end_reminder_enabled: boolean | null;
+  sleep_reminder_time: string | null;
+  journal_reminder_time: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -86,7 +86,15 @@ export default async function TodayPage() {
 
   return (
     <div>
-      <PageHeader title="Errday" subtitle="All day. Errday." />
+      <div className="mb-6 flex items-start justify-between gap-3 pt-1">
+        <PageHeader title="Errday" subtitle="All day. Errday." />
+        <Link
+          className="mt-1 inline-flex min-h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-3 text-sm font-semibold text-zinc-700 shadow-sm shadow-zinc-200/70 transition hover:border-fuchsia-200 hover:bg-fuchsia-50"
+          href="/settings#reminder-settings"
+        >
+          Settings
+        </Link>
+      </div>
 
       <section className="mb-7 rounded-2xl border border-fuchsia-200 bg-gradient-to-br from-fuchsia-50 via-white to-violet-50 p-5 shadow-lg shadow-fuchsia-100/60">
         <div className="flex items-end justify-between gap-4">

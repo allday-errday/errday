@@ -19,13 +19,13 @@ export default async function FoodPage() {
         title="Food"
       />
 
-      <section className="mb-5 rounded-lg border border-white/10 bg-[#151515] p-5">
-        <h2 className="mb-4 text-lg font-semibold text-white">Log Meal</h2>
+      <section className="mb-5 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
+        <h2 className="mb-4 text-lg font-semibold text-zinc-900">Log Meal</h2>
         <FoodForm />
       </section>
 
-      <section className="mb-5 rounded-lg border border-[#d946ef]/30 bg-[#121712] p-5">
-        <h2 className="text-lg font-semibold text-white">Today&apos;s Totals</h2>
+      <section className="mb-5 rounded-2xl border border-fuchsia-200 bg-gradient-to-br from-fuchsia-50 via-white to-violet-50 p-5 shadow-lg shadow-fuchsia-100/60">
+        <h2 className="text-lg font-semibold text-zinc-900">Today&apos;s Totals</h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
           <Metric label="Calories" value={`${totals.calories} kcal`} />
           <Metric label="Protein" value={`${Math.round(totals.proteinG)} g`} />
@@ -34,8 +34,8 @@ export default async function FoodPage() {
         </div>
       </section>
 
-      <section className="rounded-lg border border-white/10 bg-[#151515] p-5">
-        <h2 className="text-lg font-semibold text-white">Today&apos;s Entries</h2>
+      <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
+        <h2 className="text-lg font-semibold text-zinc-900">Today&apos;s Entries</h2>
         {entries.length === 0 ? (
           <p className="mt-3 text-sm leading-6 text-zinc-400">
             No meals logged today. Add your first manual entry above.
@@ -44,12 +44,12 @@ export default async function FoodPage() {
           <div className="mt-4 space-y-3">
             {entries.map((entry) => (
               <article
-                className="rounded-lg border border-white/10 bg-black/20 p-4"
+                className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-4"
                 key={entry.id}
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="font-semibold text-white">{entry.name}</p>
+                    <p className="font-semibold text-zinc-900">{entry.name}</p>
                     <p className="mt-1 text-xs uppercase text-zinc-500">
                       {entry.meal_type} · {formatDate(entry.date)}
                     </p>
@@ -82,9 +82,9 @@ export default async function FoodPage() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-black/20 p-3">
+    <div className="rounded-xl border border-fuchsia-100 bg-white/80 p-3">
       <p className="text-xs text-zinc-500">{label}</p>
-      <p className="mt-1 font-bold text-white">{value}</p>
+      <p className="mt-1 font-bold text-zinc-900">{value}</p>
     </div>
   );
 }
