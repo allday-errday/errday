@@ -33,7 +33,8 @@ export interface Profile {
   updated_at: string;
 }
 
-export type ProfileInsert = Omit<Profile, "created_at" | "updated_at">;
+export type ProfileInsert = Pick<Profile, "id"> &
+  Partial<Omit<Profile, "id" | "created_at" | "updated_at">>;
 
 export interface BodyWeightLog {
   id: string;

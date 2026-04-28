@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { FormMessage } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
+import { initialActionState } from "@/lib/forms";
 import type { Profile } from "@/types/database";
 import { saveReminderSettings } from "./actions";
 
@@ -15,10 +16,10 @@ function timeValue(value: string | null | undefined) {
 }
 
 export function ReminderSettingsForm({ profile }: ReminderSettingsFormProps) {
-  const [state, formAction] = useActionState(saveReminderSettings, {
-    status: "idle",
-    message: "",
-  });
+  const [state, formAction] = useActionState(
+    saveReminderSettings,
+    initialActionState,
+  );
 
   return (
     <form action={formAction} className="grid gap-4" id="reminders">
