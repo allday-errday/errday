@@ -31,6 +31,9 @@ export function ReminderSettingsForm({ profile }: ReminderSettingsFormProps) {
         />
         Enable daily reminders
       </label>
+      <p className="text-sm text-zinc-500">
+        Browser reminders will appear when this app is open and notifications are allowed.
+      </p>
 
       <div className="grid grid-cols-2 gap-3">
         <ReminderTimeField
