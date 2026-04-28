@@ -1,9 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { Field, inputClassName } from "@/components/field";
 import { FormMessage } from "@/components/form-message";
-import { SubmitButton } from "@/components/submit-button";
 import { initialActionState } from "@/lib/forms";
 import { saveWorkoutSet } from "@/app/gym/actions";
 
@@ -14,6 +12,9 @@ type SetInputRowProps = {
   workoutId: string;
 };
 
+const inputClassName =
+  "h-12 w-full rounded-none border border-white/10 bg-[#050505] px-2 text-center text-lg font-semibold text-white outline-none transition placeholder:text-zinc-700 focus:border-[#22c55e]";
+
 export function SetInputRow({
   exerciseId,
   exerciseName,
@@ -23,57 +24,54 @@ export function SetInputRow({
   const [state, formAction] = useActionState(saveWorkoutSet, initialActionState);
 
   return (
-    <form action={formAction} className="mt-3 grid gap-3 rounded-lg bg-black/25 p-3">
+    <form action={formAction} className="mt-4 space-y-3">
       <input name="workout_id" type="hidden" value={workoutId} />
       <input name="exercise_id" type="hidden" value={exerciseId} />
       <input name="exercise_name" type="hidden" value={exerciseName} />
-      <div className="grid grid-cols-4 gap-2">
-        <Field label="Set">
+      <div className="grid grid-cols-[3rem_1fr_1fr_3rem] items-end gap-3">
+        <label className="grid gap-2 text-xs font-bold uppercase text-zinc-500">
+          Set
           <input
-            className={inputClassName("px-2 text-sm")}
+            className={inputClassName}
             defaultValue={nextSetNumber}
             min="1"
             name="set_number"
             required
             type="number"
           />
-        </Field>
-        <Field label="Kg">
+        </label>
+        <label className="grid gap-2 text-xs font-bold uppercase text-zinc-500">
+          Kg
           <input
-            className={inputClassName("px-2 text-sm")}
+            className={inputClassName}
             min="0"
             name="weight_kg"
+            placeholder="0"
             step="0.5"
             type="number"
           />
-        </Field>
-        <Field label="Reps">
+        </label>
+        <label className="grid gap-2 text-xs font-bold uppercase text-zinc-500">
+          Reps
           <input
-            className={inputClassName("px-2 text-sm")}
+            className={inputClassName}
             min="0"
             name="reps"
+            placeholder="0"
             type="number"
           />
-        </Field>
-        <Field label="RPE">
-          <input
-            className={inputClassName("px-2 text-sm")}
-            max="10"
-            min="0"
-            name="rpe"
-            step="0.5"
-            type="number"
-          />
-        </Field>
+        </label>
+        <button
+          className="grid h-12 place-items-center rounded-full bg-[#252525] text-2xl font-black text-white"
+          type="submit"
+          aria-label="Add set"
+        >
+          OK
+        </button>
       </div>
-      <input
-        className={inputClassName()}
-        name="note"
-        placeholder="Set note"
-        type="text"
-      />
+      <input name="rpe" type="hidden" value="" />
+      <input name="note" type="hidden" value="" />
       <FormMessage state={state} />
-      <SubmitButton pendingLabel="Adding...">Add Set</SubmitButton>
     </form>
   );
 }

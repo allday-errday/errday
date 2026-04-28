@@ -87,3 +87,53 @@ body .shadow-black\/25 {
 body [class*="hover:bg-white/5"]:hover {
   background-color: #f1f5f9 !important;
 }
+
+.gym-screen,
+.gym-screen [class*="bg-[#050505]"],
+.gym-screen [class*="bg-[#080808]"] {
+  background-color: #050505 !important;
+}
+
+.gym-screen [class*="bg-[#0d0d0d]"],
+.gym-screen [class*="bg-[#101010]"],
+.gym-screen [class*="bg-[#121212]"],
+.gym-screen [class*="bg-[#151515]"],
+.gym-screen [class*="bg-[#171717]"],
+.gym-screen [class*="bg-[#1c1c1c]"],
+.gym-screen [class*="bg-[#1d1d1d]"] {
+  background-color: #111111 !important;
+}
+
+.gym-screen .bg-black\/20,
+.gym-screen .bg-black\/25,
+.gym-screen .bg-black\/70,
+.gym-screen .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.gym-screen .text-white,
+.gym-screen .text-zinc-100,
+.gym-screen .text-zinc-300 {
+  color: #ffffff !important;
+}
+
+.gym-screen .text-zinc-400,
+.gym-screen .text-zinc-500,
+.gym-screen .text-zinc-600 {
+  color: #8b8b92 !important;
+}
+
+.gym-screen .border-white\/10,
+.gym-screen .border-white\/20 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.gym-screen .shadow-black,
+.gym-screen .shadow-black\/20,
+.gym-screen .shadow-black\/25 {
+  --tw-shadow-color: rgba(0, 0, 0, 0.45) !important;
+}
+
+.gym-screen [class*="hover:bg-white/5"]:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
