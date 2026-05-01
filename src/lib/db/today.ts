@@ -12,6 +12,19 @@ import {
   calculateRemainingCalories,
 } from "@/lib/nutrition/calculations";
 
+async function safeDashboardRead<T>(
+  promise: Promise<T>,
+  fallback: T,
+  label: string,
+) {
+  try {
+    return await promise;
+  } catch (error) {
+    console.error(`[Today] ${label} failed`, error);
+    return fallback;
+  }
+}
+
 export async function getLatestBodyWeight(
   supabase: SupabaseClient,
   userId: string,
@@ -65,17 +78,40 @@ export async function getTodayDashboard(
     latestWeight,
     workouts,
     workoutLogs,
-  ] =
-    await Promise.all([
-      getProfile(supabase, userId),
+  ] = await Promise.all([
+    safeDashboardRead(getProfile(supabase, userId), null, "profile"),
+    safeDashboardRead(
       getNutritionTarget(supabase, userId),
+      null,
+      "nutrition target",
+    ),
+    safeDashboardRead(
       listFoodLogsForDay(supabase, userId, today),
-      listSleepLogs(supabase, userId),
+      [],
+      "food logs",
+    ),
+    safeDashboardRead(listSleepLogs(supabase, userId), [], "sleep logs"),
+    safeDashboardRead(
       listJournalEntries(supabase, userId),
+      [],
+      "journal entries",
+    ),
+    safeDashboardRead(
       getLatestBodyWeight(supabase, userId),
+      null,
+      "latest body weight",
+    ),
+    safeDashboardRead(
       getTodayWorkouts(supabase, userId, today),
+      [],
+      "legacy workouts",
+    ),
+    safeDashboardRead(
       listWorkoutLogsForDay(supabase, userId, today),
-    ]);
+      [],
+      "workout logs",
+    ),
+  ]);
 
   const todaySleep = sleepLogs.find((log) => log.date === today) ?? sleepLogs[0];
   const todayJournal = journalEntries.find((entry) => entry.date === today);
