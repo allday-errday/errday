@@ -4,7 +4,7 @@ All day. Errday.
 
 Errday is a private personal all-day tracker for fitness, nutrition, sleep, journaling, body weight tracking and daily habits.
 
-## Core modules
+## Core moduless
 
 - Today dashboard
 - Gym tracker
