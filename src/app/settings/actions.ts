@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { todayDateString } from "@/lib/dates";
-import { upsertBodyWeightLog, upsertProfile } from "@/lib/db/profile";
+import {
+  upsertBodyWeightLog,
+  upsertNutritionTarget,
+  upsertProfile,
+} from "@/lib/db/profile";
 import type { ActionState } from "@/lib/forms";
 import { formString, nullableString, numberValue } from "@/lib/forms";
 import {
@@ -98,6 +102,18 @@ export async function saveProfile(
       date: todayDateString(),
       weight_kg: currentWeightKg,
       note: "Saved from profile settings.",
+    });
+
+    await upsertNutritionTarget(supabase, {
+      user_id: user.id,
+      sex,
+      birthdate,
+      height_cm: heightCm,
+      weight_kg: currentWeightKg,
+      activity_level: activityLevel,
+      goal,
+      daily_calorie_target: calorieTarget,
+      daily_protein_target_g: macros.proteinG,
     });
   } catch (error) {
     return {

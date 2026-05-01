@@ -4,6 +4,7 @@ const activityFactors: Record<ActivityLevel, number> = {
   sedentary: 1.2,
   light: 1.375,
   moderate: 1.55,
+  active: 1.725,
   very_active: 1.725,
   athlete: 1.9,
 };
@@ -51,7 +52,7 @@ export function calculateTargetCalories(input: {
     weeklyRate && weeklyRate > 0 ? Math.round((weeklyRate * 7700) / 7) : null;
 
   if (input.goal === "lose") {
-    return input.tdee - (rateAdjustment ?? 500);
+    return input.tdee - (rateAdjustment ?? 300);
   }
 
   if (input.goal === "gain") {
@@ -59,6 +60,49 @@ export function calculateTargetCalories(input: {
   }
 
   return input.tdee;
+}
+
+export function calculateNetCalories(input: {
+  consumed: number;
+  burned: number;
+}) {
+  return input.consumed - input.burned;
+}
+
+export function calculateRemainingCalories(input: {
+  target: number | null | undefined;
+  netCalories: number;
+}) {
+  if (!input.target) {
+    return null;
+  }
+
+  return input.target - input.netCalories;
+}
+
+export type OnTrackStatus = "on_track" | "warning" | "off_track";
+
+export function calculateOnTrackStatus(input: {
+  netCalories: number;
+  proteinG: number;
+  targetCalories?: number | null;
+  targetProteinG?: number | null;
+}): OnTrackStatus {
+  if (!input.targetCalories || !input.targetProteinG) {
+    return "off_track";
+  }
+
+  const proteinRatio = input.proteinG / input.targetProteinG;
+
+  if (input.netCalories > input.targetCalories + 300) {
+    return "off_track";
+  }
+
+  if (input.netCalories <= input.targetCalories && proteinRatio >= 0.8) {
+    return "on_track";
+  }
+
+  return "warning";
 }
 
 export function calculateMacroTargets(input: {

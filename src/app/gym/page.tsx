@@ -2,21 +2,25 @@ import Link from "next/link";
 import { ExerciseRow } from "@/components/gym/exercise-row";
 import { WorkoutTimer } from "@/components/gym/workout-timer";
 import { requireUser } from "@/lib/auth";
-import { formatDate } from "@/lib/dates";
+import { formatDate, todayDateString } from "@/lib/dates";
 import {
   getActiveWorkoutSession,
   getRecentWorkoutsWithSets,
+  listWorkoutLogsForDay,
   listWorkoutTemplates,
 } from "@/lib/db/gym";
 import { gymPresets } from "@/lib/gym/presets";
 import { startEmptyWorkout } from "./actions";
+import { WorkoutLogForm } from "./workout-log-form";
 
 export default async function GymPage() {
   const { supabase, user } = await requireUser();
-  const [activeSession, workouts, templates] = await Promise.all([
+  const today = todayDateString();
+  const [activeSession, workouts, templates, workoutLogs] = await Promise.all([
     getActiveWorkoutSession(supabase, user.id),
     getRecentWorkoutsWithSets(supabase, user.id, 5),
     listWorkoutTemplates(supabase, user.id),
+    listWorkoutLogsForDay(supabase, user.id, today),
   ]);
   const activeWorkout = workouts.find(
     (workout) => workout.id === activeSession?.workout_id,
@@ -101,6 +105,52 @@ export default async function GymPage() {
           </button>
         </form>
       )}
+
+      <section className="mb-7 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
+        <h2 className="mb-4 text-xl font-black text-zinc-900">Log workout</h2>
+        {templates.length === 0 ? (
+          <p className="text-sm leading-6 text-zinc-400">
+            No workout templates found. Run migration 0004 in Supabase.
+          </p>
+        ) : (
+          <WorkoutLogForm templates={templates} />
+        )}
+      </section>
+
+      <section className="mb-7 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 className="text-xl font-black text-zinc-900">Today done</h2>
+          <p className="text-sm font-bold text-[#d946ef]">
+            {workoutLogs.length} workouts
+          </p>
+        </div>
+        {workoutLogs.length === 0 ? (
+          <p className="text-sm leading-6 text-zinc-400">
+            No workouts logged today.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {workoutLogs.map((log) => (
+              <article
+                className="rounded-2xl border border-zinc-200 bg-zinc-50/70 p-4"
+                key={log.id}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="font-bold text-zinc-900">{log.name}</h3>
+                    <p className="mt-1 text-xs uppercase text-zinc-500">
+                      {log.category} / {log.duration_minutes} min
+                    </p>
+                  </div>
+                  <p className="font-black text-[#d946ef]">
+                    {log.calories_burned} kcal
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
 
       <section className="mb-7">
         <div className="mb-4 flex items-center justify-between">

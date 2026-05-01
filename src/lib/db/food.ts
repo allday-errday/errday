@@ -1,5 +1,12 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { FoodEntry, FoodEntryInsert } from "@/types/database";
+import type {
+  FoodEntry,
+  FoodEntryInsert,
+  FoodItem,
+  FoodLog,
+  FoodLogInsert,
+  FoodLogWithItem,
+} from "@/types/database";
 
 export type FoodTotals = {
   calories: number;
@@ -18,6 +25,105 @@ export function calculateFoodTotals(entries: FoodEntry[]): FoodTotals {
     }),
     { calories: 0, proteinG: 0, carbsG: 0, fatG: 0 },
   );
+}
+
+export function calculateFoodLogTotals(logs: FoodLog[]): FoodTotals {
+  return logs.reduce(
+    (totals, log) => ({
+      calories: totals.calories + log.calories,
+      proteinG: totals.proteinG + Number(log.protein_g),
+      carbsG: totals.carbsG + Number(log.carbs_g),
+      fatG: totals.fatG + Number(log.fat_g),
+    }),
+    { calories: 0, proteinG: 0, carbsG: 0, fatG: 0 },
+  );
+}
+
+export async function listFoodItems(
+  supabase: SupabaseClient,
+  userId: string,
+) {
+  const { data, error } = await supabase
+    .from("food_items")
+    .select("*")
+    .or(`user_id.is.null,user_id.eq.${userId}`)
+    .order("name", { ascending: true })
+    .returns<FoodItem[]>();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function getFoodItem(
+  supabase: SupabaseClient,
+  userId: string,
+  id: string,
+) {
+  const { data, error } = await supabase
+    .from("food_items")
+    .select("*")
+    .eq("id", id)
+    .or(`user_id.is.null,user_id.eq.${userId}`)
+    .maybeSingle<FoodItem>();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function listFoodLogsForDay(
+  supabase: SupabaseClient,
+  userId: string,
+  date: string,
+) {
+  const start = `${date}T00:00:00.000Z`;
+  const end = `${date}T23:59:59.999Z`;
+  const { data, error } = await supabase
+    .from("food_logs")
+    .select("*, food_items(*)")
+    .eq("user_id", userId)
+    .gte("logged_at", start)
+    .lte("logged_at", end)
+    .order("logged_at", { ascending: false })
+    .returns<FoodLogWithItem[]>();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function createFoodLog(
+  supabase: SupabaseClient,
+  log: FoodLogInsert,
+) {
+  const { error } = await supabase.from("food_logs").insert(log);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function deleteFoodLog(
+  supabase: SupabaseClient,
+  userId: string,
+  id: string,
+) {
+  const { error } = await supabase
+    .from("food_logs")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", userId);
+
+  if (error) {
+    throw error;
+  }
 }
 
 export async function listFoodEntries(

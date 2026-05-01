@@ -4,72 +4,39 @@ import { useActionState } from "react";
 import { Field, inputClassName } from "@/components/field";
 import { FormMessage } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
-import { todayDateString } from "@/lib/dates";
 import { initialActionState } from "@/lib/forms";
-import { saveFoodEntry } from "./actions";
+import type { FoodItem } from "@/types/database";
+import { saveFoodLog } from "./actions";
 
-export function FoodForm() {
-  const [state, formAction] = useActionState(saveFoodEntry, initialActionState);
+type FoodFormProps = {
+  items: FoodItem[];
+};
+
+export function FoodForm({ items }: FoodFormProps) {
+  const [state, formAction] = useActionState(saveFoodLog, initialActionState);
 
   return (
     <form action={formAction} className="grid gap-4">
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Date">
-          <input
-            className={inputClassName()}
-            defaultValue={todayDateString()}
-            name="date"
-            required
-            type="date"
-          />
-        </Field>
-        <Field label="Meal">
-          <select className={inputClassName()} name="meal_type" required>
-            <option value="breakfast">Breakfast</option>
-            <option value="lunch">Lunch</option>
-            <option value="dinner">Dinner</option>
-            <option value="snack">Snack</option>
-          </select>
-        </Field>
-      </div>
+      <Field label="Food item">
+        <select className={inputClassName()} name="food_item_id" required>
+          <option value="">Select food</option>
+          {items.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.name} - {item.calories_per_serving} kcal
+            </option>
+          ))}
+        </select>
+      </Field>
 
-      <Field label="Food name">
+      <Field label="Servings">
         <input
           className={inputClassName()}
-          name="name"
-          placeholder="Chicken rice bowl"
+          defaultValue="1"
+          min="0.25"
+          name="servings"
           required
-        />
-      </Field>
-
-      <Field label="Amount">
-        <input
-          className={inputClassName()}
-          name="amount"
-          placeholder="1 bowl, 250 g, 2 pieces"
-        />
-      </Field>
-
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Calories">
-          <input className={inputClassName()} min="0" name="calories" required type="number" />
-        </Field>
-        <Field label="Protein g">
-          <input className={inputClassName()} min="0" name="protein_g" step="0.1" type="number" />
-        </Field>
-        <Field label="Carbs g">
-          <input className={inputClassName()} min="0" name="carbs_g" step="0.1" type="number" />
-        </Field>
-        <Field label="Fat g">
-          <input className={inputClassName()} min="0" name="fat_g" step="0.1" type="number" />
-        </Field>
-      </div>
-
-      <Field label="Note">
-        <textarea
-          className={inputClassName("min-h-24 py-3")}
-          name="note"
-          placeholder="Optional"
+          step="0.25"
+          type="number"
         />
       </Field>
 

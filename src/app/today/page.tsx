@@ -15,26 +15,38 @@ const quickActions = [
 export default async function TodayPage() {
   const { supabase, user } = await requireUser();
   const dashboard = await getTodayDashboard(supabase, user.id);
-  const calorieTarget = dashboard.profile?.calorie_target ?? 0;
-  const caloriesRemaining = calorieTarget - dashboard.foodTotals.calories;
+  const calorieTarget = dashboard.targetCalories ?? 0;
+  const caloriesRemaining = dashboard.remainingCalories ?? 0;
   const score = calculateDailyScore({
     hasProfile: Boolean(dashboard.profile),
     hasFood: dashboard.foodEntries.length > 0,
     hasSleep: Boolean(dashboard.todaySleep),
     hasJournal: Boolean(dashboard.todayJournal),
-    hasWorkout: dashboard.workouts.length > 0,
+    hasWorkout: dashboard.workouts.length > 0 || dashboard.workoutLogs.length > 0,
   });
   const stats = [
     {
-      label: "Calories",
+      label: "Consumed",
       value: `${dashboard.foodTotals.calories.toLocaleString("en-US")}`,
       helper: calorieTarget ? `/ ${calorieTarget.toLocaleString("en-US")} kcal` : "Set target",
     },
     {
+      label: "Burned",
+      value: `${dashboard.workoutCalories.toLocaleString("en-US")} kcal`,
+      helper: "Workout burn",
+    },
+    {
+      label: "Net",
+      value: `${dashboard.netCalories.toLocaleString("en-US")} kcal`,
+      helper: calorieTarget
+        ? `${caloriesRemaining.toLocaleString("en-US")} remaining`
+        : "Set target",
+    },
+    {
       label: "Protein",
       value: `${Math.round(dashboard.foodTotals.proteinG)} g`,
-      helper: dashboard.profile?.protein_target_g
-        ? `/ ${dashboard.profile.protein_target_g} g`
+      helper: dashboard.targetProtein
+        ? `/ ${dashboard.targetProtein} g`
         : "Set target",
     },
     {
@@ -58,15 +70,15 @@ export default async function TodayPage() {
     {
       title: "Training",
       detail:
-        dashboard.workouts.length > 0
-          ? `${dashboard.workouts.length} workout logged today`
+        dashboard.workoutLogs.length > 0
+          ? `${dashboard.workoutLogs.length} workout logged today`
           : "No workout logged today",
       href: "/gym",
     },
     {
       title: "Food",
       detail: calorieTarget
-        ? `${caloriesRemaining.toLocaleString("en-US")} kcal remaining`
+        ? `${caloriesRemaining.toLocaleString("en-US")} kcal remaining / ${dashboard.onTrackStatus.replace("_", " ")}`
         : "Set your profile targets",
       href: calorieTarget ? "/food" : "/settings",
     },
@@ -109,9 +121,11 @@ export default async function TodayPage() {
           </div>
         </div>
         <p className="mt-4 text-sm leading-6 text-zinc-600">
-          {score >= 80
-            ? "Solid day. Keep the streak alive."
-            : "Log the basics and let the day come into focus."}
+          {dashboard.onTrackStatus === "on_track"
+            ? "On track. Calories and protein are lining up."
+            : dashboard.onTrackStatus === "warning"
+              ? "Close, but check calories or protein."
+              : "Set targets and log food to get on track."}
         </p>
       </section>
 

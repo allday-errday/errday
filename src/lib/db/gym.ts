@@ -5,6 +5,9 @@ import type {
   Workout,
   WorkoutExerciseInsert,
   WorkoutInsert,
+  WorkoutLog,
+  WorkoutLogInsert,
+  WorkoutLogWithTemplate,
   WorkoutSetInsert,
   WorkoutTemplate,
   WorkoutTemplateInsert,
@@ -272,7 +275,7 @@ export async function listWorkoutTemplates(
   const { data, error } = await supabase
     .from("workout_templates")
     .select("*")
-    .eq("user_id", userId)
+    .or(`user_id.is.null,user_id.eq.${userId}`)
     .order("created_at", { ascending: false })
     .returns<WorkoutTemplate[]>();
 
@@ -285,13 +288,79 @@ export async function listWorkoutTemplates(
 
 export async function createWorkoutTemplate(
   supabase: SupabaseClient,
-  template: WorkoutTemplateInsert,
+  template: Pick<WorkoutTemplateInsert, "user_id" | "name" | "description"> &
+    Partial<WorkoutTemplateInsert>,
 ) {
-  const { error } = await supabase.from("workout_templates").insert(template);
+  const { error } = await supabase.from("workout_templates").insert({
+    category: "strength",
+    estimated_minutes: 45,
+    estimated_calories: null,
+    image_url: null,
+    ...template,
+  });
 
   if (error) {
     throw error;
   }
+}
+
+export async function getWorkoutTemplate(
+  supabase: SupabaseClient,
+  userId: string,
+  id: string,
+) {
+  const { data, error } = await supabase
+    .from("workout_templates")
+    .select("*")
+    .eq("id", id)
+    .or(`user_id.is.null,user_id.eq.${userId}`)
+    .maybeSingle<WorkoutTemplate>();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function listWorkoutLogsForDay(
+  supabase: SupabaseClient,
+  userId: string,
+  date: string,
+) {
+  const start = `${date}T00:00:00.000Z`;
+  const end = `${date}T23:59:59.999Z`;
+  const { data, error } = await supabase
+    .from("workout_logs")
+    .select("*, workout_templates(*)")
+    .eq("user_id", userId)
+    .gte("logged_at", start)
+    .lte("logged_at", end)
+    .order("logged_at", { ascending: false })
+    .returns<WorkoutLogWithTemplate[]>();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function createWorkoutLog(
+  supabase: SupabaseClient,
+  log: WorkoutLogInsert,
+) {
+  const { data, error } = await supabase
+    .from("workout_logs")
+    .insert(log)
+    .select("*")
+    .single<WorkoutLog>();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
 }
 
 export async function deleteWorkout(

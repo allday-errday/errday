@@ -16,7 +16,7 @@ export async function GET() {
   try {
     const profile = await getProfile(supabase, user.id);
     return NextResponse.json({ profile });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ profile: null }, { status: 500 });
   }
 }

@@ -89,6 +89,13 @@ For the Gym v1 exercise library, workout templates and active workout sessions, 
 supabase/migrations/0003_gym_exercise_library.sql
 ```
 
+For Food/Gym database-backed tracking, seeded food items, global workout
+templates, workout logs and nutrition targets, run:
+
+```text
+supabase/migrations/0004_food_workout_tracking.sql
+```
+
 Apply migrations manually in order through the Supabase SQL Editor. Copy the full SQL file contents, paste into a new SQL Editor query, and run it.
 
 ## Local development

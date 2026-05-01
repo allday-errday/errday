@@ -10,10 +10,12 @@ import {
   cancelActiveWorkoutSession,
   createWorkout,
   createWorkoutFromExercises,
+  createWorkoutLog,
   createWorkoutSet,
   createWorkoutTemplate,
   deleteWorkout,
   finishActiveWorkoutSession,
+  getWorkoutTemplate,
   startActiveWorkoutSession,
 } from "@/lib/db/gym";
 import type { ActionState } from "@/lib/forms";
@@ -260,4 +262,47 @@ export async function saveWorkoutTemplate(
 
   revalidatePath("/gym/templates");
   return { status: "success", message: "Template created." };
+}
+
+export async function logWorkoutTemplate(
+  _previousState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const { supabase, user } = await requireUser();
+  const templateId = formString(formData, "template_id");
+  const durationMinutes = integerValue(formData, "duration_minutes");
+  const caloriesBurned = integerValue(formData, "calories_burned");
+
+  if (!templateId) {
+    return { status: "error", message: "Choose a workout template." };
+  }
+
+  const template = await getWorkoutTemplate(supabase, user.id, templateId);
+
+  if (!template) {
+    return { status: "error", message: "Workout template not found." };
+  }
+
+  try {
+    await createWorkoutLog(supabase, {
+      user_id: user.id,
+      workout_template_id: template.id,
+      name: template.name,
+      category: template.category,
+      duration_minutes: durationMinutes ?? template.estimated_minutes,
+      calories_burned: caloriesBurned ?? template.estimated_calories ?? 0,
+      logged_at: new Date().toISOString(),
+      notes: nullableString(formData, "notes"),
+    });
+  } catch (error) {
+    return {
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "Could not log workout.",
+    };
+  }
+
+  revalidatePath("/gym");
+  revalidatePath("/today");
+  return { status: "success", message: "Workout logged." };
 }

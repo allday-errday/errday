@@ -4,6 +4,7 @@ export type ActivityLevel =
   | "sedentary"
   | "light"
   | "moderate"
+  | "active"
   | "very_active"
   | "athlete";
 export type MealType = "breakfast" | "lunch" | "dinner" | "snack";
@@ -63,6 +64,41 @@ export interface FoodEntry {
 }
 
 export type FoodEntryInsert = Omit<FoodEntry, "id" | "created_at">;
+
+export interface FoodItem {
+  id: string;
+  user_id: string | null;
+  name: string;
+  brand: string | null;
+  calories_per_serving: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  serving_label: string;
+  image_url: string | null;
+  created_at: string;
+}
+
+export type FoodItemInsert = Omit<FoodItem, "id" | "created_at">;
+
+export interface FoodLog {
+  id: string;
+  user_id: string;
+  food_item_id: string;
+  logged_at: string;
+  servings: number;
+  calories: number;
+  protein_g: number;
+  carbs_g: number;
+  fat_g: number;
+  created_at: string;
+}
+
+export type FoodLogInsert = Omit<FoodLog, "id" | "created_at">;
+
+export type FoodLogWithItem = FoodLog & {
+  food_items: FoodItem | null;
+};
 
 export interface SleepLog {
   id: string;
@@ -141,9 +177,13 @@ export type ExerciseInsert = Omit<Exercise, "id" | "created_at">;
 
 export interface WorkoutTemplate {
   id: string;
-  user_id: string;
+  user_id: string | null;
   name: string;
   description: string | null;
+  category: string;
+  image_url: string | null;
+  estimated_minutes: number;
+  estimated_calories: number | null;
   created_at: string;
 }
 
@@ -172,6 +212,44 @@ export interface ActiveWorkoutSession {
   status: "active" | "completed" | "cancelled";
   created_at: string;
 }
+
+export interface WorkoutLog {
+  id: string;
+  user_id: string;
+  workout_template_id: string | null;
+  name: string;
+  category: string;
+  duration_minutes: number;
+  calories_burned: number;
+  logged_at: string;
+  notes: string | null;
+  created_at: string;
+}
+
+export type WorkoutLogInsert = Omit<WorkoutLog, "id" | "created_at">;
+
+export type WorkoutLogWithTemplate = WorkoutLog & {
+  workout_templates: WorkoutTemplate | null;
+};
+
+export interface NutritionTarget {
+  user_id: string;
+  sex: Sex | null;
+  birthdate: string | null;
+  height_cm: number | null;
+  weight_kg: number | null;
+  activity_level: ActivityLevel | null;
+  goal: Goal | null;
+  daily_calorie_target: number | null;
+  daily_protein_target_g: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type NutritionTargetInsert = Omit<
+  NutritionTarget,
+  "created_at" | "updated_at"
+>;
 
 export interface WorkoutExercise {
   id: string;
