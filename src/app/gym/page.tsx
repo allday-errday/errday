@@ -9,6 +9,7 @@ import {
   listWorkoutLogsForDay,
   listWorkoutTemplates,
 } from "@/lib/db/gym";
+import { safeRead } from "@/lib/db/safe-read";
 import { gymPresets } from "@/lib/gym/presets";
 import { startEmptyWorkout } from "./actions";
 import { WorkoutLogForm } from "./workout-log-form";
@@ -17,10 +18,22 @@ export default async function GymPage() {
   const { supabase, user } = await requireUser();
   const today = todayDateString();
   const [activeSession, workouts, templates, workoutLogs] = await Promise.all([
-    getActiveWorkoutSession(supabase, user.id),
-    getRecentWorkoutsWithSets(supabase, user.id, 5),
-    listWorkoutTemplates(supabase, user.id),
-    listWorkoutLogsForDay(supabase, user.id, today),
+    safeRead(
+      getActiveWorkoutSession(supabase, user.id),
+      null,
+      "active workout session",
+    ),
+    safeRead(
+      getRecentWorkoutsWithSets(supabase, user.id, 5),
+      [],
+      "recent workouts",
+    ),
+    safeRead(listWorkoutTemplates(supabase, user.id), [], "workout templates"),
+    safeRead(
+      listWorkoutLogsForDay(supabase, user.id, today),
+      [],
+      "today workout logs",
+    ),
   ]);
   const activeWorkout = workouts.find(
     (workout) => workout.id === activeSession?.workout_id,

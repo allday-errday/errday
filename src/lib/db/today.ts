@@ -11,19 +11,7 @@ import {
   calculateOnTrackStatus,
   calculateRemainingCalories,
 } from "@/lib/nutrition/calculations";
-
-async function safeDashboardRead<T>(
-  promise: Promise<T>,
-  fallback: T,
-  label: string,
-) {
-  try {
-    return await promise;
-  } catch (error) {
-    console.error(`[Today] ${label} failed`, error);
-    return fallback;
-  }
-}
+import { safeRead } from "./safe-read";
 
 export async function getLatestBodyWeight(
   supabase: SupabaseClient,
@@ -79,34 +67,34 @@ export async function getTodayDashboard(
     workouts,
     workoutLogs,
   ] = await Promise.all([
-    safeDashboardRead(getProfile(supabase, userId), null, "profile"),
-    safeDashboardRead(
+    safeRead(getProfile(supabase, userId), null, "profile"),
+    safeRead(
       getNutritionTarget(supabase, userId),
       null,
       "nutrition target",
     ),
-    safeDashboardRead(
+    safeRead(
       listFoodLogsForDay(supabase, userId, today),
       [],
       "food logs",
     ),
-    safeDashboardRead(listSleepLogs(supabase, userId), [], "sleep logs"),
-    safeDashboardRead(
+    safeRead(listSleepLogs(supabase, userId), [], "sleep logs"),
+    safeRead(
       listJournalEntries(supabase, userId),
       [],
       "journal entries",
     ),
-    safeDashboardRead(
+    safeRead(
       getLatestBodyWeight(supabase, userId),
       null,
       "latest body weight",
     ),
-    safeDashboardRead(
+    safeRead(
       getTodayWorkouts(supabase, userId, today),
       [],
       "legacy workouts",
     ),
-    safeDashboardRead(
+    safeRead(
       listWorkoutLogsForDay(supabase, userId, today),
       [],
       "workout logs",

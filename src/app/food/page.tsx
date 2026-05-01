@@ -7,6 +7,7 @@ import {
   listFoodItems,
   listFoodLogsForDay,
 } from "@/lib/db/food";
+import { safeRead } from "@/lib/db/safe-read";
 import { FoodForm } from "./food-form";
 import { removeFoodLog } from "./actions";
 
@@ -14,8 +15,12 @@ export default async function FoodPage() {
   const { supabase, user } = await requireUser();
   const today = todayDateString();
   const [items, logs] = await Promise.all([
-    listFoodItems(supabase, user.id),
-    listFoodLogsForDay(supabase, user.id, today),
+    safeRead(listFoodItems(supabase, user.id), [], "food items"),
+    safeRead(
+      listFoodLogsForDay(supabase, user.id, today),
+      [],
+      "today food logs",
+    ),
   ]);
   const totals = calculateFoodLogTotals(logs);
 
