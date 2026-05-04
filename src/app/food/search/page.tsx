@@ -111,7 +111,7 @@ export default async function FoodSearchPage({
 
       {!query && !barcode ? (
         <EmptyState />
-      ) : products.length === 0 ? (
+      ) : searchResult.error ? null : products.length === 0 ? (
         <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
           <h2 className="font-black text-black">No product found</h2>
           <p className="mt-2 text-sm leading-6 text-zinc-500">

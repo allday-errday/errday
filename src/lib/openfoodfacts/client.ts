@@ -82,10 +82,16 @@ function normalizeProduct(
   };
 }
 
-async function fetchJson<T>(url: string): Promise<T | null> {
+type FetchJsonResult<T> = {
+  data: T | null;
+  error: "rate_limited" | "unavailable" | null;
+};
+
+async function fetchJson<T>(url: string): Promise<FetchJsonResult<T>> {
   try {
     const response = await fetch(url, {
       headers: {
+        Accept: "application/json",
         "User-Agent": userAgent,
       },
       next: {
@@ -95,13 +101,26 @@ async function fetchJson<T>(url: string): Promise<T | null> {
 
     if (!response.ok) {
       console.error(`[OpenFoodFacts] ${response.status} ${response.statusText}`);
-      return null;
+      return {
+        data: null,
+        error:
+          response.status === 429 || response.status === 503
+            ? "rate_limited"
+            : "unavailable",
+      };
     }
 
-    return (await response.json()) as T;
+    const contentType = response.headers.get("content-type") ?? "";
+
+    if (!contentType.includes("application/json")) {
+      console.error("[OpenFoodFacts] non-JSON response");
+      return { data: null, error: "rate_limited" };
+    }
+
+    return { data: (await response.json()) as T, error: null };
   } catch (error) {
     console.error("[OpenFoodFacts] request failed", error);
-    return null;
+    return { data: null, error: "unavailable" };
   }
 }
 
@@ -115,7 +134,7 @@ export async function getProductByBarcode(barcode: string) {
   const url = `${baseUrl}/api/v2/product/${encodeURIComponent(
     cleanBarcode,
   )}.json?fields=${encodeURIComponent(fields)}`;
-  const data = await fetchJson<OpenFoodFactsProductResponse>(url);
+  const { data } = await fetchJson<OpenFoodFactsProductResponse>(url);
 
   if (!data?.product || data.status === 0) {
     return null;
@@ -141,13 +160,16 @@ export async function searchProducts(
     search_simple: "1",
     search_terms: cleanQuery,
   });
-  const data = await fetchJson<OpenFoodFactsSearchResponse>(
+  const { data, error } = await fetchJson<OpenFoodFactsSearchResponse>(
     `${baseUrl}/cgi/search.pl?${params.toString()}`,
   );
 
   if (!data) {
     return {
-      error: "OpenFoodFacts is unavailable right now. Try again shortly.",
+      error:
+        error === "rate_limited"
+          ? "OpenFoodFacts is temporarily limiting anonymous requests. Try again later or use the manual food log for now."
+          : "OpenFoodFacts is unavailable right now. Try again shortly.",
       products: [],
     };
   }
