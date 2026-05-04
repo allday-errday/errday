@@ -4,6 +4,7 @@ import type {
   FoodEntry,
   FoodEntryInsert,
   FoodItem,
+  FoodItemInsert,
   FoodLog,
   FoodLogInsert,
   FoodLogWithItem,
@@ -69,6 +70,44 @@ export async function getFoodItem(
     .eq("id", id)
     .or(`user_id.is.null,user_id.eq.${userId}`)
     .maybeSingle<FoodItem>();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function getFoodItemByExternalId(
+  supabase: SupabaseClient,
+  userId: string,
+  externalSource: string,
+  externalId: string,
+) {
+  const { data, error } = await supabase
+    .from("food_items")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("external_source", externalSource)
+    .eq("external_id", externalId)
+    .maybeSingle<FoodItem>();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+export async function createFoodItem(
+  supabase: SupabaseClient,
+  item: FoodItemInsert,
+) {
+  const { data, error } = await supabase
+    .from("food_items")
+    .insert(item)
+    .select("*")
+    .single<FoodItem>();
 
   if (error) {
     throw error;

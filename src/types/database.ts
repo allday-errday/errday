@@ -86,6 +86,10 @@ export interface FoodItem {
   fat_g: number;
   serving_label: string;
   image_url: string | null;
+  barcode: string | null;
+  external_source: string | null;
+  external_id: string | null;
+  serving_size: string | null;
   created_at: string;
 }
 

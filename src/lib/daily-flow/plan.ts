@@ -33,13 +33,13 @@ const slotLabels: Record<DailyPlanSlot, string> = {
 };
 
 const slotHrefs: Record<DailyPlanSlot, string> = {
-  breakfast: "/food",
-  lunch: "/food",
-  pre_workout: "/food",
+  breakfast: "/food/search?slot=breakfast",
+  lunch: "/food/search?slot=lunch",
+  pre_workout: "/food/search?slot=pre_workout",
   workout: "/gym",
-  post_workout: "/food",
-  dinner: "/food",
-  snack: "/food",
+  post_workout: "/food/search?slot=post_workout",
+  dinner: "/food/search?slot=dinner",
+  snack: "/food/search?slot=snack",
   sleep: "/sleep",
 };
 

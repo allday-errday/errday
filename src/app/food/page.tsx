@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { SubmitButton } from "@/components/submit-button";
 import { requireUser } from "@/lib/auth";
@@ -27,6 +28,23 @@ export default async function FoodPage() {
   return (
     <div>
       <PageHeader subtitle="Track calories, macros and meals." title="Food" />
+
+      <section className="mb-5 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/70">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h2 className="font-black text-black">Search products</h2>
+            <p className="mt-1 text-sm text-zinc-500">
+              Find foods by name or barcode with OpenFoodFacts.
+            </p>
+          </div>
+          <Link
+            className="shrink-0 rounded-full bg-[#FF69B4] px-4 py-2 text-sm font-black text-black"
+            href="/food/search"
+          >
+            Search
+          </Link>
+        </div>
+      </section>
 
       <section className="mb-5 rounded-2xl border border-white/10 bg-[#151515] p-5 shadow-lg shadow-black/20">
         <h2 className="mb-4 text-lg font-semibold text-white">Log Meal</h2>

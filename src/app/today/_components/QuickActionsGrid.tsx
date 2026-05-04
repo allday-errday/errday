@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const actions = [
-  { href: "/food", label: "Log Meal" },
+  { href: "/food/search", label: "Log Meal" },
   { href: "/gym", label: "Start Workout" },
   { href: "/journal", label: "Write Journal" },
   { href: "/settings", label: "Log Weight" },
