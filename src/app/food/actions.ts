@@ -2,13 +2,19 @@
 
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
+import { detectDayType, inferNextMealSlot } from "@/lib/daily-flow/plan";
+import { todayDateString } from "@/lib/dates";
+import { getDaySetting } from "@/lib/db/daily-flow";
 import {
   createFoodEntry,
   createFoodLog,
   deleteFoodEntry,
   deleteFoodLog,
   getFoodItem,
+  listFoodLogsForDay,
 } from "@/lib/db/food";
+import { listWorkoutLogsForDay } from "@/lib/db/gym";
+import { getTodayWorkouts } from "@/lib/db/today";
 import type { ActionState } from "@/lib/forms";
 import {
   formString,
@@ -92,6 +98,22 @@ export async function saveFoodLog(
   }
 
   try {
+    const today = todayDateString();
+    const [existingFoodLogs, workoutLogs, workouts, daySetting] = await Promise.all([
+      listFoodLogsForDay(supabase, user.id, today),
+      listWorkoutLogsForDay(supabase, user.id, today),
+      getTodayWorkouts(supabase, user.id, today),
+      getDaySetting(supabase, user.id, today),
+    ]);
+    const dayType =
+      daySetting?.day_type ?? detectDayType({ workoutLogs, workouts });
+    const mealSlot = inferNextMealSlot({
+      dayType,
+      foodLogs: existingFoodLogs,
+      workoutLogs,
+      workouts,
+    });
+
     await createFoodLog(supabase, {
       user_id: user.id,
       food_item_id: item.id,
@@ -101,6 +123,10 @@ export async function saveFoodLog(
       protein_g: Number(item.protein_g) * servings,
       carbs_g: Number(item.carbs_g) * servings,
       fat_g: Number(item.fat_g) * servings,
+      meal_slot: mealSlot,
+      source: "manual",
+      external_food_id: null,
+      display_name: item.name,
     });
   } catch (error) {
     return {

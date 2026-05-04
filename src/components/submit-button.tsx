@@ -17,7 +17,7 @@ export function SubmitButton({
 
   const classes = {
     primary:
-      "bg-[#d946ef] text-black hover:bg-[#ec4899] disabled:bg-[#701a75] disabled:text-black/50",
+      "bg-[#FF69B4] text-black hover:bg-[#ff85c4] disabled:bg-[#FF69B4]/40 disabled:text-black/50",
     secondary:
       "border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-50 disabled:text-zinc-400",
     danger:

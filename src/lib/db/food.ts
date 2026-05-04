@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { localDayRange } from "@/lib/dates";
 import type {
   FoodEntry,
   FoodEntryInsert,
@@ -81,14 +82,13 @@ export async function listFoodLogsForDay(
   userId: string,
   date: string,
 ) {
-  const start = `${date}T00:00:00.000Z`;
-  const end = `${date}T23:59:59.999Z`;
+  const range = localDayRange(date);
   const { data, error } = await supabase
     .from("food_logs")
     .select("*, food_items(*)")
     .eq("user_id", userId)
-    .gte("logged_at", start)
-    .lte("logged_at", end)
+    .gte("logged_at", range.startIso)
+    .lt("logged_at", range.endIso)
     .order("logged_at", { ascending: false })
     .returns<FoodLogWithItem[]>();
 

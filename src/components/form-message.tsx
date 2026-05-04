@@ -15,7 +15,7 @@ export function FormMessage({ state }: FormMessageProps) {
     <p
       className={`rounded-lg border px-3 py-2 text-sm ${
         state.status === "success"
-          ? "border-[#d946ef]/30 bg-[#d946ef]/10 text-[#f0abfc]"
+          ? "border-[#FF69B4]/30 bg-[#FF69B4]/10 text-black"
           : "border-red-500/30 bg-red-500/10 text-red-200"
       }`}
     >

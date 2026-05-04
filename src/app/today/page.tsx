@@ -1,203 +1,122 @@
-import Link from "next/link";
-import { PageHeader } from "@/components/page-header";
-import { QuickActionButton } from "@/components/quick-action-button";
-import { StatCard } from "@/components/stat-card";
 import { requireUser } from "@/lib/auth";
+import { detectDayType } from "@/lib/daily-flow/plan";
+import { generateDailyPlan } from "@/lib/daily-flow/plan";
+import { calculateDailyFlowScore } from "@/lib/daily-flow/score";
+import { todayDateString } from "@/lib/dates";
+import {
+  getDailyProfile,
+  getDaySetting,
+  getTodayWaterTotal,
+} from "@/lib/db/daily-flow";
+import { safeRead } from "@/lib/db/safe-read";
 import { getTodayDashboard } from "@/lib/db/today";
+import { DailyPlanTimeline } from "./_components/DailyPlanTimeline";
+import { DailyScoreCard } from "./_components/DailyScoreCard";
+import { DailyStatsGrid, type DailyStat } from "./_components/DailyStatsGrid";
+import { QuickActionsGrid } from "./_components/QuickActionsGrid";
+import { TodayHeader } from "./_components/TodayHeader";
+import { WaterLogButtons } from "./_components/WaterLogButtons";
 
-const quickActions = [
-  { label: "Log Meal", href: "/food" },
-  { label: "Start Workout", href: "/gym" },
-  { label: "Add Journal", href: "/journal" },
-  { label: "Log Weight", href: "/settings" },
-];
+const burnedCaloriesGoal = 300;
 
 export default async function TodayPage() {
   const { supabase, user } = await requireUser();
-  const dashboard = await getTodayDashboard(supabase, user.id);
-  const calorieTarget = dashboard.targetCalories ?? 0;
-  const caloriesRemaining = dashboard.remainingCalories ?? 0;
-  const score = calculateDailyScore({
-    hasProfile: Boolean(dashboard.profile),
-    hasFood: dashboard.foodEntries.length > 0,
-    hasSleep: Boolean(dashboard.todaySleep),
-    hasJournal: Boolean(dashboard.todayJournal),
-    hasWorkout: dashboard.workouts.length > 0 || dashboard.workoutLogs.length > 0,
+  const today = todayDateString();
+  const [dashboard, dailyProfile, daySetting, waterTotalMl] = await Promise.all([
+    getTodayDashboard(supabase, user.id),
+    safeRead(getDailyProfile(supabase, user.id), null, "daily profile"),
+    safeRead(getDaySetting(supabase, user.id, today), null, "day setting"),
+    safeRead(getTodayWaterTotal(supabase, user.id, today), 0, "water total"),
+  ]);
+  const waterTargetMl = dailyProfile?.water_goal_ml ?? 2500;
+  const sleepTargetHours = dailyProfile
+    ? Number(dailyProfile.sleep_goal_hours)
+    : 8;
+  const inferredDayType = detectDayType({
+    workoutLogs: dashboard.workoutLogs,
+    workouts: dashboard.workouts,
   });
-  const stats = [
+  const dayType = daySetting?.day_type ?? inferredDayType;
+  const carbsTarget =
+    dashboard.nutritionTarget?.daily_calorie_target && dashboard.targetProtein
+      ? dashboard.profile?.carbs_target_g ?? null
+      : dashboard.profile?.carbs_target_g ?? null;
+  const sleepHours = dashboard.todaySleep
+    ? Number(dashboard.todaySleep.sleep_hours)
+    : 0;
+  const scoreResult = calculateDailyFlowScore({
+    burnedCalories: dashboard.workoutCalories,
+    burnedCaloriesGoal,
+    caloriesConsumed: dashboard.foodTotals.calories,
+    calorieTarget: dashboard.targetCalories,
+    carbsG: dashboard.foodTotals.carbsG,
+    carbsTargetG: carbsTarget,
+    proteinG: dashboard.foodTotals.proteinG,
+    proteinTargetG: dashboard.targetProtein,
+    sleepHours,
+    sleepTargetHours,
+    waterMl: waterTotalMl,
+    waterTargetMl,
+  });
+  const plan = generateDailyPlan({
+    dayType,
+    foodLogs: dashboard.foodLogs,
+    sleepLog: dashboard.todaySleep,
+    suggestedBedtime: dailyProfile?.suggested_bedtime,
+    workoutLogs: dashboard.workoutLogs,
+    workouts: dashboard.workouts,
+  });
+  const stats: DailyStat[] = [
     {
-      label: "Consumed",
+      label: "Calories",
       value: `${dashboard.foodTotals.calories.toLocaleString("en-US")}`,
-      helper: calorieTarget ? `/ ${calorieTarget.toLocaleString("en-US")} kcal` : "Set target",
+      helper: dashboard.targetCalories
+        ? `/ ${dashboard.targetCalories.toLocaleString("en-US")} kcal`
+        : "Set target",
     },
     {
       label: "Burned",
       value: `${dashboard.workoutCalories.toLocaleString("en-US")} kcal`,
-      helper: "Workout burn",
-    },
-    {
-      label: "Net",
-      value: `${dashboard.netCalories.toLocaleString("en-US")} kcal`,
-      helper: calorieTarget
-        ? `${caloriesRemaining.toLocaleString("en-US")} remaining`
-        : "Set target",
+      helper: `/ ${burnedCaloriesGoal} kcal goal`,
     },
     {
       label: "Protein",
       value: `${Math.round(dashboard.foodTotals.proteinG)} g`,
-      helper: dashboard.targetProtein
-        ? `/ ${dashboard.targetProtein} g`
-        : "Set target",
+      helper: dashboard.targetProtein ? `/ ${dashboard.targetProtein} g` : "Set target",
+    },
+    {
+      label: "Carbs",
+      value: `${Math.round(dashboard.foodTotals.carbsG)} g`,
+      helper: carbsTarget ? `/ ${carbsTarget} g` : "Set target",
     },
     {
       label: "Sleep",
-      value: dashboard.todaySleep
-        ? `${Number(dashboard.todaySleep.sleep_hours)}h`
-        : "-",
-      helper: dashboard.todaySleep ? "Latest log" : "No sleep log",
+      value: dashboard.todaySleep ? `${sleepHours}h` : "0h",
+      helper: `/ ${sleepTargetHours}h target`,
     },
     {
-      label: "Body weight",
-      value: dashboard.latestWeight
-        ? `${Number(dashboard.latestWeight.weight_kg)} kg`
-        : dashboard.profile?.current_weight_kg
-          ? `${Number(dashboard.profile.current_weight_kg)} kg`
-          : "-",
-      helper: dashboard.latestWeight ? "Latest entry" : "No log yet",
-    },
-  ];
-  const overviewItems = [
-    {
-      title: "Training",
-      detail:
-        dashboard.workoutLogs.length > 0
-          ? `${dashboard.workoutLogs.length} workout logged today`
-          : "No workout logged today",
-      href: "/gym",
-    },
-    {
-      title: "Food",
-      detail: calorieTarget
-        ? `${caloriesRemaining.toLocaleString("en-US")} kcal remaining / ${dashboard.onTrackStatus.replace("_", " ")}`
-        : "Set your profile targets",
-      href: calorieTarget ? "/food" : "/settings",
-    },
-    {
-      title: "Sleep",
-      detail: dashboard.todaySleep
-        ? `Quality ${dashboard.todaySleep.quality ?? "-"} / 5`
-        : "No sleep log yet",
-      href: "/sleep",
-    },
-    {
-      title: "Journal",
-      detail: dashboard.todayJournal ? "Written today" : "Not written yet",
-      href: "/journal",
+      label: "Water",
+      value: `${waterTotalMl.toLocaleString("en-US")} ml`,
+      helper: `/ ${waterTargetMl.toLocaleString("en-US")} ml target`,
     },
   ];
 
   return (
     <div>
-      <div className="mb-6 flex items-start justify-between gap-3 pt-1">
-        <PageHeader title="Errday" subtitle="All day. Errday." />
-        <Link
-          className="mt-1 inline-flex min-h-10 items-center justify-center rounded-xl border border-zinc-200 bg-white px-3 text-sm font-semibold text-zinc-700 shadow-sm shadow-zinc-200/70 transition hover:border-fuchsia-200 hover:bg-fuchsia-50"
-          href="/settings#reminder-settings"
-        >
-          Settings
-        </Link>
-      </div>
-
-      <section className="mb-7 rounded-2xl border border-fuchsia-200 bg-gradient-to-br from-fuchsia-50 via-white to-violet-50 p-5 shadow-lg shadow-fuchsia-100/60">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold text-fuchsia-700">Today Score</p>
-            <p className="mt-2 text-6xl font-black tracking-normal text-zinc-900">
-              {score}
-            </p>
-          </div>
-          <div className="mb-2 rounded-full bg-[#d946ef] px-3 py-1 text-xs font-bold text-black">
-            Live
-          </div>
-        </div>
-        <p className="mt-4 text-sm leading-6 text-zinc-600">
-          {dashboard.onTrackStatus === "on_track"
-            ? "On track. Calories and protein are lining up."
-            : dashboard.onTrackStatus === "warning"
-              ? "Close, but check calories or protein."
-              : "Set targets and log food to get on track."}
-        </p>
-      </section>
-
-      <section className="mb-7">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-normal text-zinc-500">
-          Stats
-        </h2>
-        <div className="grid grid-cols-2 gap-3">
-          {stats.map((stat) => (
-            <StatCard
-              helper={stat.helper}
-              key={stat.label}
-              label={stat.label}
-              value={stat.value}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="mb-7">
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-normal text-zinc-500">
-          Quick Actions
-        </h2>
-        <div className="grid grid-cols-2 gap-3">
-          {quickActions.map((action) => (
-            <QuickActionButton
-              href={action.href}
-              key={action.label}
-              label={action.label}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section>
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-normal text-zinc-500">
-          Daily Overview
-        </h2>
-        <div className="space-y-3">
-          {overviewItems.map((item) => (
-            <Link
-              className="flex items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/60 transition hover:border-fuchsia-200 hover:shadow-md hover:shadow-fuchsia-100/60"
-              href={item.href}
-              key={item.title}
-            >
-              <div>
-                <h3 className="font-semibold text-zinc-900">{item.title}</h3>
-                <p className="mt-1 text-sm text-zinc-600">{item.detail}</p>
-              </div>
-              <span className="size-2 rounded-full bg-[#d946ef]" />
-            </Link>
-          ))}
-        </div>
-      </section>
+      <TodayHeader dateLabel={formatLocalDate(new Date())} />
+      <DailyScoreCard result={scoreResult} />
+      <DailyStatsGrid stats={stats} />
+      <WaterLogButtons />
+      <QuickActionsGrid />
+      <DailyPlanTimeline dayType={plan.dayType} items={plan.items} />
     </div>
   );
 }
 
-function calculateDailyScore(input: {
-  hasProfile: boolean;
-  hasFood: boolean;
-  hasSleep: boolean;
-  hasJournal: boolean;
-  hasWorkout: boolean;
-}) {
-  let score = 20;
-
-  if (input.hasProfile) score += 20;
-  if (input.hasFood) score += 20;
-  if (input.hasSleep) score += 20;
-  if (input.hasJournal) score += 10;
-  if (input.hasWorkout) score += 10;
-
-  return score;
+function formatLocalDate(date: Date) {
+  return new Intl.DateTimeFormat("en", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  }).format(date);
 }

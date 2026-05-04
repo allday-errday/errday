@@ -8,6 +8,16 @@ export type ActivityLevel =
   | "very_active"
   | "athlete";
 export type MealType = "breakfast" | "lunch" | "dinner" | "snack";
+export type DayType = "rest" | "gym";
+export type MealSlot =
+  | "breakfast"
+  | "lunch"
+  | "dinner"
+  | "snack"
+  | "pre_workout"
+  | "post_workout";
+export type PlanSlot = MealSlot | "workout" | "sleep";
+export type PlanStatus = "logged" | "upcoming" | "missed";
 
 export interface Profile {
   id: string;
@@ -91,6 +101,10 @@ export interface FoodLog {
   protein_g: number;
   carbs_g: number;
   fat_g: number;
+  meal_slot: MealSlot | null;
+  source: string;
+  external_food_id: string | null;
+  display_name: string | null;
   created_at: string;
 }
 
@@ -222,6 +236,9 @@ export interface WorkoutLog {
   duration_minutes: number;
   calories_burned: number;
   logged_at: string;
+  started_at: string | null;
+  ended_at: string | null;
+  plan_slot: Extract<PlanSlot, "workout"> | null;
   notes: string | null;
   created_at: string;
 }
@@ -278,6 +295,44 @@ export interface HabitLog {
 }
 
 export type HabitLogInsert = Omit<HabitLog, "id" | "created_at">;
+
+export interface DailyProfile {
+  user_id: string;
+  default_day_type: DayType;
+  sleep_goal_hours: number;
+  water_goal_ml: number;
+  suggested_bedtime: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export type DailyProfileInsert = Pick<DailyProfile, "user_id"> &
+  Partial<Omit<DailyProfile, "user_id" | "created_at" | "updated_at">>;
+
+export interface DailyDaySetting {
+  id: string;
+  user_id: string;
+  date: string;
+  day_type: DayType;
+  created_at: string;
+  updated_at: string;
+}
+
+export type DailyDaySettingInsert = Omit<
+  DailyDaySetting,
+  "id" | "created_at" | "updated_at"
+>;
+
+export interface WaterLog {
+  id: string;
+  user_id: string;
+  amount_ml: number;
+  logged_at: string;
+  created_at: string;
+}
+
+export type WaterLogInsert = Omit<WaterLog, "id" | "logged_at" | "created_at"> &
+  Partial<Pick<WaterLog, "logged_at">>;
 
 export type WorkoutWithSets = Workout & {
   workout_sets: WorkoutSet[];

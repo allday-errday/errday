@@ -174,6 +174,45 @@ export async function finishWorkout(formData: FormData) {
   const sessionId = formString(formData, "session_id");
 
   if (sessionId) {
+    const { data: session, error: sessionError } = await supabase
+      .from("active_workout_sessions")
+      .select("*, workouts(*)")
+      .eq("id", sessionId)
+      .eq("user_id", user.id)
+      .maybeSingle<{
+        id: string;
+        started_at: string;
+        workout_id: string | null;
+        workouts: { name: string | null } | null;
+      }>();
+
+    if (sessionError) {
+      throw sessionError;
+    }
+
+    if (session) {
+      const endedAt = new Date();
+      const startedAt = new Date(session.started_at);
+      const durationMinutes = Math.max(
+        0,
+        Math.round((endedAt.getTime() - startedAt.getTime()) / 60000),
+      );
+
+      await createWorkoutLog(supabase, {
+        user_id: user.id,
+        workout_template_id: null,
+        name: session.workouts?.name ?? "Workout",
+        category: "strength",
+        duration_minutes: durationMinutes,
+        calories_burned: 0,
+        logged_at: endedAt.toISOString(),
+        started_at: session.started_at,
+        ended_at: endedAt.toISOString(),
+        plan_slot: "workout",
+        notes: "Completed from active workout.",
+      });
+    }
+
     await finishActiveWorkoutSession(supabase, user.id, sessionId);
   }
 
@@ -292,6 +331,9 @@ export async function logWorkoutTemplate(
       duration_minutes: durationMinutes ?? template.estimated_minutes,
       calories_burned: caloriesBurned ?? template.estimated_calories ?? 0,
       logged_at: new Date().toISOString(),
+      started_at: null,
+      ended_at: null,
+      plan_slot: "workout",
       notes: nullableString(formData, "notes"),
     });
   } catch (error) {

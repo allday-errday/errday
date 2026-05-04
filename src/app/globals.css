@@ -43,7 +43,7 @@ button {
 }
 
 ::selection {
-  background: rgba(217, 70, 239, 0.3);
+  background: rgba(255, 105, 180, 0.3);
 }
 
 body [class*="bg-[#050505]"],
@@ -98,30 +98,30 @@ body [class*="hover:bg-white/5"]:hover {
 }
 
 body [class*="bg-[#d946ef]"] {
-  background-color: #d946ef !important;
+  background-color: #ff69b4 !important;
 }
 
 body [class*="hover:bg-[#ec4899]"]:hover {
-  background-color: #ec4899 !important;
+  background-color: #ff85c4 !important;
 }
 
 body [class*="disabled:bg-[#701a75]"]:disabled {
-  background-color: #701a75 !important;
+  background-color: rgba(255, 105, 180, 0.4) !important;
 }
 
 body [class*="text-[#d946ef]"],
 body [class*="text-[#f0abfc]"] {
-  color: #d946ef !important;
+  color: #ff69b4 !important;
 }
 
 body [class*="border-[#d946ef]"],
 body [class*="focus:border-[#d946ef]"]:focus,
 body [class*="hover:border-[#d946ef]"]:hover {
-  border-color: #d946ef !important;
+  border-color: #ff69b4 !important;
 }
 
 body [class*="shadow-[#d946ef]"] {
-  --tw-shadow-color: rgba(217, 70, 239, 0.2) !important;
+  --tw-shadow-color: rgba(255, 105, 180, 0.2) !important;
 }
 
 .gym-screen {

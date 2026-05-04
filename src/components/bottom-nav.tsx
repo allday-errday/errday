@@ -33,10 +33,10 @@ export function BottomNav() {
           return (
             <Link
               aria-current={isActive ? "page" : undefined}
-              className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg text-xs font-medium transition ${
-                isActive
-                  ? "bg-fuchsia-500 text-white shadow-sm shadow-fuchsia-200"
-                  : "text-zinc-500 hover:bg-fuchsia-50 hover:text-zinc-800"
+                className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg text-xs font-medium transition ${
+                  isActive
+                  ? "bg-[#FF69B4] text-black shadow-sm shadow-[#FF69B4]/20"
+                  : "text-zinc-500 hover:bg-[#FF69B4]/10 hover:text-zinc-800"
               }`}
               href={item.href}
               key={item.href}
