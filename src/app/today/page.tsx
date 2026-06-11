@@ -15,7 +15,6 @@ import { DailyScoreCard } from "./_components/DailyScoreCard";
 import { DailyStatsGrid, type DailyStat } from "./_components/DailyStatsGrid";
 import { QuickActionsGrid } from "./_components/QuickActionsGrid";
 import { TodayHeader } from "./_components/TodayHeader";
-import { WaterLogButtons } from "./_components/WaterLogButtons";
 
 const burnedCaloriesGoal = 300;
 
@@ -68,45 +67,62 @@ export default async function TodayPage() {
   });
   const stats: DailyStat[] = [
     {
+      icon: "calories",
       label: "Calories",
+      progress:
+        dashboard.targetCalories && dashboard.targetCalories > 0
+          ? dashboard.foodTotals.calories / dashboard.targetCalories
+          : 0,
       value: `${dashboard.foodTotals.calories.toLocaleString("en-US")}`,
       helper: dashboard.targetCalories
         ? `/ ${dashboard.targetCalories.toLocaleString("en-US")} kcal`
         : "Set target",
     },
     {
+      icon: "burned",
       label: "Burned",
-      value: `${dashboard.workoutCalories.toLocaleString("en-US")} kcal`,
+      progress: dashboard.workoutCalories / burnedCaloriesGoal,
+      value: `${dashboard.workoutCalories.toLocaleString("en-US")}`,
       helper: `/ ${burnedCaloriesGoal} kcal goal`,
     },
     {
+      icon: "protein",
       label: "Protein",
+      progress:
+        dashboard.targetProtein && dashboard.targetProtein > 0
+          ? dashboard.foodTotals.proteinG / dashboard.targetProtein
+          : 0,
       value: `${Math.round(dashboard.foodTotals.proteinG)} g`,
       helper: dashboard.targetProtein ? `/ ${dashboard.targetProtein} g` : "Set target",
     },
     {
+      icon: "carbs",
       label: "Carbs",
+      progress: carbsTarget && carbsTarget > 0 ? dashboard.foodTotals.carbsG / carbsTarget : 0,
       value: `${Math.round(dashboard.foodTotals.carbsG)} g`,
       helper: carbsTarget ? `/ ${carbsTarget} g` : "Set target",
     },
     {
-      label: "Sleep",
-      value: dashboard.todaySleep ? `${sleepHours}h` : "0h",
-      helper: `/ ${sleepTargetHours}h target`,
+      icon: "water",
+      label: "Water",
+      progress: waterTotalMl / waterTargetMl,
+      value: `${waterTotalMl.toLocaleString("en-US")} ml`,
+      helper: `/ ${waterTargetMl.toLocaleString("en-US")} ml`,
     },
     {
-      label: "Water",
-      value: `${waterTotalMl.toLocaleString("en-US")} ml`,
-      helper: `/ ${waterTargetMl.toLocaleString("en-US")} ml target`,
+      icon: "sleep",
+      label: "Sleep",
+      progress: sleepHours / sleepTargetHours,
+      value: dashboard.todaySleep ? `${sleepHours}h` : "0h",
+      helper: `/ ${sleepTargetHours}h target`,
     },
   ];
 
   return (
-    <div>
+    <div className="today-dark -mx-4 -mt-[calc(1.25rem+env(safe-area-inset-top))] min-h-dvh bg-[#090a0d] px-5 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-[calc(1.65rem+env(safe-area-inset-top))] text-white">
       <TodayHeader dateLabel={formatLocalDate(new Date())} />
       <DailyScoreCard result={scoreResult} />
       <DailyStatsGrid stats={stats} />
-      <WaterLogButtons />
       <QuickActionsGrid />
       <DailyPlanTimeline dayType={plan.dayType} items={plan.items} />
     </div>

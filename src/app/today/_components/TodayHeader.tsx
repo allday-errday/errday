@@ -8,12 +8,12 @@ export function TodayHeader({ dateLabel }: TodayHeaderProps) {
   return (
     <header className="mb-5 flex items-start justify-between gap-4 pt-1">
       <div>
-        <h1 className="text-4xl font-black tracking-normal text-black">Today</h1>
-        <p className="mt-1 text-sm font-medium text-zinc-500">{dateLabel}</p>
+        <h1 className="text-5xl font-black tracking-normal text-white">Today</h1>
+        <p className="mt-3 text-xl font-semibold text-zinc-400">{dateLabel}</p>
       </div>
       <Link
         aria-label="Open settings"
-        className="grid size-11 place-items-center rounded-full border border-zinc-200 bg-white text-xl font-black text-black shadow-sm shadow-zinc-200/70 transition hover:border-[#FF69B4] hover:bg-zinc-50"
+        className="grid size-16 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-xl font-black text-white shadow-lg shadow-black/30 transition hover:border-[#FF69B4]/60 hover:bg-white/[0.07]"
         href="/settings#reminder-settings"
       >
         <svg

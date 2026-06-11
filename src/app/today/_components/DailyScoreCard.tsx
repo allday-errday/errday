@@ -7,23 +7,25 @@ type DailyScoreCardProps = {
 
 export function DailyScoreCard({ result }: DailyScoreCardProps) {
   return (
-    <section className="mb-6 rounded-[1.75rem] border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/80">
+    <section className="mb-7 rounded-[1.65rem] border border-white/10 bg-[#111316]/85 p-5 shadow-2xl shadow-black/30">
       <div className="flex items-center justify-between gap-4">
         <div className="min-w-0">
           <p className="text-sm font-bold text-[#FF69B4]">Daily Flow Score</p>
           <div className="mt-2 flex items-end gap-1">
-            <p className="text-6xl font-black leading-none tracking-normal text-black">
+            <p className="text-7xl font-black leading-none tracking-normal text-white">
               {result.score}
             </p>
-            <p className="pb-1 text-xl font-black text-zinc-400">/100</p>
+            <p className="pb-2 text-3xl font-black text-zinc-400">/100</p>
           </div>
-          <p className="mt-3 inline-flex rounded-full bg-[#FF69B4]/10 px-3 py-1 text-sm font-black text-black">
+          <p className="mt-4 inline-flex rounded-xl bg-[#FF69B4]/30 px-4 py-2 text-lg font-black text-[#FF69B4]">
             {result.status}
           </p>
         </div>
         <CircularScoreProgress score={result.score} />
       </div>
-      <p className="mt-4 text-sm leading-6 text-zinc-600">{result.message}</p>
+      <p className="mt-6 max-w-72 text-lg font-semibold leading-7 text-zinc-400">
+        {result.message}
+      </p>
     </section>
   );
 }

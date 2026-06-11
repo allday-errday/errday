@@ -5,32 +5,32 @@ type CircularScoreProgressProps = {
 };
 
 export function CircularScoreProgress({ score }: CircularScoreProgressProps) {
-  const radius = 44;
+  const radius = 52;
   const stroke = 10;
   const circumference = 2 * Math.PI * radius;
   const progress = Math.max(0, Math.min(100, score));
   const offset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="relative grid size-28 place-items-center">
+    <div className="relative grid size-40 place-items-center">
       <svg
         aria-hidden="true"
         className="-rotate-90"
-        height="112"
-        viewBox="0 0 112 112"
-        width="112"
+        height="160"
+        viewBox="0 0 136 136"
+        width="160"
       >
         <circle
-          cx="56"
-          cy="56"
+          cx="68"
+          cy="68"
           fill="none"
           r={radius}
-          stroke="#f4f4f5"
+          stroke="rgba(255, 105, 180, 0.22)"
           strokeWidth={stroke}
         />
         <circle
-          cx="56"
-          cy="56"
+          cx="68"
+          cy="68"
           fill="none"
           r={radius}
           stroke={DAILY_FLOW_ACCENT}
@@ -40,7 +40,10 @@ export function CircularScoreProgress({ score }: CircularScoreProgressProps) {
           strokeDashoffset={offset}
         />
       </svg>
-      <span className="absolute text-sm font-black text-zinc-900">{score}%</span>
+      <span className="absolute grid place-items-center text-white">
+        <span className="text-4xl font-black leading-none">{score}<span className="text-xl">%</span></span>
+        <span className="mt-4 text-4xl text-[#FF69B4]">★</span>
+      </span>
     </div>
   );
 }
