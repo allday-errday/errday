@@ -1,25 +1,28 @@
 import type { FoodSearchResult, NormalizedFoodProduct } from "./types";
 
-const baseUrl = "https://trackapi.nutritionix.com/v2";
+const baseUrl = "https://api.nal.usda.gov/fdc/v1";
 
-function credentials() {
-  const appId = process.env.NUTRITIONIX_APP_ID;
-  const appKey = process.env.NUTRITIONIX_APP_KEY;
-  return { appId, appKey, configured: Boolean(appId && appKey) };
+function apiKey() {
+  return process.env.FDC_API_KEY;
 }
 
-type NutritionixFood = {
-  food_name?: unknown;
-  brand_name?: unknown;
-  nix_item_id?: unknown;
-  serving_qty?: unknown;
-  serving_unit?: unknown;
-  serving_weight_grams?: unknown;
-  nf_calories?: unknown;
-  nf_protein?: unknown;
-  nf_total_carbohydrate?: unknown;
-  nf_total_fat?: unknown;
-  photo?: { thumb?: unknown } | null;
+type FdcNutrient = {
+  nutrientNumber?: unknown;
+  number?: unknown;
+  value?: unknown;
+  unitName?: unknown;
+};
+
+type FdcFood = {
+  fdcId?: unknown;
+  description?: unknown;
+  brandName?: unknown;
+  brandOwner?: unknown;
+  gtinUpc?: unknown;
+  servingSize?: unknown;
+  servingSizeUnit?: unknown;
+  householdServingFullText?: unknown;
+  foodNutrients?: FdcNutrient[];
 };
 
 function num(value: unknown): number | null {
@@ -37,83 +40,73 @@ function str(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-function slug(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+function round1(value: number | null): number | null {
+  return value === null ? null : Math.round(value * 10) / 10;
 }
 
-function per100(value: unknown, grams: number | null): number | null {
-  const v = num(value);
-  if (v === null || grams === null || grams <= 0) {
-    return null;
+// FoodData Central reports foodNutrients per 100 g for all data types.
+function byNumber(food: FdcFood, ...numbers: string[]): number | null {
+  const list = food.foodNutrients ?? [];
+  for (const target of numbers) {
+    const hit = list.find(
+      (n) => String(n.nutrientNumber ?? n.number ?? "") === target,
+    );
+    if (hit) {
+      return num(hit.value);
+    }
   }
-  return Math.round((v / grams) * 100 * 10) / 10;
+  return null;
 }
 
-function normalize(food: NutritionixFood): NormalizedFoodProduct | null {
-  const name = str(food.food_name);
-  if (!name) {
+function normalize(food: FdcFood): NormalizedFoodProduct | null {
+  const name = str(food.description);
+  const fdcId = num(food.fdcId);
+  if (!name || fdcId === null) {
     return null;
   }
-  const grams = num(food.serving_weight_grams);
-  const brand = str(food.brand_name);
-  const itemId = str(food.nix_item_id);
-  const servingQty = num(food.serving_qty);
-  const servingUnit = str(food.serving_unit);
+
+  const servingSize = num(food.servingSize);
+  const servingUnit = str(food.servingSizeUnit);
+  const household = str(food.householdServingFullText);
 
   return {
-    brand,
-    caloriesPer100g: per100(food.nf_calories, grams),
-    carbsPer100g: per100(food.nf_total_carbohydrate, grams),
-    code: itemId ?? `nlp:${slug(name)}`,
-    fatPer100g: per100(food.nf_total_fat, grams),
-    imageUrl: str(food.photo?.thumb),
+    brand: str(food.brandName) ?? str(food.brandOwner),
+    caloriesPer100g: round1(byNumber(food, "208", "957", "958")),
+    carbsPer100g: round1(byNumber(food, "205")),
+    code: String(fdcId),
+    fatPer100g: round1(byNumber(food, "204")),
+    imageUrl: null,
     name,
-    proteinPer100g: per100(food.nf_protein, grams),
+    proteinPer100g: round1(byNumber(food, "203")),
     servingSize:
-      servingQty !== null && servingUnit
-        ? `${servingQty} ${servingUnit}${grams ? ` (${Math.round(grams)} g)` : ""}`
-        : grams
-          ? `${Math.round(grams)} g`
-          : null,
-    source: "nutritionix",
+      household ??
+      (servingSize !== null
+        ? `${servingSize} ${servingUnit ?? "g"}`
+        : null),
+    source: "usda",
   };
 }
 
-async function nutritionix<T>(
+async function fdc<T>(
   path: string,
-  init: RequestInit,
 ): Promise<{ data: T | null; error: FoodSearchResult["error"] }> {
-  const { appId, appKey, configured } = credentials();
-  if (!configured) {
+  const key = apiKey();
+  if (!key) {
     return {
       data: null,
-      error:
-        "Food search is not configured yet. Add NUTRITIONIX_APP_ID and NUTRITIONIX_APP_KEY.",
+      error: "Food search is not configured yet. Add FDC_API_KEY.",
     };
   }
 
+  const separator = path.includes("?") ? "&" : "?";
   try {
-    const response = await fetch(`${baseUrl}${path}`, {
-      ...init,
-      headers: {
-        "Content-Type": "application/json",
-        "x-app-id": appId as string,
-        "x-app-key": appKey as string,
-        ...(init.headers ?? {}),
-      },
-      next: { revalidate: 60 * 60 },
-    });
-
-    if (response.status === 404) {
-      return { data: null, error: null };
-    }
+    const response = await fetch(
+      `${baseUrl}${path}${separator}api_key=${encodeURIComponent(key)}`,
+      { headers: { Accept: "application/json" }, next: { revalidate: 60 * 60 } },
+    );
 
     if (!response.ok) {
-      console.error(`[Nutritionix] ${response.status} ${response.statusText}`);
+      console.error(`[FDC] ${response.status} ${response.statusText}`);
       return {
         data: null,
         error:
@@ -125,7 +118,7 @@ async function nutritionix<T>(
 
     return { data: (await response.json()) as T, error: null };
   } catch (error) {
-    console.error("[Nutritionix] request failed", error);
+    console.error("[FDC] request failed", error);
     return { data: null, error: "Food search is unavailable right now." };
   }
 }
@@ -136,9 +129,10 @@ export async function searchProducts(query: string): Promise<FoodSearchResult> {
     return { error: null, products: [] };
   }
 
-  const { data, error } = await nutritionix<{ foods?: NutritionixFood[] }>(
-    "/natural/nutrients",
-    { method: "POST", body: JSON.stringify({ query: clean }) },
+  const { data, error } = await fdc<{ foods?: FdcFood[] }>(
+    `/foods/search?query=${encodeURIComponent(clean)}&pageSize=25&dataType=${encodeURIComponent(
+      "Foundation,SR Legacy,Branded",
+    )}`,
   );
 
   if (error) {
@@ -161,11 +155,12 @@ export async function getProductByBarcode(
     return null;
   }
 
-  const { data } = await nutritionix<{ foods?: NutritionixFood[] }>(
-    `/search/item?upc=${encodeURIComponent(upc)}`,
-    { method: "GET" },
+  const { data } = await fdc<{ foods?: FdcFood[] }>(
+    `/foods/search?query=${encodeURIComponent(upc)}&pageSize=10&dataType=Branded`,
   );
 
-  const food = data?.foods?.[0];
+  const foods = data?.foods ?? [];
+  const exact = foods.find((f) => String(f.gtinUpc ?? "").replace(/\D/g, "") === upc);
+  const food = exact ?? foods[0];
   return food ? normalize(food) : null;
 }
