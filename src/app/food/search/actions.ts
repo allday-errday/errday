@@ -15,8 +15,6 @@ import {
 import { listWorkoutLogsForDay } from "@/lib/db/gym";
 import { getTodayWorkouts } from "@/lib/db/today";
 import { formString, numberValue } from "@/lib/forms";
-import { getProductByBarcode } from "@/lib/openfoodfacts/client";
-import type { NormalizedOpenFoodFactsProduct } from "@/lib/openfoodfacts/types";
 import type { FoodItem, MealSlot } from "@/types/database";
 
 const mealSlots: MealSlot[] = [
@@ -32,61 +30,63 @@ function validMealSlot(value: string): MealSlot | null {
   return mealSlots.includes(value as MealSlot) ? (value as MealSlot) : null;
 }
 
-function scalePer100g(value: number | null, grams: number) {
-  return value === null ? 0 : value * (grams / 100);
+function scalePer100g(value: number, grams: number) {
+  return value * (grams / 100);
 }
 
 async function getOrCreateFoodItem(
-  product: NormalizedOpenFoodFactsProduct,
-  userId: string,
   supabase: Awaited<ReturnType<typeof requireUser>>["supabase"],
+  userId: string,
+  input: {
+    name: string;
+    brand: string | null;
+    source: string;
+    code: string;
+    imageUrl: string | null;
+    servingSize: string | null;
+    cal100: number;
+    protein100: number;
+    carbs100: number;
+    fat100: number;
+  },
 ): Promise<FoodItem> {
   const existing = await getFoodItemByExternalId(
     supabase,
     userId,
-    product.source,
-    product.code,
+    input.source,
+    input.code,
   );
-
   if (existing) {
     return existing;
   }
 
   return createFoodItem(supabase, {
     user_id: userId,
-    name: product.name,
-    brand: product.brand,
-    calories_per_serving: Math.round(product.caloriesPer100g ?? 0),
-    protein_g: product.proteinPer100g ?? 0,
-    carbs_g: product.carbsPer100g ?? 0,
-    fat_g: product.fatPer100g ?? 0,
+    name: input.name,
+    brand: input.brand,
+    calories_per_serving: Math.round(input.cal100),
+    protein_g: input.protein100,
+    carbs_g: input.carbs100,
+    fat_g: input.fat100,
     serving_label: "100 g",
-    image_url: product.imageUrl,
-    barcode: product.code,
-    external_source: product.source,
-    external_id: product.code,
-    serving_size: product.servingSize,
+    image_url: input.imageUrl,
+    barcode: /^\d+$/.test(input.code) ? input.code : null,
+    external_source: input.source,
+    external_id: input.code,
+    serving_size: input.servingSize,
   });
 }
 
-export async function logOpenFoodFactsProduct(formData: FormData) {
+export async function logFoodProduct(formData: FormData) {
   const { supabase, user } = await requireUser();
+  const name = formString(formData, "name");
   const code = formString(formData, "code");
+  const cal100 = numberValue(formData, "cal100");
   const grams = numberValue(formData, "grams") ?? 100;
   const requestedSlot = validMealSlot(formString(formData, "meal_slot"));
 
-  if (!code || grams <= 0) {
+  if (!name || !code || cal100 === null || grams <= 0) {
     redirect("/food/search?error=invalid-log");
-  }
-
-  const product = await getProductByBarcode(code);
-
-  if (!product) {
-    redirect("/food/search?error=not-found");
-  }
-
-  if (product.caloriesPer100g === null) {
-    redirect(`/food/search?barcode=${encodeURIComponent(code)}&error=missing-calories`);
   }
 
   const today = todayDateString();
@@ -100,27 +100,39 @@ export async function logOpenFoodFactsProduct(formData: FormData) {
     daySetting?.day_type ?? detectDayType({ workoutLogs, workouts });
   const mealSlot =
     requestedSlot ??
-    inferNextMealSlot({
-      dayType,
-      foodLogs,
-      workoutLogs,
-      workouts,
-    });
-  const foodItem = await getOrCreateFoodItem(product, user.id, supabase);
+    inferNextMealSlot({ dayType, foodLogs, workoutLogs, workouts });
+
+  const protein100 = numberValue(formData, "protein100") ?? 0;
+  const carbs100 = numberValue(formData, "carbs100") ?? 0;
+  const fat100 = numberValue(formData, "fat100") ?? 0;
+  const source = formString(formData, "source") || "nutritionix";
+
+  const foodItem = await getOrCreateFoodItem(supabase, user.id, {
+    name,
+    brand: formString(formData, "brand") || null,
+    source,
+    code,
+    imageUrl: formString(formData, "image_url") || null,
+    servingSize: formString(formData, "serving_size") || null,
+    cal100,
+    protein100,
+    carbs100,
+    fat100,
+  });
 
   await createFoodLog(supabase, {
     user_id: user.id,
     food_item_id: foodItem.id,
     logged_at: new Date().toISOString(),
     servings: grams / 100,
-    calories: Math.round(scalePer100g(product.caloriesPer100g, grams)),
-    protein_g: scalePer100g(product.proteinPer100g, grams),
-    carbs_g: scalePer100g(product.carbsPer100g, grams),
-    fat_g: scalePer100g(product.fatPer100g, grams),
+    calories: Math.round(scalePer100g(cal100, grams)),
+    protein_g: scalePer100g(protein100, grams),
+    carbs_g: scalePer100g(carbs100, grams),
+    fat_g: scalePer100g(fat100, grams),
     meal_slot: mealSlot,
-    source: product.source,
-    external_food_id: product.code,
-    display_name: product.name,
+    source,
+    external_food_id: code,
+    display_name: name,
   });
 
   revalidatePath("/today");

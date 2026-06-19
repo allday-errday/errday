@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
-import { getProductByBarcode, searchProducts } from "@/lib/openfoodfacts/client";
-import type { NormalizedOpenFoodFactsProduct } from "@/lib/openfoodfacts/types";
+import { getProductByBarcode, searchProducts } from "@/lib/food-search/client";
+import type { NormalizedFoodProduct } from "@/lib/food-search/types";
 import type { MealSlot } from "@/types/database";
-import { logOpenFoodFactsProduct } from "./actions";
+import { logFoodProduct } from "./actions";
 
 type FoodSearchPageProps = {
   searchParams: Promise<{
@@ -47,7 +47,7 @@ export default async function FoodSearchPage({
   return (
     <div>
       <PageHeader
-        subtitle="Search OpenFoodFacts or enter a barcode, then log grams into today."
+        subtitle="Search foods by name (e.g. 200g chicken breast) or scan a barcode, then log into today."
         title="Log Meal"
       />
 
@@ -162,7 +162,7 @@ function ErrorMessage({
   const messages: Record<string, string> = {
     "invalid-log": "Choose a product and enter a valid gram amount.",
     "missing-calories": "This product is missing calories, so it cannot be logged yet.",
-    "not-found": "OpenFoodFacts could not find that product.",
+    "not-found": "We couldn't find that product.",
   };
 
   return (
@@ -176,7 +176,7 @@ function ProductCard({
   product,
   selectedSlot,
 }: {
-  product: NormalizedOpenFoodFactsProduct;
+  product: NormalizedFoodProduct;
   selectedSlot: MealSlot | "";
 }) {
   const canLog = product.caloriesPer100g !== null;
@@ -204,8 +204,17 @@ function ProductCard({
           Calories are unknown. Logging is disabled for this product.
         </p>
       ) : (
-        <form action={logOpenFoodFactsProduct} className="mt-4 grid gap-3">
+        <form action={logFoodProduct} className="mt-4 grid gap-3">
           <input name="code" type="hidden" value={product.code} />
+          <input name="name" type="hidden" value={product.name} />
+          <input name="brand" type="hidden" value={product.brand ?? ""} />
+          <input name="source" type="hidden" value={product.source} />
+          <input name="image_url" type="hidden" value={product.imageUrl ?? ""} />
+          <input name="serving_size" type="hidden" value={product.servingSize ?? ""} />
+          <input name="cal100" type="hidden" value={product.caloriesPer100g ?? ""} />
+          <input name="protein100" type="hidden" value={product.proteinPer100g ?? ""} />
+          <input name="carbs100" type="hidden" value={product.carbsPer100g ?? ""} />
+          <input name="fat100" type="hidden" value={product.fatPer100g ?? ""} />
           <div className="grid grid-cols-[1fr_1.2fr] gap-3">
             <label className="grid gap-2 text-sm font-bold text-zinc-300">
               Grams
@@ -246,11 +255,11 @@ function ProductCard({
   );
 }
 
-function ProductImage({ product }: { product: NormalizedOpenFoodFactsProduct }) {
+function ProductImage({ product }: { product: NormalizedFoodProduct }) {
   if (!product.imageUrl) {
     return (
-      <div className="grid size-20 shrink-0 place-items-center rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] text-sm font-bold text-[var(--accent)]">
-        OFF
+      <div className="grid size-20 shrink-0 place-items-center rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] text-lg font-bold text-[var(--accent)]">
+        {product.name.slice(0, 2).toUpperCase()}
       </div>
     );
   }

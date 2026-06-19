@@ -1,6 +1,6 @@
-export type OpenFoodFactsSource = "open_food_facts";
+export type FoodSource = "nutritionix" | "open_food_facts" | "manual";
 
-export type NormalizedOpenFoodFactsProduct = {
+export type NormalizedFoodProduct = {
   brand: string | null;
   caloriesPer100g: number | null;
   carbsPer100g: number | null;
@@ -10,10 +10,10 @@ export type NormalizedOpenFoodFactsProduct = {
   name: string;
   proteinPer100g: number | null;
   servingSize: string | null;
-  source: OpenFoodFactsSource;
+  source: FoodSource;
 };
 
-export type OpenFoodFactsSearchResult = {
+export type FoodSearchResult = {
   error: string | null;
-  products: NormalizedOpenFoodFactsProduct[];
+  products: NormalizedFoodProduct[];
 };
