@@ -1,4 +1,4 @@
-export type FoodSource = "usda" | "nutritionix" | "open_food_facts" | "manual";
+export type FoodSource = "usda" | "manual";
 
 export type NormalizedFoodProduct = {
   brand: string | null;
