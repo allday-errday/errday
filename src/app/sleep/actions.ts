@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireUser } from "@/lib/auth";
+import { todayDateString } from "@/lib/dates";
 import { upsertSleepLog } from "@/lib/db/sleep";
 import type { ActionState } from "@/lib/forms";
 import {
@@ -10,6 +11,28 @@ import {
   nullableString,
   numberValue,
 } from "@/lib/forms";
+
+export async function logSleepSession(
+  hours: number,
+  bedtime: string,
+  wakeTime: string,
+) {
+  const { supabase, user } = await requireUser();
+  const safeHours = Math.max(0, Math.min(24, Math.round(hours * 10) / 10));
+
+  await upsertSleepLog(supabase, {
+    user_id: user.id,
+    date: todayDateString(),
+    sleep_hours: safeHours,
+    quality: null,
+    bedtime: bedtime || null,
+    wake_time: wakeTime || null,
+    note: "Tracked with the sleep timer.",
+  });
+
+  revalidatePath("/sleep");
+  revalidatePath("/today");
+}
 
 export async function saveSleepLog(
   _previousState: ActionState,
