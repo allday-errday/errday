@@ -1,10 +1,4 @@
-export type NavIconName =
-  | "food"
-  | "gym"
-  | "journal"
-  | "library"
-  | "sleep"
-  | "today";
+export type NavIconName = "food" | "gym" | "journal" | "sleep" | "today";
 
 export type NavItem = {
   href: string;
@@ -15,7 +9,6 @@ export type NavItem = {
 export const navItems: NavItem[] = [
   { href: "/today", icon: "today", label: "Today" },
   { href: "/gym", icon: "gym", label: "Gym" },
-  { href: "/library", icon: "library", label: "Library" },
   { href: "/food", icon: "food", label: "Food" },
   { href: "/sleep", icon: "sleep", label: "Sleep" },
   { href: "/journal", icon: "journal", label: "Journal" },
@@ -77,16 +70,6 @@ export function NavIcon({
     return (
       <svg {...common}>
         <path d="M21 14.5A7.5 7.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" />
-      </svg>
-    );
-  }
-
-  if (name === "library") {
-    return (
-      <svg {...common}>
-        <path d="M12 3 3 8l9 5 9-5-9-5Z" />
-        <path d="m3 12 9 5 9-5" />
-        <path d="m3 16 9 5 9-5" />
       </svg>
     );
   }
