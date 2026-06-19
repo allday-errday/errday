@@ -23,7 +23,7 @@ export function ReminderSettingsForm({ profile }: ReminderSettingsFormProps) {
 
   return (
     <form action={formAction} className="grid gap-4" id="reminders">
-      <label className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50/70 px-3 py-3 text-sm font-medium text-zinc-800">
+      <label className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/70 px-3 py-3 text-sm font-medium text-zinc-200">
         <input
           defaultChecked={Boolean(profile?.reminders_enabled)}
           name="reminders_enabled"
@@ -63,7 +63,7 @@ export function ReminderSettingsForm({ profile }: ReminderSettingsFormProps) {
         />
       </div>
 
-      <label className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50/70 px-3 py-3 text-sm font-medium text-zinc-800">
+      <label className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/70 px-3 py-3 text-sm font-medium text-zinc-200">
         <input
           defaultChecked={Boolean(profile?.gym_rest_end_reminder_enabled)}
           name="gym_rest_end_reminder_enabled"
@@ -90,10 +90,10 @@ function ReminderTimeField({
   name: string;
 }) {
   return (
-    <label className="grid gap-2 text-sm font-medium text-zinc-700">
+    <label className="grid gap-2 text-sm font-medium text-zinc-300">
       <span>{label}</span>
       <input
-        className="min-h-12 rounded-lg border border-zinc-200 bg-white px-3 text-base text-zinc-900 outline-none transition focus:border-[#d946ef]/70"
+        className="min-h-12 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 text-base text-white outline-none transition focus:border-[var(--accent)]/70"
         defaultValue={defaultValue}
         name={name}
         type="time"

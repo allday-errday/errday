@@ -8,9 +8,9 @@ type DailyPlanTimelineProps = {
 };
 
 const statusStyles: Record<PlanItemStatus, string> = {
-  logged: "border-[#FF69B4] bg-[#FF69B4] text-white",
-  upcoming: "border-zinc-500 bg-[#111316] text-zinc-500",
-  missed: "border-zinc-500 bg-[#181a1f] text-zinc-500",
+  logged: "border-[var(--accent)] bg-[var(--accent)] text-white",
+  upcoming: "border-zinc-500 bg-[var(--bg-soft)] text-zinc-500",
+  missed: "border-zinc-500 bg-[var(--surface)] text-zinc-500",
 };
 
 const statusLabels: Record<PlanItemStatus, string> = {
@@ -23,17 +23,17 @@ export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
   return (
     <section className="pb-3">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-2xl font-black tracking-normal text-white">
+        <h2 className="text-2xl font-bold tracking-normal text-white">
           Daily Plan
         </h2>
-        <div className="flex rounded-full border border-white/10 bg-white/[0.03] p-1 text-base font-black text-zinc-400">
+        <div className="flex rounded-full border border-white/10 bg-white/[0.03] p-1 text-base font-bold text-zinc-400">
           {(["rest", "gym"] as const).map((type) => (
             <form action={setTodayDayType} key={type}>
               <input name="day_type" type="hidden" value={type} />
               <button
                 className={`min-h-12 rounded-full px-6 capitalize ${
                   dayType === type
-                    ? "bg-[#FF69B4]/25 text-[#FF69B4] shadow-sm"
+                    ? "bg-[var(--accent)]/25 text-[var(--accent)] shadow-sm"
                     : "text-zinc-400"
                 }`}
                 type="submit"
@@ -45,7 +45,7 @@ export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
         </div>
       </div>
 
-      <div className="rounded-[1.65rem] border border-white/10 bg-[#111316]/90 px-4 py-5 shadow-2xl shadow-black/30">
+      <div className="rounded-[1.65rem] border border-white/10 bg-[var(--bg-soft)]/90 px-4 py-5 shadow-2xl shadow-black/30">
         <div>
           {items.map((item, index) => (
             <Link
@@ -53,7 +53,7 @@ export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
               href={item.href}
               key={item.slot}
             >
-              <span className="text-base font-black text-zinc-400">
+              <span className="text-base font-bold text-zinc-400">
                 {item.targetTime}
               </span>
               <span className="relative flex h-full justify-center">
@@ -68,18 +68,18 @@ export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
                   <span className="absolute top-8 h-[calc(100%+0.75rem)] w-px bg-zinc-600" />
                 ) : null}
               </span>
-              <span className="grid size-12 place-items-center rounded-full bg-[#FF69B4]/15 text-[#FF69B4]">
+              <span className="grid size-12 place-items-center rounded-full bg-[var(--accent)]/15 text-[var(--accent)]">
                 <PlanIcon slot={item.slot} />
               </span>
               <span className="min-w-0">
-                <span className="block text-xl font-black text-white">{item.label}</span>
+                <span className="block text-xl font-bold text-white">{item.label}</span>
                 <span className="mt-1 block truncate text-base font-semibold text-zinc-400">
                   {item.detail}
                 </span>
               </span>
-              <span className={`justify-self-end rounded-full px-4 py-2 text-sm font-black ${
+              <span className={`justify-self-end rounded-full px-4 py-2 text-sm font-bold ${
                 item.status === "logged"
-                  ? "bg-[#FF69B4]/20 text-[#FF69B4]"
+                  ? "bg-[var(--accent)]/20 text-[var(--accent)]"
                   : "bg-white/[0.04] text-zinc-400"
               }`}>
                 {statusLabels[item.status]}

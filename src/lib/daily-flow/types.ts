@@ -9,7 +9,7 @@ import type {
 
 export type { DayType, MealSlot, PlanSlot, PlanStatus } from "@/types/database";
 
-export const DAILY_FLOW_ACCENT = "#FF69B4";
+export const DAILY_FLOW_ACCENT = "var(--accent)";
 
 export type DailyScoreStatus = "Poor" | "Okay" | "Good" | "Great" | "Amazing";
 

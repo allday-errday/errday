@@ -10,17 +10,17 @@ const actions = [
 export function QuickActionsGrid() {
   return (
     <section className="mb-8">
-      <h2 className="mb-4 text-2xl font-black tracking-normal text-white">
+      <h2 className="mb-4 text-2xl font-bold tracking-normal text-white">
         Quick Actions
       </h2>
       <div className="grid grid-cols-4 gap-3">
         {actions.map((action) => (
           <Link
-            className="flex min-h-28 flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-[#111316]/90 px-2 text-center text-sm font-black text-white shadow-xl shadow-black/25 transition hover:border-[#FF69B4]/60 hover:bg-white/[0.06] active:scale-[0.98]"
+            className="flex min-h-28 flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-[var(--bg-soft)]/90 px-2 text-center text-sm font-bold text-white shadow-xl shadow-black/25 transition hover:border-[var(--accent)]/60 hover:bg-white/[0.06] active:scale-[0.98]"
             href={action.href}
             key={action.href}
           >
-            <span className="text-[#FF69B4]">
+            <span className="text-[var(--accent)]">
               <ActionIcon name={action.icon} />
             </span>
             {action.label}

@@ -15,15 +15,15 @@ export default async function JournalPage() {
         title="Journal"
       />
 
-      <section className="mb-5 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
-        <h2 className="mb-4 text-lg font-semibold text-zinc-900">
+      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+        <h2 className="mb-4 text-lg font-semibold text-white">
           Today&apos;s Check-in
         </h2>
         <JournalForm />
       </section>
 
-      <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
-        <h2 className="text-lg font-semibold text-zinc-900">Latest Entries</h2>
+      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+        <h2 className="text-lg font-semibold text-white">Latest Entries</h2>
         {entries.length === 0 ? (
           <p className="mt-3 text-sm leading-6 text-zinc-400">
             No journal entries yet. Add a quick reflection above.
@@ -32,14 +32,14 @@ export default async function JournalPage() {
           <div className="mt-4 space-y-3">
             {entries.map((entry) => (
               <article
-                className="rounded-xl border border-zinc-200 bg-zinc-50/70 p-4"
+                className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/70 p-4"
                 key={entry.id}
               >
                 <div className="flex items-center justify-between">
-                  <p className="font-semibold text-zinc-900">
+                  <p className="font-semibold text-white">
                     {formatDate(entry.date)}
                   </p>
-                  <p className="text-sm text-[#d946ef]">
+                  <p className="text-sm text-[var(--accent)]">
                     Mood {entry.mood ?? "-"} / 5
                   </p>
                 </div>
@@ -47,7 +47,7 @@ export default async function JournalPage() {
                   Energy {entry.energy ?? "-"} · Stress {entry.stress ?? "-"}
                 </p>
                 {entry.content ? (
-                  <p className="mt-3 text-sm leading-6 text-zinc-700">
+                  <p className="mt-3 text-sm leading-6 text-zinc-300">
                     {entry.content}
                   </p>
                 ) : null}

@@ -12,8 +12,8 @@ type SetInputRowProps = {
   workoutId: string;
 };
 
-const inputClassName =
-  "h-12 w-full rounded-none border border-white/10 bg-[#050505] px-2 text-center text-lg font-semibold text-white outline-none transition placeholder:text-zinc-700 focus:border-[#d946ef]";
+const cellClassName =
+  "h-12 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 text-center text-lg font-semibold text-white outline-none transition placeholder:text-zinc-500 focus:border-[var(--accent)]";
 
 export function SetInputRow({
   exerciseId,
@@ -24,53 +24,45 @@ export function SetInputRow({
   const [state, formAction] = useActionState(saveWorkoutSet, initialActionState);
 
   return (
-    <form action={formAction} className="mt-4 space-y-3">
+    <form action={formAction} className="mt-3 space-y-3">
       <input name="workout_id" type="hidden" value={workoutId} />
       <input name="exercise_id" type="hidden" value={exerciseId} />
       <input name="exercise_name" type="hidden" value={exerciseName} />
-      <div className="grid grid-cols-[3rem_1fr_1fr_3rem] items-end gap-3">
-        <label className="grid gap-2 text-xs font-bold uppercase text-zinc-500">
-          Set
-          <input
-            className={inputClassName}
-            defaultValue={nextSetNumber}
-            min="1"
-            name="set_number"
-            required
-            type="number"
-          />
-        </label>
-        <label className="grid gap-2 text-xs font-bold uppercase text-zinc-500">
-          Kg
-          <input
-            className={inputClassName}
-            min="0"
-            name="weight_kg"
-            placeholder="0"
-            step="0.5"
-            type="number"
-          />
-        </label>
-        <label className="grid gap-2 text-xs font-bold uppercase text-zinc-500">
-          Reps
-          <input
-            className={inputClassName}
-            min="0"
-            name="reps"
-            placeholder="0"
-            type="number"
-          />
-        </label>
+      <div className="grid grid-cols-[3rem_1fr_1fr_3rem] items-center gap-3">
+        <input
+          aria-label="Set number"
+          className={cellClassName}
+          defaultValue={nextSetNumber}
+          min="1"
+          name="set_number"
+          required
+          type="number"
+        />
+        <input
+          aria-label="Weight in kg"
+          className={cellClassName}
+          min="0"
+          name="weight_kg"
+          placeholder="0"
+          step="0.5"
+          type="number"
+        />
+        <input
+          aria-label="Reps"
+          className={cellClassName}
+          min="0"
+          name="reps"
+          placeholder="0"
+          type="number"
+        />
         <button
-          className="grid h-12 place-items-center rounded-full bg-[#252525] text-2xl font-black text-white"
-          type="submit"
           aria-label="Add set"
+          className="grid size-12 place-items-center rounded-full bg-[var(--accent)] text-sm font-bold text-black transition hover:bg-[var(--accent-strong)]"
+          type="submit"
         >
           OK
         </button>
       </div>
-      <input name="rpe" type="hidden" value="" />
-      <input name="note" type="hidden" value="" />
       <FormMessage state={state} />
     </form>
   );

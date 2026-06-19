@@ -31,7 +31,7 @@ export function WorkoutTimer({ startedAt }: WorkoutTimerProps) {
   }, [startMs]);
 
   return (
-    <span className="rounded-full bg-[#d946ef] px-3 py-1 text-sm font-black tabular-nums text-black">
+    <span className="rounded-full bg-[var(--accent)] px-3 py-1 text-sm font-bold tabular-nums text-black">
       {formatElapsed(elapsed)}
     </span>
   );

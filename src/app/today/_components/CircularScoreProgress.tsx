@@ -41,8 +41,8 @@ export function CircularScoreProgress({ score }: CircularScoreProgressProps) {
         />
       </svg>
       <span className="absolute grid place-items-center text-white">
-        <span className="text-4xl font-black leading-none">{score}<span className="text-xl">%</span></span>
-        <span className="mt-4 text-4xl text-[#FF69B4]">★</span>
+        <span className="text-4xl font-bold leading-none">{score}<span className="text-xl">%</span></span>
+        <span className="mt-4 text-4xl text-[var(--accent)]">★</span>
       </span>
     </div>
   );

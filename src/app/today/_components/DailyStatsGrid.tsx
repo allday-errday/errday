@@ -16,11 +16,11 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
   return (
     <section className="mb-8">
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-2xl font-black tracking-normal text-white">
+        <h2 className="text-2xl font-bold tracking-normal text-white">
           Top Priorities
         </h2>
         <button
-          className="inline-flex min-h-12 items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-5 text-base font-black text-[#FF69B4] shadow-lg shadow-black/25"
+          className="inline-flex min-h-12 items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-5 text-base font-bold text-[var(--accent)] shadow-lg shadow-black/25"
           type="button"
         >
           <Icon name="sliders" />
@@ -30,22 +30,22 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
       <div className="grid grid-cols-5 gap-2">
         {priorityStats.map((stat) => (
           <article
-            className="min-h-32 rounded-2xl border border-white/10 bg-[#111316]/90 p-3 text-center shadow-xl shadow-black/25"
+            className="min-h-32 rounded-2xl border border-white/10 bg-[var(--bg-soft)]/90 p-3 text-center shadow-xl shadow-black/25"
             key={stat.label}
           >
-            <div className="mx-auto grid size-8 place-items-center text-[#FF69B4]">
+            <div className="mx-auto grid size-8 place-items-center text-[var(--accent)]">
               <Icon name={stat.icon} />
             </div>
             <p className="mt-3 text-sm font-semibold text-zinc-300">{stat.label}</p>
-            <p className="mt-2 whitespace-nowrap text-xl font-black tracking-normal text-white">
+            <p className="mt-2 whitespace-nowrap text-xl font-bold tracking-normal text-white">
               {stat.value}
             </p>
             <p className="mt-2 whitespace-nowrap text-xs font-semibold leading-5 text-zinc-500">
               {stat.helper}
             </p>
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#FF69B4]/25">
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--accent)]/25">
               <div
-                className="h-full rounded-full bg-[#FF69B4]"
+                className="h-full rounded-full bg-[var(--accent)]"
                 style={{ width: `${Math.max(6, Math.min(100, stat.progress * 100))}%` }}
               />
             </div>

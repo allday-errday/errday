@@ -4,7 +4,7 @@
   "description": "Personal all-day tracker for fitness, nutrition, sleep and journaling.",
   "start_url": "/today",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#FF69B4",
+  "background_color": "#15171c",
+  "theme_color": "#8b82f6",
   "orientation": "portrait"
 }

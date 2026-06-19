@@ -36,7 +36,7 @@ export function LoginForm() {
       <SubmitButton pendingLabel="Signing in...">Log in</SubmitButton>
       <p className="text-center text-sm text-zinc-500">
         No account yet?{" "}
-        <Link className="font-semibold text-[#d946ef]" href="/signup">
+        <Link className="font-semibold text-[var(--accent)]" href="/signup">
           Sign up
         </Link>
       </p>

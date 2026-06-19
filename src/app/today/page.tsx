@@ -119,7 +119,7 @@ export default async function TodayPage() {
   ];
 
   return (
-    <div className="today-dark -mx-4 -mt-[calc(1.25rem+env(safe-area-inset-top))] min-h-dvh bg-[#090a0d] px-5 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-[calc(1.65rem+env(safe-area-inset-top))] text-white">
+    <div className="text-white">
       <TodayHeader dateLabel={formatLocalDate(new Date())} />
       <DailyScoreCard result={scoreResult} />
       <DailyStatsGrid stats={stats} />

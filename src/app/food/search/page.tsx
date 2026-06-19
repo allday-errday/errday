@@ -51,23 +51,23 @@ export default async function FoodSearchPage({
         title="Log Meal"
       />
 
-      <section className="mb-5 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/70">
+      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
         <form className="grid gap-3">
           {selectedSlot ? (
             <input name="slot" type="hidden" value={selectedSlot} />
           ) : null}
-          <label className="grid gap-2 text-sm font-bold text-zinc-700">
+          <label className="grid gap-2 text-sm font-bold text-zinc-300">
             Search food
             <div className="flex gap-2">
               <input
-                className="min-h-12 min-w-0 flex-1 rounded-lg border border-zinc-200 bg-zinc-50 px-3 text-base text-black outline-none focus:border-[#FF69B4]"
+                className="min-h-12 min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
                 defaultValue={query}
                 name="q"
                 placeholder="Greek yogurt, pasta, protein bar"
                 type="search"
               />
               <button
-                className="rounded-lg bg-[#FF69B4] px-4 text-sm font-black text-black"
+                className="rounded-lg bg-[var(--accent)] px-4 text-sm font-bold text-black"
                 type="submit"
               >
                 Search
@@ -80,18 +80,18 @@ export default async function FoodSearchPage({
           {selectedSlot ? (
             <input name="slot" type="hidden" value={selectedSlot} />
           ) : null}
-          <label className="grid gap-2 text-sm font-bold text-zinc-700">
+          <label className="grid gap-2 text-sm font-bold text-zinc-300">
             Barcode
             <div className="flex gap-2">
               <input
-                className="min-h-12 min-w-0 flex-1 rounded-lg border border-zinc-200 bg-zinc-50 px-3 text-base text-black outline-none focus:border-[#FF69B4]"
+                className="min-h-12 min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
                 defaultValue={barcode}
                 inputMode="numeric"
                 name="barcode"
                 placeholder="Enter barcode"
               />
               <button
-                className="rounded-lg border border-zinc-200 bg-white px-4 text-sm font-black text-black"
+                className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 text-sm font-bold text-white transition hover:bg-[var(--surface-2)]"
                 type="submit"
               >
                 Find
@@ -112,8 +112,8 @@ export default async function FoodSearchPage({
       {!query && !barcode ? (
         <EmptyState />
       ) : searchResult.error ? null : products.length === 0 ? (
-        <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
-          <h2 className="font-black text-black">No product found</h2>
+        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+          <h2 className="font-bold text-white">No product found</h2>
           <p className="mt-2 text-sm leading-6 text-zinc-500">
             Try a more specific name or check the barcode.
           </p>
@@ -142,8 +142,8 @@ export default async function FoodSearchPage({
 
 function EmptyState() {
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
-      <h2 className="font-black text-black">Search or enter a barcode</h2>
+    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+      <h2 className="font-bold text-white">Search or enter a barcode</h2>
       <p className="mt-2 text-sm leading-6 text-zinc-500">
         Results appear after you submit. Errday will use grams to calculate
         calories and macros.
@@ -166,7 +166,7 @@ function ErrorMessage({
   };
 
   return (
-    <p className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+    <p className="mb-4 rounded-2xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
       {message ?? messages[error ?? ""] ?? "Something went wrong."}
     </p>
   );
@@ -182,11 +182,11 @@ function ProductCard({
   const canLog = product.caloriesPer100g !== null;
 
   return (
-    <article className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/70">
+    <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
       <div className="flex gap-3">
         <ProductImage product={product} />
         <div className="min-w-0 flex-1">
-          <h2 className="line-clamp-2 font-black text-black">{product.name}</h2>
+          <h2 className="line-clamp-2 font-bold text-white">{product.name}</h2>
           <p className="mt-1 truncate text-sm text-zinc-500">
             {product.brand ?? "Unknown brand"}
           </p>
@@ -200,17 +200,17 @@ function ProductCard({
       </div>
 
       {!canLog ? (
-        <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+        <p className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
           Calories are unknown. Logging is disabled for this product.
         </p>
       ) : (
         <form action={logOpenFoodFactsProduct} className="mt-4 grid gap-3">
           <input name="code" type="hidden" value={product.code} />
           <div className="grid grid-cols-[1fr_1.2fr] gap-3">
-            <label className="grid gap-2 text-sm font-bold text-zinc-700">
+            <label className="grid gap-2 text-sm font-bold text-zinc-300">
               Grams
               <input
-                className="min-h-11 rounded-lg border border-zinc-200 bg-zinc-50 px-3 text-base text-black outline-none focus:border-[#FF69B4]"
+                className="min-h-11 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
                 defaultValue="100"
                 min="1"
                 name="grams"
@@ -218,10 +218,10 @@ function ProductCard({
                 type="number"
               />
             </label>
-            <label className="grid gap-2 text-sm font-bold text-zinc-700">
+            <label className="grid gap-2 text-sm font-bold text-zinc-300">
               Meal
               <select
-                className="min-h-11 rounded-lg border border-zinc-200 bg-zinc-50 px-3 text-base text-black outline-none focus:border-[#FF69B4]"
+                className="min-h-11 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
                 defaultValue={selectedSlot}
                 name="meal_slot"
               >
@@ -235,7 +235,7 @@ function ProductCard({
             </label>
           </div>
           <button
-            className="min-h-12 rounded-full bg-[#FF69B4] px-4 text-sm font-black text-black shadow-sm shadow-[#FF69B4]/20"
+            className="min-h-12 rounded-full bg-[var(--accent)] px-4 text-sm font-bold text-black shadow-sm shadow-[var(--accent)]/20"
             type="submit"
           >
             Log product
@@ -249,7 +249,7 @@ function ProductCard({
 function ProductImage({ product }: { product: NormalizedOpenFoodFactsProduct }) {
   if (!product.imageUrl) {
     return (
-      <div className="grid size-20 shrink-0 place-items-center rounded-2xl border border-zinc-200 bg-zinc-50 text-sm font-black text-[#FF69B4]">
+      <div className="grid size-20 shrink-0 place-items-center rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] text-sm font-bold text-[var(--accent)]">
         OFF
       </div>
     );
@@ -259,7 +259,7 @@ function ProductImage({ product }: { product: NormalizedOpenFoodFactsProduct }) 
     // eslint-disable-next-line @next/next/no-img-element
     <img
       alt=""
-      className="size-20 shrink-0 rounded-2xl border border-zinc-200 object-cover"
+      className="size-20 shrink-0 rounded-2xl border border-[var(--border)] object-cover"
       src={product.imageUrl}
     />
   );
@@ -267,9 +267,9 @@ function ProductImage({ product }: { product: NormalizedOpenFoodFactsProduct }) 
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-2">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-2">
       <p className="text-zinc-500">{label}</p>
-      <p className="mt-1 font-black text-black">{value}</p>
+      <p className="mt-1 font-bold text-white">{value}</p>
     </div>
   );
 }

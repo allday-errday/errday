@@ -17,11 +17,11 @@ export function SubmitButton({
 
   const classes = {
     primary:
-      "bg-[#FF69B4] text-black hover:bg-[#ff85c4] disabled:bg-[#FF69B4]/40 disabled:text-black/50",
+      "bg-[var(--accent)] text-black hover:bg-[var(--accent-strong)] disabled:bg-[var(--accent)]/40 disabled:text-black/50",
     secondary:
-      "border border-zinc-200 bg-white text-zinc-800 hover:bg-zinc-50 disabled:text-zinc-400",
+      "border border-[var(--border-strong)] bg-[var(--surface-2)] text-zinc-100 hover:bg-[var(--surface-3)] disabled:text-zinc-500",
     danger:
-      "border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 disabled:text-red-300",
+      "border border-red-500/30 bg-red-500/10 text-red-300 hover:bg-red-500/20 disabled:text-red-400/50",
   };
 
   return (

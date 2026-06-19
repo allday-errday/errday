@@ -37,7 +37,7 @@ export default async function NewWorkoutPage({
     : [];
 
   return (
-    <div className="gym-screen -mx-4 -mt-[calc(1.25rem+env(safe-area-inset-top))] min-h-dvh bg-white px-4 pb-[calc(7rem+env(safe-area-inset-bottom))] pt-[calc(1rem+env(safe-area-inset-top))]">
+    <div>
       {preset ? (
         <PresetWorkoutStart
           error={params.error}
@@ -76,7 +76,7 @@ function CustomWorkoutBuilder({
 
       <form className="mb-4">
         <input
-          className="min-h-12 w-full rounded-2xl border border-zinc-200 bg-zinc-50 px-4 text-base text-zinc-900 outline-none focus:border-[#d946ef]"
+          className="min-h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-4 text-base text-white outline-none focus:border-[var(--accent)]"
           defaultValue={query}
           name="q"
           placeholder="Search exercises"
@@ -93,17 +93,17 @@ function CustomWorkoutBuilder({
       </div>
 
       {error === "select-exercise" ? (
-        <p className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <p className="mb-4 rounded-2xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
           Select at least one exercise to start.
         </p>
       ) : null}
 
       <form action={startWorkoutFromSelection} className="space-y-5">
-        <section className="rounded-3xl border border-zinc-200 bg-white p-4 shadow-sm shadow-zinc-200/70">
-          <label className="grid gap-2 text-sm font-medium text-zinc-700">
+        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
+          <label className="grid gap-2 text-sm font-medium text-zinc-300">
             Workout name
             <input
-              className="min-h-12 rounded-2xl border border-zinc-200 bg-zinc-50 px-3 text-base text-zinc-900 outline-none focus:border-[#d946ef]"
+              className="min-h-12 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
               defaultValue="Workout"
               name="name"
             />
@@ -113,11 +113,11 @@ function CustomWorkoutBuilder({
         <section className="space-y-3">
           {exercises.map((exercise) => (
             <label
-              className="flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm shadow-zinc-200/70"
+              className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-sm shadow-black/20"
               key={exercise.id}
             >
               <input
-                className="size-5 accent-[#d946ef]"
+                className="size-5 accent-[var(--accent)]"
                 name="exercise_id"
                 type="checkbox"
                 value={exercise.id}
@@ -127,7 +127,7 @@ function CustomWorkoutBuilder({
                 name={exercise.name}
               />
               <span className="min-w-0 flex-1">
-                <span className="block truncate font-semibold text-zinc-900">
+                <span className="block truncate font-semibold text-white">
                   {exercise.name}
                 </span>
                 <span className="block truncate text-xs text-zinc-500">
@@ -138,7 +138,7 @@ function CustomWorkoutBuilder({
           ))}
         </section>
 
-        <div className="sticky bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-10 grid gap-2 rounded-full border border-zinc-200 bg-white/90 p-2 backdrop-blur-xl">
+        <div className="sticky bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-10 grid gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-soft)]/90 p-2 backdrop-blur-xl">
           <SubmitButton pendingLabel="Starting...">Start Workout</SubmitButton>
           <Link
             className="text-center text-sm font-semibold text-zinc-500"
@@ -165,28 +165,32 @@ function PresetWorkoutStart({
 
   return (
     <div>
-      <header className="sticky top-0 z-20 -mx-4 mb-5 border-b border-zinc-200 bg-white/95 px-4 py-3 backdrop-blur-xl">
+      <header className="sticky top-0 z-20 -mx-4 mb-5 border-b border-[var(--border)] bg-[var(--bg-soft)]/95 px-4 py-3 backdrop-blur-xl">
         <div className="grid grid-cols-3 items-center">
           <Link
             aria-label="Back to gym"
-            className="text-3xl leading-none text-[#d946ef]"
+            className="text-[var(--accent)]"
             href="/gym"
           >
-            &lt;
+            <svg aria-hidden="true" className="size-6" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" viewBox="0 0 24 24">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
           </Link>
-          <p className="text-center text-lg font-black text-[#0b0b10]">Workout</p>
+          <p className="text-center text-lg font-bold text-[var(--text)]">Workout</p>
           <Link
             aria-label="Open exercise library"
-            className="text-right text-2xl leading-none text-[#d946ef]"
+            className="justify-self-end text-[var(--accent)]"
             href="/gym/exercises"
           >
-            ...
+            <svg aria-hidden="true" className="size-6" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M4 6h16" /><path d="M4 12h16" /><path d="M4 18h16" />
+            </svg>
           </Link>
         </div>
       </header>
 
       <section className="mb-5">
-        <h1 className="text-4xl font-black lowercase text-[#0b0b10]">
+        <h1 className="text-4xl font-bold lowercase text-[var(--text)]">
           {preset.name}
         </h1>
         <p className="mt-3 text-lg font-bold text-zinc-500">
@@ -194,8 +198,8 @@ function PresetWorkoutStart({
         </p>
       </section>
 
-      <section className="mb-7 rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm shadow-zinc-200/70">
-        <div className="grid grid-cols-3 divide-x divide-zinc-200 text-center">
+      <section className="mb-7 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+        <div className="grid grid-cols-3 divide-x divide-white/10 text-center">
           <PresetMetric label="Total Sets" value={`${totalSets}`} />
           <PresetMetric label="Duration" value={`~${preset.durationMinutes} min`} />
           <PresetMetric label="Focus" value={preset.muscles[0] ?? "Gym"} />
@@ -203,7 +207,7 @@ function PresetWorkoutStart({
       </section>
 
       {error === "select-exercise" ? (
-        <p className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        <p className="mb-4 rounded-2xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
           This preset needs exercises from the library. Apply migration 0003 if
           this list is empty.
         </p>
@@ -220,7 +224,7 @@ function PresetWorkoutStart({
                 name={exercise.name}
               />
               <div className="min-w-0 flex-1">
-                <h2 className="truncate text-xl font-semibold text-[#0b0b10]">
+                <h2 className="truncate text-xl font-semibold text-[var(--text)]">
                   {exercise.name}
                 </h2>
                 <p className="mt-1 text-base text-zinc-500">
@@ -231,9 +235,9 @@ function PresetWorkoutStart({
           ))}
         </section>
 
-        <div className="fixed inset-x-5 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-sm">
+        <div className="fixed inset-x-5 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-sm lg:static lg:mx-0 lg:mt-6 lg:max-w-xs">
           <button
-            className="flex min-h-16 w-full items-center justify-center rounded-full bg-zinc-900 px-5 text-lg font-black text-white shadow-xl shadow-zinc-300/60"
+            className="flex min-h-16 w-full items-center justify-center rounded-full bg-[var(--accent)] px-5 text-lg font-bold text-black shadow-xl shadow-[var(--accent)]/30"
             type="submit"
           >
             Start workout
@@ -248,7 +252,7 @@ function PresetMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="px-2">
       <p className="text-sm text-zinc-500">{label}</p>
-      <p className="mt-2 text-xl font-black text-zinc-900">{value}</p>
+      <p className="mt-2 text-xl font-bold text-white">{value}</p>
     </div>
   );
 }

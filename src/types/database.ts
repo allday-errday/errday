@@ -193,9 +193,25 @@ export interface Exercise {
 
 export type ExerciseInsert = Omit<Exercise, "id" | "created_at">;
 
+export interface WorkoutProgram {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+  position: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export type WorkoutProgramInsert = Pick<WorkoutProgram, "user_id" | "name"> &
+  Partial<Omit<WorkoutProgram, "id" | "created_at" | "updated_at">>;
+
 export interface WorkoutTemplate {
   id: string;
   user_id: string | null;
+  program_id: string | null;
+  position: number;
   name: string;
   description: string | null;
   category: string;
@@ -220,6 +236,18 @@ export interface WorkoutTemplateExercise {
   note: string | null;
   created_at: string;
 }
+
+export type WorkoutTemplateExerciseWithExercise = WorkoutTemplateExercise & {
+  exercises: Exercise | null;
+};
+
+export type WorkoutTemplateWithExercises = WorkoutTemplate & {
+  workout_template_exercises: WorkoutTemplateExerciseWithExercise[];
+};
+
+export type WorkoutTemplateWithCount = WorkoutTemplate & {
+  workout_template_exercises: { count: number }[];
+};
 
 export interface ActiveWorkoutSession {
   id: string;
