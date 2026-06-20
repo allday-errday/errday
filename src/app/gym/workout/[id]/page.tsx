@@ -153,7 +153,7 @@ export default async function WorkoutPage({
                       </p>
                     )}
                   </div>
-                  <div className="text-[var(--accent)]">
+                  <div className="text-zinc-600">
                     <svg aria-hidden="true" className="size-6" fill="currentColor" viewBox="0 0 24 24">
                       <circle cx="12" cy="5" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="12" cy="19" r="1.6" />
                     </svg>

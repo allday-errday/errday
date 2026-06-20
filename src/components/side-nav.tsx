@@ -30,10 +30,10 @@ export function SideNav() {
           return (
             <Link
               aria-current={isActive ? "page" : undefined}
-              className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition ${
+              className={`relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition before:absolute before:left-0 before:top-1/2 before:h-5 before:w-1 before:-translate-y-1/2 before:rounded-full before:bg-[var(--accent)] before:transition ${
                 isActive
-                  ? "bg-[var(--accent-soft)] text-[var(--accent)]"
-                  : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-100"
+                  ? "bg-[var(--accent-soft)] text-[var(--accent)] before:opacity-100"
+                  : "text-zinc-400 before:opacity-0 hover:bg-white/[0.04] hover:text-zinc-100"
               }`}
               href={item.href}
               key={item.href}
@@ -47,10 +47,10 @@ export function SideNav() {
 
       <Link
         aria-current={pathname === "/settings" ? "page" : undefined}
-        className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition ${
+        className={`relative flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold transition before:absolute before:left-0 before:top-1/2 before:h-5 before:w-1 before:-translate-y-1/2 before:rounded-full before:bg-[var(--accent)] before:transition ${
           pathname === "/settings"
-            ? "bg-[var(--accent-soft)] text-[var(--accent)]"
-            : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-100"
+            ? "bg-[var(--accent-soft)] text-[var(--accent)] before:opacity-100"
+            : "text-zinc-400 before:opacity-0 hover:bg-white/[0.04] hover:text-zinc-100"
         }`}
         href="/settings"
       >
