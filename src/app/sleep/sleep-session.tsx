@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/components/toaster";
 import { logSleepSession } from "./actions";
 
 type Phase = "idle" | "winddown" | "sleeping";
@@ -110,6 +111,7 @@ export function SleepSession({ goalHours, suggestedBedtime }: SleepSessionProps)
     try {
       await logSleepSession(hours, hhmm(state.bedtime), hhmm(wake));
       setState({ phase: "idle" });
+      toast(`Sleep tracked · ${(Math.round(hours * 10) / 10)}h`);
       router.refresh();
     } finally {
       setSaving(false);

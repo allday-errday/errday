@@ -138,5 +138,5 @@ export async function logFoodProduct(formData: FormData) {
   revalidatePath("/today");
   revalidatePath("/food");
   revalidatePath("/food/search");
-  redirect("/today?logged=food");
+  redirect("/today?toast=meal");
 }

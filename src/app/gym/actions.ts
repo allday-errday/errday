@@ -218,7 +218,7 @@ export async function finishWorkout(formData: FormData) {
 
   revalidatePath("/gym");
   revalidatePath("/gym/history");
-  redirect("/gym/history");
+  redirect("/gym/history?toast=workout");
 }
 
 export async function discardWorkout(formData: FormData) {

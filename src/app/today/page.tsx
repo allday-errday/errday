@@ -122,11 +122,17 @@ export default async function TodayPage() {
   return (
     <div className="text-white">
       <TodayHeader dateLabel={formatLocalDate(new Date())} />
-      <DailyScoreCard result={scoreResult} />
-      <DailyStatsGrid stats={stats} />
-      <WaterLogButtons />
-      <QuickActionsGrid />
-      <DailyPlanTimeline dayType={plan.dayType} items={plan.items} />
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]">
+        <div className="min-w-0">
+          <DailyScoreCard result={scoreResult} />
+          <DailyStatsGrid stats={stats} />
+          <WaterLogButtons />
+          <QuickActionsGrid />
+        </div>
+        <div className="min-w-0">
+          <DailyPlanTimeline dayType={plan.dayType} items={plan.items} />
+        </div>
+      </div>
     </div>
   );
 }

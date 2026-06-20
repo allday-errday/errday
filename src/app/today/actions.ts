@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { todayDateString } from "@/lib/dates";
 import { createWaterLog, upsertDaySetting } from "@/lib/db/daily-flow";
@@ -32,4 +33,5 @@ export async function logWater(formData: FormData) {
 
   await createWaterLog(supabase, user.id, amountMl);
   revalidatePath("/today");
+  redirect("/today?toast=water");
 }

@@ -112,7 +112,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
           No stats selected. Tap Customize to add some.
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {shown.map((stat) => (
             <article
               className={`min-h-32 rounded-2xl border border-white/10 bg-[var(--bg-soft)]/90 p-3 text-center shadow-xl shadow-black/25 transition ${
