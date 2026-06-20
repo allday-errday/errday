@@ -15,6 +15,7 @@ import { DailyScoreCard } from "./_components/DailyScoreCard";
 import { DailyStatsGrid, type DailyStat } from "./_components/DailyStatsGrid";
 import { QuickActionsGrid } from "./_components/QuickActionsGrid";
 import { TodayHeader } from "./_components/TodayHeader";
+import { WaterLogButtons } from "./_components/WaterLogButtons";
 
 const burnedCaloriesGoal = 300;
 
@@ -123,6 +124,7 @@ export default async function TodayPage() {
       <TodayHeader dateLabel={formatLocalDate(new Date())} />
       <DailyScoreCard result={scoreResult} />
       <DailyStatsGrid stats={stats} />
+      <WaterLogButtons />
       <QuickActionsGrid />
       <DailyPlanTimeline dayType={plan.dayType} items={plan.items} />
     </div>

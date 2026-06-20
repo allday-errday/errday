@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 export type DailyStat = {
   helper: string;
   icon: "burned" | "calories" | "carbs" | "protein" | "sleep" | "water";
@@ -10,48 +14,132 @@ type DailyStatsGridProps = {
   stats: DailyStat[];
 };
 
+const STORAGE_KEY = "errday.todayStats";
+const DEFAULT_VISIBLE: DailyStat["icon"][] = [
+  "calories",
+  "burned",
+  "protein",
+  "carbs",
+  "water",
+];
+
 export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
-  const priorityStats = stats.filter((stat) => stat.icon !== "sleep").slice(0, 5);
+  const [visible, setVisible] = useState<DailyStat["icon"][]>(DEFAULT_VISIBLE);
+  const [editing, setEditing] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as DailyStat["icon"][];
+        if (Array.isArray(parsed)) {
+          setVisible(parsed);
+        }
+      }
+    } catch {
+      // ignore
+    }
+    setHydrated(true);
+  }, []);
+
+  function toggle(icon: DailyStat["icon"]) {
+    setVisible((current) => {
+      const next = current.includes(icon)
+        ? current.filter((i) => i !== icon)
+        : [...current, icon];
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  }
+
+  const shown = stats.filter((stat) => visible.includes(stat.icon));
 
   return (
     <section className="mb-8">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="text-2xl font-bold tracking-normal text-white">
-          Top Priorities
+          {editing ? "Pick your stats" : "Top Priorities"}
         </h2>
         <button
-          className="inline-flex min-h-12 items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-5 text-base font-bold text-[var(--accent)] shadow-lg shadow-black/25"
+          aria-pressed={editing}
+          className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-5 text-sm font-bold transition ${
+            editing
+              ? "border-[var(--accent)] bg-[var(--accent)] text-black"
+              : "border-white/10 bg-white/[0.03] text-[var(--accent)] hover:bg-white/[0.06]"
+          }`}
+          onClick={() => setEditing((v) => !v)}
           type="button"
         >
           <Icon name="sliders" />
-          Customize
+          {editing ? "Done" : "Customize"}
         </button>
       </div>
-      <div className="grid grid-cols-5 gap-2">
-        {priorityStats.map((stat) => (
-          <article
-            className="min-h-32 rounded-2xl border border-white/10 bg-[var(--bg-soft)]/90 p-3 text-center shadow-xl shadow-black/25"
-            key={stat.label}
-          >
-            <div className="mx-auto grid size-8 place-items-center text-[var(--accent)]">
-              <Icon name={stat.icon} />
-            </div>
-            <p className="mt-3 text-sm font-semibold text-zinc-300">{stat.label}</p>
-            <p className="mt-2 whitespace-nowrap text-xl font-bold tracking-normal text-white">
-              {stat.value}
-            </p>
-            <p className="mt-2 whitespace-nowrap text-xs font-semibold leading-5 text-zinc-500">
-              {stat.helper}
-            </p>
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--accent)]/25">
-              <div
-                className="h-full rounded-full bg-[var(--accent)]"
-                style={{ width: `${Math.max(6, Math.min(100, stat.progress * 100))}%` }}
-              />
-            </div>
-          </article>
-        ))}
-      </div>
+
+      {editing ? (
+        <div className="mb-4 grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-3 sm:grid-cols-3">
+          {stats.map((stat) => {
+            const on = visible.includes(stat.icon);
+            return (
+              <button
+                aria-pressed={on}
+                className={`flex items-center gap-2 rounded-xl border px-3 py-3 text-left text-sm font-semibold transition ${
+                  on
+                    ? "border-[var(--accent)]/60 bg-[var(--accent-soft)] text-white"
+                    : "border-white/10 bg-white/[0.02] text-zinc-500"
+                }`}
+                key={stat.icon}
+                onClick={() => toggle(stat.icon)}
+                type="button"
+              >
+                <span className={on ? "text-[var(--accent)]" : "text-zinc-600"}>
+                  <Icon name={stat.icon} />
+                </span>
+                <span className="flex-1 truncate">{stat.label}</span>
+                <span className="text-xs">{on ? "✓" : "+"}</span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+
+      {shown.length === 0 ? (
+        <p className="rounded-2xl border border-dashed border-white/15 p-6 text-center text-sm text-zinc-500">
+          No stats selected. Tap Customize to add some.
+        </p>
+      ) : (
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+          {shown.map((stat) => (
+            <article
+              className={`min-h-32 rounded-2xl border border-white/10 bg-[var(--bg-soft)]/90 p-3 text-center shadow-xl shadow-black/25 transition ${
+                editing ? "ring-1 ring-[var(--accent)]/30" : ""
+              }`}
+              key={stat.label}
+            >
+              <div className="mx-auto grid size-8 place-items-center text-[var(--accent)]">
+                <Icon name={stat.icon} />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-zinc-300">{stat.label}</p>
+              <p className="mt-2 whitespace-nowrap text-xl font-bold tracking-normal text-white">
+                {stat.value}
+              </p>
+              <p className="mt-2 whitespace-nowrap text-xs font-semibold leading-5 text-zinc-500">
+                {stat.helper}
+              </p>
+              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--accent)]/25">
+                <div
+                  className="h-full rounded-full bg-[var(--accent)] transition-[width] duration-500"
+                  style={{ width: `${Math.max(6, Math.min(100, stat.progress * 100))}%` }}
+                />
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
