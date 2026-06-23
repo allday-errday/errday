@@ -3,6 +3,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { requireUser } from "@/lib/auth";
 import { getProfile } from "@/lib/db/profile";
 import { ReminderSettingsForm } from "./reminder-settings-form";
+import { AppearanceSettings } from "./appearance-settings";
 import { logout } from "./actions";
 import { SettingsForm } from "./settings-form";
 
@@ -13,9 +14,11 @@ export default async function SettingsPage() {
   return (
     <div>
       <PageHeader
-        subtitle="Profile, goals and app settings."
+        subtitle="Your profile, goals and the way Errday looks and feels."
         title="Settings"
       />
+
+      <AppearanceSettings />
 
       <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
         <h2 className="mb-4 text-lg font-semibold text-white">Body Profile</h2>

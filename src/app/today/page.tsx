@@ -122,16 +122,30 @@ export default async function TodayPage() {
   return (
     <div className="text-white">
       <TodayHeader dateLabel={formatLocalDate(new Date())} />
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)]">
-        <div className="min-w-0">
-          <DailyScoreCard result={scoreResult} />
-          <DailyStatsGrid stats={stats} />
-          <WaterLogButtons />
-          <QuickActionsGrid />
-        </div>
+      <div className="grid items-stretch gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(22rem,0.7fr)]">
+        <DailyScoreCard result={scoreResult} />
+        <QuickActionsGrid />
+      </div>
+      <DailyStatsGrid stats={stats} />
+      <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(20rem,0.65fr)]">
         <div className="min-w-0">
           <DailyPlanTimeline dayType={plan.dayType} items={plan.items} />
         </div>
+        <aside className="grid gap-5">
+          <WaterLogButtons />
+          <div className="surface-panel overflow-hidden p-6">
+            <p className="eyebrow">Keep the streak</p>
+            <p className="mt-4 text-2xl font-extrabold tracking-[-0.04em] text-white">
+              Small inputs.<br />Big momentum.
+            </p>
+            <p className="mt-3 max-w-sm text-sm leading-6 text-zinc-400">
+              Your score moves with every meal, session, glass and check-in.
+            </p>
+            <div className="mt-8 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+              <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--signal)]" />
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );

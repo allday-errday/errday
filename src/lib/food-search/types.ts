@@ -1,9 +1,10 @@
-export type FoodSource = "usda" | "manual";
+export type FoodSource = "swiss_nutrition" | "manual";
 
 export type NormalizedFoodProduct = {
   brand: string | null;
   caloriesPer100g: number | null;
   carbsPer100g: number | null;
+  category: string | null;
   code: string;
   fatPer100g: number | null;
   imageUrl: string | null;

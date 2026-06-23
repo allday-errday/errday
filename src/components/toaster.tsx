@@ -51,15 +51,18 @@ export function Toaster() {
     if (!key) {
       return;
     }
-    push(PARAM_MESSAGES[key] ?? "Done");
-    const params = new URLSearchParams(Array.from(searchParams.entries()));
-    params.delete("toast");
-    const qs = params.toString();
-    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    const timer = window.setTimeout(() => {
+      push(PARAM_MESSAGES[key] ?? "Done");
+      const params = new URLSearchParams(Array.from(searchParams.entries()));
+      params.delete("toast");
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [searchParams, pathname, router, push]);
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-[calc(6.5rem+env(safe-area-inset-bottom))] z-50 flex flex-col items-center gap-2 px-4 lg:bottom-7 lg:left-[var(--sidebar-width)] lg:right-0">
+    <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex flex-col items-center gap-2 px-4 lg:bottom-8">
       {toasts.map((t) => (
         <div
           className="pointer-events-auto flex items-center gap-2.5 rounded-full border border-[var(--accent)]/40 bg-[var(--bg-soft)]/95 px-4 py-2.5 text-sm font-bold text-white shadow-2xl shadow-black/50 backdrop-blur-xl [animation:fadeRise_0.25s_ease]"

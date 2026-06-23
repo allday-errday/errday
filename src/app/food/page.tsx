@@ -34,7 +34,7 @@ export default async function FoodPage() {
           <div>
             <h2 className="font-bold text-white">Search products</h2>
             <p className="mt-1 text-sm text-zinc-400">
-              Find foods by name or barcode.
+              Search 1&apos;220 foods from the official Swiss database.
             </p>
           </div>
           <Link
@@ -64,33 +64,6 @@ export default async function FoodPage() {
           <Metric label="Protein" value={`${Math.round(totals.proteinG)} g`} />
           <Metric label="Carbs" value={`${Math.round(totals.carbsG)} g`} />
           <Metric label="Fat" value={`${Math.round(totals.fatG)} g`} />
-        </div>
-      </section>
-
-      <section className="mb-5 rounded-2xl border border-white/10 bg-[var(--surface)] p-5 shadow-lg shadow-black/20">
-        <h2 className="text-lg font-semibold text-white">Food Library</h2>
-        <div className="mt-4 grid gap-3">
-          {items.slice(0, 8).map((item) => (
-            <article
-              className="flex gap-3 rounded-2xl border border-white/10 bg-[var(--surface-2)] p-3"
-              key={item.id}
-            >
-              <FoodImage imageUrl={item.image_url} name={item.name} />
-              <div className="min-w-0 flex-1">
-                <h3 className="truncate font-bold text-white">{item.name}</h3>
-                <p className="mt-1 text-xs text-zinc-500">
-                  {item.brand ?? "Global"} / {item.serving_label}
-                </p>
-                <p className="mt-2 text-sm font-semibold text-[var(--accent)]">
-                  {item.calories_per_serving} kcal
-                </p>
-                <p className="mt-1 text-xs text-zinc-400">
-                  P {Number(item.protein_g)}g / C {Number(item.carbs_g)}g / F{" "}
-                  {Number(item.fat_g)}g
-                </p>
-              </div>
-            </article>
-          ))}
         </div>
       </section>
 
@@ -143,30 +116,5 @@ function Metric({ label, value }: { label: string; value: string }) {
       <p className="text-xs text-zinc-500">{label}</p>
       <p className="mt-1 font-bold text-white">{value}</p>
     </div>
-  );
-}
-
-function FoodImage({
-  imageUrl,
-  name,
-}: {
-  imageUrl: string | null;
-  name: string;
-}) {
-  if (!imageUrl) {
-    return (
-      <div className="grid size-16 shrink-0 place-items-center rounded-2xl bg-[var(--surface-2)] text-xs font-bold text-[var(--accent)]">
-        {name.slice(0, 2).toUpperCase()}
-      </div>
-    );
-  }
-
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      alt=""
-      className="size-16 shrink-0 rounded-2xl object-cover"
-      src={imageUrl}
-    />
   );
 }

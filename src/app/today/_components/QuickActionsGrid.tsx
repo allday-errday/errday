@@ -1,29 +1,39 @@
 import Link from "next/link";
 
 const actions = [
-  { href: "/food/search", icon: "meal", label: "Log Meal" },
-  { href: "/gym", icon: "workout", label: "Start Workout" },
-  { href: "/journal", icon: "journal", label: "Write Journal" },
-  { href: "/settings", icon: "weight", label: "Log Weight" },
+  { href: "/food/search", icon: "meal", label: "Log meal", detail: "Fuel the day" },
+  { href: "/gym", icon: "workout", label: "Start workout", detail: "Move with intent" },
+  { href: "/journal", icon: "journal", label: "Write journal", detail: "Clear your head" },
+  { href: "/settings", icon: "weight", label: "Log weight", detail: "Track the trend" },
 ];
 
 export function QuickActionsGrid() {
   return (
-    <section className="mb-8">
-      <h2 className="mb-4 text-2xl font-bold tracking-normal text-white">
-        Quick Actions
-      </h2>
-      <div className="grid grid-cols-4 gap-3">
+    <section className="surface-panel flex h-full min-h-[28rem] flex-col p-5 sm:p-7">
+      <div className="mb-6 flex items-end justify-between gap-4">
+        <div>
+          <p className="eyebrow">Quick moves</p>
+          <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.05em] text-white">
+            Move the day forward.
+          </h2>
+        </div>
+        <span className="text-2xl text-[var(--accent)]">↗</span>
+      </div>
+      <div className="grid flex-1 grid-cols-2 gap-3">
         {actions.map((action) => (
           <Link
-            className="flex min-h-28 flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-[var(--bg-soft)]/90 px-2 text-center text-sm font-bold text-white shadow-xl shadow-black/25 transition hover:border-[var(--accent)]/60 hover:bg-white/[0.06] active:scale-[0.98]"
+            className="group relative flex min-h-36 flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.08] bg-black/20 p-4 transition duration-300 hover:-translate-y-1 hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/[0.08] active:scale-[0.98]"
             href={action.href}
             key={action.href}
           >
-            <span className="text-[var(--accent)]">
+            <span className="grid size-11 place-items-center rounded-xl bg-white/[0.06] text-[var(--accent)] transition group-hover:bg-[var(--accent)] group-hover:text-black">
               <ActionIcon name={action.icon} />
             </span>
-            {action.label}
+            <span>
+              <span className="block text-base font-extrabold text-white">{action.label}</span>
+              <span className="mt-1 block text-xs font-semibold text-zinc-500">{action.detail}</span>
+            </span>
+            <span className="absolute right-4 top-4 text-zinc-700 transition group-hover:text-[var(--accent)]">↗</span>
           </Link>
         ))}
       </div>
@@ -34,7 +44,7 @@ export function QuickActionsGrid() {
 function ActionIcon({ name }: { name: string }) {
   const common = {
     "aria-hidden": true,
-    className: "size-10",
+    className: "size-6",
     fill: "none",
     stroke: "currentColor",
     strokeLinecap: "round" as const,

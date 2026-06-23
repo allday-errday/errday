@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 
 export type DailyStat = {
   helper: string;
@@ -22,55 +22,77 @@ const DEFAULT_VISIBLE: DailyStat["icon"][] = [
   "carbs",
   "water",
 ];
+const DEFAULT_SNAPSHOT = JSON.stringify(DEFAULT_VISIBLE);
+const CHANGE_EVENT = "errday:today-stats-change";
+
+function getStoredStats() {
+  try {
+    return localStorage.getItem(STORAGE_KEY) ?? DEFAULT_SNAPSHOT;
+  } catch {
+    return DEFAULT_SNAPSHOT;
+  }
+}
+
+function getServerStats() {
+  return DEFAULT_SNAPSHOT;
+}
+
+function subscribeToStats(onChange: () => void) {
+  window.addEventListener("storage", onChange);
+  window.addEventListener(CHANGE_EVENT, onChange);
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener(CHANGE_EVENT, onChange);
+  };
+}
+
+function parseVisible(snapshot: string): DailyStat["icon"][] {
+  try {
+    const parsed = JSON.parse(snapshot) as DailyStat["icon"][];
+    return Array.isArray(parsed) ? parsed : DEFAULT_VISIBLE;
+  } catch {
+    return DEFAULT_VISIBLE;
+  }
+}
 
 export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
-  const [visible, setVisible] = useState<DailyStat["icon"][]>(DEFAULT_VISIBLE);
   const [editing, setEditing] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw) as DailyStat["icon"][];
-        if (Array.isArray(parsed)) {
-          setVisible(parsed);
-        }
-      }
-    } catch {
-      // ignore
-    }
-    setHydrated(true);
-  }, []);
+  const snapshot = useSyncExternalStore(
+    subscribeToStats,
+    getStoredStats,
+    getServerStats,
+  );
+  const visible = parseVisible(snapshot);
 
   function toggle(icon: DailyStat["icon"]) {
-    setVisible((current) => {
-      const next = current.includes(icon)
-        ? current.filter((i) => i !== icon)
-        : [...current, icon];
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      } catch {
-        // ignore
-      }
-      return next;
-    });
+    const next = visible.includes(icon)
+      ? visible.filter((item) => item !== icon)
+      : [...visible, icon];
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      window.dispatchEvent(new Event(CHANGE_EVENT));
+    } catch {
+      // Storage is optional; the dashboard still works without it.
+    }
   }
 
   const shown = stats.filter((stat) => visible.includes(stat.icon));
 
   return (
-    <section className="mb-8">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-2xl font-bold tracking-normal text-white">
-          {editing ? "Pick your stats" : "Top Priorities"}
-        </h2>
+    <section className="py-10 lg:py-14">
+      <div className="mb-6 flex items-end justify-between gap-3">
+        <div>
+          <p className="eyebrow">At a glance</p>
+          <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.05em] text-white sm:text-4xl">
+            {editing ? "Pick your signals." : "Your vital signals."}
+          </h2>
+        </div>
         <button
           aria-pressed={editing}
-          className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-5 text-sm font-bold transition ${
+          className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-bold transition sm:px-5 ${
             editing
-              ? "border-[var(--accent)] bg-[var(--accent)] text-black"
-              : "border-white/10 bg-white/[0.03] text-[var(--accent)] hover:bg-white/[0.06]"
+              ? "border-white bg-white text-black"
+              : "border-white/10 bg-white/[0.03] text-zinc-300 hover:border-white/20 hover:bg-white/[0.06]"
           }`}
           onClick={() => setEditing((v) => !v)}
           type="button"
@@ -81,7 +103,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
       </div>
 
       {editing ? (
-        <div className="mb-4 grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-3 sm:grid-cols-3">
+        <div className="mb-5 grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-3 sm:grid-cols-3 lg:grid-cols-6">
           {stats.map((stat) => {
             const on = visible.includes(stat.icon);
             return (
@@ -112,25 +134,25 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
           No stats selected. Tap Customize to add some.
         </p>
       ) : (
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
           {shown.map((stat) => (
             <article
-              className={`min-h-32 rounded-2xl border border-white/10 bg-[var(--bg-soft)]/90 p-3 text-center shadow-xl shadow-black/25 transition ${
+              className={`group min-h-44 rounded-2xl border border-white/10 bg-[var(--bg-soft)]/80 p-5 text-left shadow-xl shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-white/20 ${
                 editing ? "ring-1 ring-[var(--accent)]/30" : ""
               }`}
               key={stat.label}
             >
-              <div className="mx-auto grid size-8 place-items-center text-[var(--accent)]">
+              <div className="grid size-10 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)] transition group-hover:bg-[var(--accent)] group-hover:text-black">
                 <Icon name={stat.icon} />
               </div>
-              <p className="mt-3 text-sm font-semibold text-zinc-300">{stat.label}</p>
-              <p className="mt-2 whitespace-nowrap text-xl font-bold tracking-normal text-white">
+              <p className="mt-5 text-xs font-bold uppercase tracking-[0.13em] text-zinc-500">{stat.label}</p>
+              <p className="mt-2 whitespace-nowrap text-2xl font-extrabold tracking-[-0.04em] text-white sm:text-3xl">
                 {stat.value}
               </p>
-              <p className="mt-2 whitespace-nowrap text-xs font-semibold leading-5 text-zinc-500">
+              <p className="mt-1 whitespace-nowrap text-xs font-semibold leading-5 text-zinc-500">
                 {stat.helper}
               </p>
-              <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--accent)]/25">
+              <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/[0.07]">
                 <div
                   className="h-full rounded-full bg-[var(--accent)] transition-[width] duration-500"
                   style={{ width: `${Math.max(6, Math.min(100, stat.progress * 100))}%` }}

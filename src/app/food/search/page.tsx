@@ -1,14 +1,13 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
-import { getProductByBarcode, searchProducts } from "@/lib/food-search/client";
+import { searchProducts } from "@/lib/food-search/client";
 import type { NormalizedFoodProduct } from "@/lib/food-search/types";
 import type { MealSlot } from "@/types/database";
 import { logFoodProduct } from "./actions";
 
 type FoodSearchPageProps = {
   searchParams: Promise<{
-    barcode?: string;
     error?: string;
     q?: string;
     slot?: string;
@@ -34,20 +33,16 @@ export default async function FoodSearchPage({
   await requireUser();
   const params = await searchParams;
   const query = params.q?.trim() ?? "";
-  const barcode = params.barcode?.trim() ?? "";
   const selectedSlot = isMealSlot(params.slot) ? params.slot : "";
-  const barcodeProduct = barcode ? await getProductByBarcode(barcode) : null;
   const searchResult = query
     ? await searchProducts(query)
     : { error: null, products: [] };
-  const products = barcodeProduct
-    ? [barcodeProduct]
-    : searchResult.products;
+  const products = searchResult.products;
 
   return (
     <div>
       <PageHeader
-        subtitle="Search foods by name (e.g. 200g chicken breast) or scan a barcode, then log into today."
+        subtitle="Search the official Swiss food database and log exact gram amounts into today."
         title="Log Meal"
       />
 
@@ -63,7 +58,7 @@ export default async function FoodSearchPage({
                 className="min-h-12 min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
                 defaultValue={query}
                 name="q"
-                placeholder="Greek yogurt, pasta, protein bar"
+                placeholder="Apfel, Poulet, Haferflocken..."
                 type="search"
               />
               <button
@@ -75,47 +70,29 @@ export default async function FoodSearchPage({
             </div>
           </label>
         </form>
-
-        <form className="mt-4 grid gap-2">
-          {selectedSlot ? (
-            <input name="slot" type="hidden" value={selectedSlot} />
-          ) : null}
-          <label className="grid gap-2 text-sm font-bold text-zinc-300">
-            Barcode
-            <div className="flex gap-2">
-              <input
-                className="min-h-12 min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
-                defaultValue={barcode}
-                inputMode="numeric"
-                name="barcode"
-                placeholder="Enter barcode"
-              />
-              <button
-                className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-4 text-sm font-bold text-white transition hover:bg-[var(--surface-2)]"
-                type="submit"
-              >
-                Find
-              </button>
-            </div>
-          </label>
-        </form>
-
         <p className="mt-3 text-xs leading-5 text-zinc-500">
-          Camera scanning is not enabled yet. Manual barcode entry is available
-          as the stable fallback.
+          1&apos;220 foods · Version 7.0 · Values per 100 g · Source:{" "}
+          <a
+            className="font-semibold text-[var(--accent)] hover:underline"
+            href="https://naehrwertdaten.ch/de/"
+            rel="noreferrer"
+            target="_blank"
+          >
+            Schweizer Nährwertdatenbank (BLV)
+          </a>
         </p>
       </section>
 
       {params.error ? <ErrorMessage error={params.error} /> : null}
       {searchResult.error ? <ErrorMessage message={searchResult.error} /> : null}
 
-      {!query && !barcode ? (
+      {!query ? (
         <EmptyState />
       ) : searchResult.error ? null : products.length === 0 ? (
         <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
           <h2 className="font-bold text-white">No product found</h2>
           <p className="mt-2 text-sm leading-6 text-zinc-500">
-            Try a more specific name or check the barcode.
+            Try another name, a synonym or a broader search term.
           </p>
         </section>
       ) : (
@@ -143,10 +120,10 @@ export default async function FoodSearchPage({
 function EmptyState() {
   return (
     <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
-      <h2 className="font-bold text-white">Search or enter a barcode</h2>
+      <h2 className="font-bold text-white">Search Swiss foods</h2>
       <p className="mt-2 text-sm leading-6 text-zinc-500">
-        Results appear after you submit. Errday will use grams to calculate
-        calories and macros.
+        Search by food name or synonym. Errday uses grams to calculate calories
+        and macros from the official values per 100 g.
       </p>
     </section>
   );
@@ -188,7 +165,7 @@ function ProductCard({
         <div className="min-w-0 flex-1">
           <h2 className="line-clamp-2 font-bold text-white">{product.name}</h2>
           <p className="mt-1 truncate text-sm text-zinc-500">
-            {product.brand ?? "Unknown brand"}
+            {product.category ?? "Schweizer Nährwertdatenbank"}
           </p>
           <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
             <Metric label="kcal/100g" value={formatMacro(product.caloriesPer100g)} />

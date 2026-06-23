@@ -105,7 +105,7 @@ export async function logFoodProduct(formData: FormData) {
   const protein100 = numberValue(formData, "protein100") ?? 0;
   const carbs100 = numberValue(formData, "carbs100") ?? 0;
   const fat100 = numberValue(formData, "fat100") ?? 0;
-  const source = formString(formData, "source") || "usda";
+  const source = formString(formData, "source") || "swiss_nutrition";
 
   const foodItem = await getOrCreateFoodItem(supabase, user.id, {
     name,

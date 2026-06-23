@@ -8,86 +8,89 @@ type DailyPlanTimelineProps = {
 };
 
 const statusStyles: Record<PlanItemStatus, string> = {
-  logged: "border-[var(--accent)] bg-[var(--accent)] text-white",
-  upcoming: "border-zinc-500 bg-[var(--bg-soft)] text-zinc-500",
-  missed: "border-zinc-500 bg-[var(--surface)] text-zinc-500",
+  logged: "border-[var(--signal)] bg-[var(--signal)] text-[#11150c]",
+  upcoming: "border-[var(--accent)]/60 bg-[var(--accent-soft)] text-[var(--accent)]",
+  missed: "border-white/15 bg-white/[0.03] text-zinc-600",
 };
 
 const statusLabels: Record<PlanItemStatus, string> = {
   logged: "Logged",
-  upcoming: "Upcoming",
+  upcoming: "Up next",
   missed: "Missed",
 };
 
 export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
   return (
-    <section className="pb-3">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-2xl font-bold tracking-normal text-white">
-          Daily Plan
-        </h2>
-        <div className="flex rounded-full border border-white/10 bg-white/[0.03] p-1 text-base font-bold text-zinc-400">
+    <section>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="eyebrow">Your rhythm</p>
+          <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.05em] text-white sm:text-4xl">
+            The day, mapped out.
+          </h2>
+        </div>
+        <div className="flex rounded-full border border-white/10 bg-white/[0.03] p-1 text-sm font-bold text-zinc-400">
           {(["rest", "gym"] as const).map((type) => (
             <form action={setTodayDayType} key={type}>
               <input name="day_type" type="hidden" value={type} />
               <button
-                className={`min-h-12 rounded-full px-6 capitalize ${
+                className={`min-h-10 rounded-full px-4 capitalize transition sm:px-5 ${
                   dayType === type
-                    ? "bg-[var(--accent)]/25 text-[var(--accent)] shadow-sm"
-                    : "text-zinc-400"
+                    ? "bg-white text-[#111218] shadow-sm"
+                    : "text-zinc-500 hover:text-white"
                 }`}
                 type="submit"
               >
-                {type} Day
+                {type} day
               </button>
             </form>
           ))}
         </div>
       </div>
 
-      <div className="rounded-[1.65rem] border border-white/10 bg-[var(--bg-soft)]/90 px-4 py-5 shadow-2xl shadow-black/30">
-        <div>
-          {items.map((item, index) => (
-            <Link
-              className="grid grid-cols-[4rem_2.75rem_3.75rem_minmax(0,1fr)_6.25rem_1rem] items-center gap-3 rounded-2xl py-3 transition hover:bg-white/[0.04]"
-              href={item.href}
-              key={item.slot}
-            >
-              <span className="text-base font-bold text-zinc-400">
-                {item.targetTime}
+      <div className="surface-panel overflow-hidden p-3 sm:p-5">
+        {items.map((item, index) => (
+          <Link
+            className="group grid grid-cols-[3.25rem_2rem_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl px-2 py-4 transition hover:bg-white/[0.04] sm:grid-cols-[4.5rem_2.25rem_3rem_minmax(0,1fr)_auto] sm:gap-4 sm:px-4"
+            href={item.href}
+            key={item.slot}
+          >
+            <span className="text-sm font-extrabold tabular-nums text-zinc-500 sm:text-base">
+              {item.targetTime}
+            </span>
+            <span className="relative flex h-full items-center justify-center">
+              <span className={`z-10 grid size-7 place-items-center rounded-full border text-xs font-extrabold ${statusStyles[item.status]}`}>
+                {item.status === "logged" ? "✓" : ""}
               </span>
-              <span className="relative flex h-full justify-center">
-                <span
-                  className={`z-10 grid size-8 place-items-center rounded-full border-2 ${
-                    statusStyles[item.status]
-                  }`}
-                >
-                  {item.status === "logged" ? "✓" : null}
-                </span>
-                {index < items.length - 1 ? (
-                  <span className="absolute top-8 h-[calc(100%+0.75rem)] w-px bg-zinc-600" />
-                ) : null}
+              {index < items.length - 1 ? (
+                <span className="absolute top-[calc(50%+0.875rem)] h-[calc(100%+1rem)] w-px bg-white/10" />
+              ) : null}
+            </span>
+            <span className="hidden size-11 place-items-center rounded-xl bg-white/[0.04] text-[var(--accent)] transition group-hover:bg-[var(--accent-soft)] sm:grid">
+              <PlanIcon slot={item.slot} />
+            </span>
+            <span className="min-w-0">
+              <span className="block truncate text-base font-extrabold text-white sm:text-lg">
+                {item.label}
               </span>
-              <span className="grid size-12 place-items-center rounded-full bg-[var(--accent)]/15 text-[var(--accent)]">
-                <PlanIcon slot={item.slot} />
+              <span className="mt-1 block truncate text-xs font-semibold text-zinc-500 sm:text-sm">
+                {item.detail}
               </span>
-              <span className="min-w-0">
-                <span className="block text-xl font-bold text-white">{item.label}</span>
-                <span className="mt-1 block truncate text-base font-semibold text-zinc-400">
-                  {item.detail}
-                </span>
-              </span>
-              <span className={`justify-self-end rounded-full px-4 py-2 text-sm font-bold ${
+            </span>
+            <span className="flex items-center gap-2">
+              <span className={`hidden rounded-full px-3 py-1.5 text-xs font-bold sm:block ${
                 item.status === "logged"
-                  ? "bg-[var(--accent)]/20 text-[var(--accent)]"
-                  : "bg-white/[0.04] text-zinc-400"
+                  ? "bg-[var(--signal)]/10 text-[var(--signal)]"
+                  : item.status === "upcoming"
+                    ? "bg-[var(--accent-soft)] text-[var(--accent)]"
+                    : "bg-white/[0.03] text-zinc-600"
               }`}>
                 {statusLabels[item.status]}
               </span>
-              <span className="text-3xl font-light text-zinc-400">›</span>
-            </Link>
-          ))}
-        </div>
+              <span className="text-xl text-zinc-700 transition group-hover:translate-x-0.5 group-hover:text-white">→</span>
+            </span>
+          </Link>
+        ))}
       </div>
     </section>
   );
@@ -96,12 +99,12 @@ export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
 function PlanIcon({ slot }: { slot: DailyPlanItem["slot"] }) {
   const common = {
     "aria-hidden": true,
-    className: "size-7",
+    className: "size-5",
     fill: "none",
     stroke: "currentColor",
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
-    strokeWidth: 2.4,
+    strokeWidth: 2.2,
     viewBox: "0 0 24 24",
   };
 

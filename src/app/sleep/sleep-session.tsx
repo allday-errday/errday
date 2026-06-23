@@ -48,15 +48,19 @@ export function SleepSession({ goalHours, suggestedBedtime }: SleepSessionProps)
 
   // hydrate from localStorage once
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        setState(JSON.parse(raw) as Persisted);
+    const hydration = window.setTimeout(() => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          setState(JSON.parse(raw) as Persisted);
+        }
+      } catch {
+        // ignore
       }
-    } catch {
-      // ignore
-    }
-    hydrated.current = true;
+      hydrated.current = true;
+    }, 0);
+
+    return () => window.clearTimeout(hydration);
   }, []);
 
   // persist on change (after hydration)
@@ -118,16 +122,18 @@ export function SleepSession({ goalHours, suggestedBedtime }: SleepSessionProps)
     }
   }, [state.bedtime, router]);
 
-  // auto-advance winddown -> sleeping when the 15 min elapse
+  // auto-advance winddown -> sleeping at the end of the countdown
   useEffect(() => {
     if (state.phase !== "winddown" || !state.winddownStart) {
       return;
     }
-    const elapsed = (now - state.winddownStart) / 1000;
-    if (elapsed >= WINDDOWN_SECONDS) {
-      startSleeping(state.winddownStart + WINDDOWN_SECONDS * 1000);
-    }
-  }, [now, state, startSleeping]);
+    const bedtime = state.winddownStart + WINDDOWN_SECONDS * 1000;
+    const timer = window.setTimeout(
+      () => startSleeping(bedtime),
+      Math.max(0, bedtime - Date.now()),
+    );
+    return () => window.clearTimeout(timer);
+  }, [state.phase, state.winddownStart, startSleeping]);
 
   // ---- IDLE ----
   if (state.phase === "idle") {
