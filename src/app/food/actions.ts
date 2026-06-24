@@ -7,10 +7,12 @@ import { todayDateString } from "@/lib/dates";
 import { getDaySetting } from "@/lib/db/daily-flow";
 import {
   createFoodEntry,
+  createFoodItem,
   createFoodLog,
   deleteFoodEntry,
   deleteFoodLog,
   getFoodItem,
+  getFoodItemByExternalId,
   listFoodLogsForDay,
 } from "@/lib/db/food";
 import { listWorkoutLogsForDay } from "@/lib/db/gym";
@@ -22,9 +24,71 @@ import {
   nullableString,
   numberValue,
 } from "@/lib/forms";
-import type { MealType } from "@/types/database";
+import type { MealSlot, MealType } from "@/types/database";
 
 const mealTypes = ["breakfast", "lunch", "dinner", "snack"];
+const manualMacroSource = "errday_manual";
+const manualMacroExternalId = "macro_placeholder";
+const mealSlots: MealSlot[] = [
+  "breakfast",
+  "lunch",
+  "dinner",
+  "snack",
+  "pre_workout",
+  "post_workout",
+];
+
+function validMealSlot(value: string): MealSlot | null {
+  return mealSlots.includes(value as MealSlot) ? (value as MealSlot) : null;
+}
+
+function validateNonNegative(value: number | null, label: string) {
+  if (value !== null && value < 0) {
+    return `${label} cannot be negative.`;
+  }
+
+  return null;
+}
+
+function macroCalories(input: {
+  carbsG: number;
+  fatG: number;
+  proteinG: number;
+}) {
+  return Math.round(input.proteinG * 4 + input.carbsG * 4 + input.fatG * 9);
+}
+
+async function getOrCreateManualMacroItem(
+  supabase: Awaited<ReturnType<typeof requireUser>>["supabase"],
+  userId: string,
+) {
+  const existing = await getFoodItemByExternalId(
+    supabase,
+    userId,
+    manualMacroSource,
+    manualMacroExternalId,
+  );
+
+  if (existing) {
+    return existing;
+  }
+
+  return createFoodItem(supabase, {
+    user_id: userId,
+    name: "Manual macros",
+    brand: "Errday",
+    calories_per_serving: 0,
+    protein_g: 0,
+    carbs_g: 0,
+    fat_g: 0,
+    serving_label: "custom",
+    image_url: null,
+    barcode: null,
+    external_source: manualMacroSource,
+    external_id: manualMacroExternalId,
+    serving_size: "custom",
+  });
+}
 
 export async function saveFoodEntry(
   _previousState: ActionState,
@@ -139,6 +203,86 @@ export async function saveFoodLog(
   revalidatePath("/food");
   revalidatePath("/today");
   return { status: "success", message: "Food logged." };
+}
+
+export async function saveManualMacroLog(
+  _previousState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const { supabase, user } = await requireUser();
+  const name = formString(formData, "name") || "Quick macros";
+  const amount = nullableString(formData, "amount");
+  const displayName = amount ? `${name} (${amount})` : name;
+  const caloriesInput = integerValue(formData, "calories");
+  const proteinG = numberValue(formData, "protein_g") ?? 0;
+  const carbsG = numberValue(formData, "carbs_g") ?? 0;
+  const fatG = numberValue(formData, "fat_g") ?? 0;
+  const requestedSlot = validMealSlot(formString(formData, "meal_slot"));
+
+  const validationError =
+    validateNonNegative(caloriesInput, "Calories") ??
+    validateNonNegative(proteinG, "Protein") ??
+    validateNonNegative(carbsG, "Carbs") ??
+    validateNonNegative(fatG, "Fat");
+
+  if (validationError) {
+    return { status: "error", message: validationError };
+  }
+
+  const calories = caloriesInput ?? macroCalories({ carbsG, fatG, proteinG });
+
+  if (calories <= 0 && proteinG <= 0 && carbsG <= 0 && fatG <= 0) {
+    return {
+      status: "error",
+      message: "Enter calories or at least one macro.",
+    };
+  }
+
+  try {
+    const today = todayDateString();
+    const [existingFoodLogs, workoutLogs, workouts, daySetting] = await Promise.all([
+      listFoodLogsForDay(supabase, user.id, today),
+      listWorkoutLogsForDay(supabase, user.id, today),
+      getTodayWorkouts(supabase, user.id, today),
+      getDaySetting(supabase, user.id, today),
+    ]);
+    const dayType =
+      daySetting?.day_type ?? detectDayType({ workoutLogs, workouts });
+    const mealSlot =
+      requestedSlot ??
+      inferNextMealSlot({
+        dayType,
+        foodLogs: existingFoodLogs,
+        workoutLogs,
+        workouts,
+      });
+    const foodItem = await getOrCreateManualMacroItem(supabase, user.id);
+
+    await createFoodLog(supabase, {
+      user_id: user.id,
+      food_item_id: foodItem.id,
+      logged_at: new Date().toISOString(),
+      servings: 1,
+      calories,
+      protein_g: proteinG,
+      carbs_g: carbsG,
+      fat_g: fatG,
+      meal_slot: mealSlot,
+      source: "manual_macro",
+      external_food_id: null,
+      display_name: displayName,
+    });
+  } catch (error) {
+    return {
+      status: "error",
+      message:
+        error instanceof Error ? error.message : "Could not save macros.",
+    };
+  }
+
+  revalidatePath("/food");
+  revalidatePath("/today");
+  return { status: "success", message: "Macros logged." };
 }
 
 export async function removeFoodLog(formData: FormData) {

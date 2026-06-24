@@ -56,7 +56,7 @@ export async function listFoodItems(
     throw error;
   }
 
-  return data;
+  return data.filter((item) => item.external_source !== "errday_manual");
 }
 
 export async function getFoodItem(

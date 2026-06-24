@@ -35,7 +35,7 @@ export function ReminderSettingsForm({ profile }: ReminderSettingsFormProps) {
         Browser reminders will appear when this app is open and notifications are allowed.
       </p>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <ReminderTimeField
           defaultValue={timeValue(profile?.meal_reminder_time)}
           label="Food reminder"

@@ -3,30 +3,30 @@
 :root {
   color-scheme: dark;
 
-  --bg: #090a0e;
-  --bg-soft: #0e1016;
+  --bg: #15171c;
+  --bg-soft: #1b1e25;
   --surface: rgba(255, 255, 255, 0.045);
   --surface-2: rgba(255, 255, 255, 0.075);
   --surface-3: rgba(255, 255, 255, 0.11);
   --border: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.19);
 
-  --text: #f7f7f8;
-  --text-muted: #a0a3ad;
-  --text-subtle: #6d717d;
+  --text: #f3f4f7;
+  --text-muted: #a4abb8;
+  --text-subtle: #7b8290;
 
-  --accent: #9488ff;
+  --accent: #8b82f6;
   --accent-strong: color-mix(in srgb, var(--accent) 76%, white);
   --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
-  --signal: #b9f36b;
-  --coral: #ff8c78;
+  --signal: #c4bcff;
+  --coral: #a99fff;
 
   /* shadcn / AI Elements bridge into Errday's existing theme */
   --background: var(--bg);
   --foreground: var(--text);
   --card: var(--surface);
   --card-foreground: var(--text);
-  --popover: #15171d;
+  --popover: #20232c;
   --popover-foreground: var(--text);
   --primary: var(--accent);
   --primary-foreground: #0b0c10;
@@ -39,26 +39,6 @@
   --input: var(--border);
   --ring: var(--accent);
   --radius: 0.9rem;
-}
-
-:root[data-mode="light"] {
-  color-scheme: light;
-
-  --bg-soft: color-mix(in srgb, var(--bg) 91%, #dbe0ea);
-  --surface: rgba(255, 255, 255, 0.72);
-  --surface-2: rgba(25, 29, 40, 0.055);
-  --surface-3: rgba(25, 29, 40, 0.095);
-  --border: rgba(25, 29, 40, 0.11);
-  --border-strong: rgba(25, 29, 40, 0.2);
-
-  --text: #171922;
-  --text-muted: #59606d;
-  --text-subtle: #7b8390;
-
-  --accent-strong: color-mix(in srgb, var(--accent) 76%, #181521);
-  --accent-soft: color-mix(in srgb, var(--accent) 13%, transparent);
-  --popover: #ffffff;
-  --primary-foreground: #ffffff;
 }
 
 @theme inline {
@@ -105,10 +85,9 @@ body {
   min-height: 100vh;
   margin: 0;
   background:
-    radial-gradient(70rem 42rem at 88% -12%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%),
-    radial-gradient(55rem 40rem at -8% 30%, color-mix(in srgb, var(--signal) 7%, transparent), transparent 64%),
+    radial-gradient(70rem 42rem at 88% -12%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 60%),
+    radial-gradient(55rem 40rem at -8% 30%, rgba(111, 100, 224, 0.1), transparent 64%),
     var(--bg);
-  background-attachment: fixed;
   color: var(--text);
   font-family:
     var(--font-manrope),
@@ -120,14 +99,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  letter-spacing: -0.011em;
-}
-
-:root[data-mode="light"] body {
-  background:
-    radial-gradient(70rem 42rem at 88% -12%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 60%),
-    radial-gradient(55rem 40rem at -8% 30%, color-mix(in srgb, var(--signal) 6%, transparent), transparent 64%),
-    var(--bg);
+  letter-spacing: 0;
 }
 
 body::before {
@@ -143,33 +115,11 @@ body::before {
   pointer-events: none;
 }
 
-:root[data-mode="light"] body::before {
-  background-image:
-    linear-gradient(rgba(20, 24, 34, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(20, 24, 34, 0.035) 1px, transparent 1px);
-}
-
-:root[data-backdrop="aura"] body::before,
-:root[data-backdrop="clean"] body::before {
-  opacity: 0;
-}
-
-:root[data-backdrop="clean"] body {
-  background: var(--bg);
-}
-
 .flow-hero,
 .brand-hero {
   background:
     radial-gradient(circle at 86% 4%, color-mix(in srgb, var(--accent) 44%, transparent), transparent 48%),
-    linear-gradient(145deg, color-mix(in srgb, var(--accent) 17%, var(--bg)), color-mix(in srgb, var(--bg) 90%, black));
-}
-
-:root[data-mode="light"] .flow-hero,
-:root[data-mode="light"] .brand-hero {
-  background:
-    radial-gradient(circle at 86% 4%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 48%),
-    linear-gradient(145deg, color-mix(in srgb, var(--accent) 8%, var(--bg)), color-mix(in srgb, var(--bg) 94%, white));
+    linear-gradient(145deg, color-mix(in srgb, var(--accent) 16%, #20232c), #15171c 72%);
 }
 
 a {
@@ -202,87 +152,30 @@ select optgroup {
   color: var(--text);
 }
 
-:root[data-mode="light"] select option,
-:root[data-mode="light"] select optgroup {
-  background-color: #ffffff;
-}
-
-/* Tailwind compatibility for legacy dark-first utility classes. */
-:root[data-mode="light"] .text-white,
-:root[data-mode="light"] [class~="hover:text-white"]:hover {
-  color: var(--text) !important;
-}
-
-:root[data-mode="light"] [class~="text-white/80"] { color: rgba(23, 25, 34, 0.8) !important; }
-:root[data-mode="light"] [class~="text-white/60"] { color: rgba(23, 25, 34, 0.64) !important; }
-:root[data-mode="light"] [class~="text-white/55"] { color: rgba(23, 25, 34, 0.58) !important; }
-:root[data-mode="light"] [class~="text-white/45"] { color: rgba(23, 25, 34, 0.5) !important; }
-:root[data-mode="light"] [class~="text-white/40"] { color: rgba(23, 25, 34, 0.46) !important; }
-:root[data-mode="light"] [class~="text-white/35"] { color: rgba(23, 25, 34, 0.42) !important; }
-
-:root[data-mode="light"] .text-zinc-100 { color: #252832 !important; }
-:root[data-mode="light"] .text-zinc-200,
-:root[data-mode="light"] [class~="hover:text-zinc-200"]:hover { color: #30343e !important; }
-:root[data-mode="light"] .text-zinc-300,
-:root[data-mode="light"] [class~="hover:text-zinc-300"]:hover { color: #414650 !important; }
-:root[data-mode="light"] .text-zinc-400 { color: #555c68 !important; }
-:root[data-mode="light"] .text-zinc-500,
-:root[data-mode="light"] [class~="disabled:text-zinc-500"]:disabled { color: #6a7280 !important; }
-:root[data-mode="light"] .text-zinc-600 { color: #7c8491 !important; }
-:root[data-mode="light"] .text-zinc-700 { color: #9299a4 !important; }
-:root[data-mode="light"] [class~="placeholder:text-zinc-500"]::placeholder,
-:root[data-mode="light"] [class~="placeholder:text-zinc-600"]::placeholder { color: #858d99 !important; }
-
-:root[data-mode="light"] [class~="bg-white/[0.02]"],
-:root[data-mode="light"] [class~="bg-white/[0.025]"],
-:root[data-mode="light"] [class~="bg-white/[0.03]"],
-:root[data-mode="light"] [class~="bg-white/[0.035]"],
-:root[data-mode="light"] [class~="bg-white/[0.04]"],
-:root[data-mode="light"] [class~="bg-white/[0.05]"],
-:root[data-mode="light"] [class~="bg-white/[0.06]"],
-:root[data-mode="light"] [class~="bg-white/[0.07]"],
-:root[data-mode="light"] [class~="bg-white/[0.08]"],
-:root[data-mode="light"] [class~="bg-white/5"],
-:root[data-mode="light"] [class~="bg-white/10"] {
-  background-color: rgba(23, 25, 34, 0.055) !important;
-}
-
-:root[data-mode="light"] [class~="hover:bg-white/[0.04]"]:hover,
-:root[data-mode="light"] [class~="hover:bg-white/[0.05]"]:hover,
-:root[data-mode="light"] [class~="hover:bg-white/[0.06]"]:hover,
-:root[data-mode="light"] [class~="hover:bg-white/[0.07]"]:hover {
-  background-color: rgba(23, 25, 34, 0.085) !important;
-}
-
-:root[data-mode="light"] [class~="bg-black/10"],
-:root[data-mode="light"] [class~="bg-black/15"] {
-  background-color: rgba(23, 25, 34, 0.035) !important;
-}
-
-:root[data-mode="light"] [class~="bg-black/20"],
-:root[data-mode="light"] [class~="bg-black/30"],
-:root[data-mode="light"] [class~="focus:bg-black/30"]:focus {
-  background-color: rgba(255, 255, 255, 0.66) !important;
-}
-
-:root[data-mode="light"] .border-white,
-:root[data-mode="light"] [class~="border-white/[0.07]"],
-:root[data-mode="light"] [class~="border-white/[0.08]"],
-:root[data-mode="light"] [class~="border-white/[0.09]"],
-:root[data-mode="light"] [class~="border-white/10"],
-:root[data-mode="light"] [class~="border-white/15"],
-:root[data-mode="light"] [class~="border-white/20"],
-:root[data-mode="light"] [class~="border-white/30"],
-:root[data-mode="light"] [class~="hover:border-white/20"]:hover {
-  border-color: var(--border) !important;
-}
-
-:root[data-mode="light"] [class~="ring-white/10"] {
-  --tw-ring-color: var(--border) !important;
-}
-
 ::selection {
   background: rgba(139, 130, 246, 0.32);
+}
+
+.errday-mark-glow {
+  isolation: isolate;
+}
+
+.errday-mark-glow::before {
+  position: absolute;
+  z-index: -1;
+  inset: 8%;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(139, 130, 246, 0.36), transparent 68%);
+  content: "";
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.errday-orbit {
+  animation: errOrbit 18s linear infinite;
+  transform-box: view-box;
+  transform-origin: 50px 50px;
+  will-change: transform;
 }
 
 /* Visible, on-brand keyboard focus everywhere */
@@ -315,6 +208,12 @@ select optgroup {
 }
 
 /* Subtle per-page entrance */
+@keyframes errOrbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes fadeRise {
   from {
     opacity: 0;
@@ -327,6 +226,10 @@ select optgroup {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .errday-orbit {
+    animation: none;
+  }
+
   @keyframes fadeRise {
     from,
     to {
@@ -376,5 +279,17 @@ select optgroup {
 @media (max-width: 767px) {
   body::before {
     background-size: 42px 42px;
+  }
+
+  body {
+    background:
+      radial-gradient(36rem 24rem at 90% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 62%),
+      var(--bg);
+  }
+
+  .card,
+  .card-soft,
+  .surface-panel {
+    border-radius: 1.25rem;
   }
 }

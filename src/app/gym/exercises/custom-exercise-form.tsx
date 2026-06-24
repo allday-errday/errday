@@ -18,7 +18,7 @@ export function CustomExerciseForm() {
       <Field label="Name">
         <input className={inputClassName()} name="name" required />
       </Field>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Muscle">
           <select className={inputClassName()} name="primary_muscle" required>
             <option value="Chest">Chest</option>

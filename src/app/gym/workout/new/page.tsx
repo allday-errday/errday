@@ -138,7 +138,7 @@ function CustomWorkoutBuilder({
           ))}
         </section>
 
-        <div className="sticky bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-10 grid gap-2 rounded-full border border-[var(--border)] bg-[var(--bg-soft)]/90 p-2 backdrop-blur-xl">
+        <div className="sticky bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-10 grid gap-2 rounded-2xl border border-[var(--border)] bg-[var(--bg-soft)]/90 p-2 backdrop-blur-xl sm:rounded-full">
           <SubmitButton pendingLabel="Starting...">Start Workout</SubmitButton>
           <Link
             className="text-center text-sm font-semibold text-zinc-500"
@@ -165,7 +165,7 @@ function PresetWorkoutStart({
 
   return (
     <div>
-      <header className="sticky top-0 z-20 -mx-4 mb-5 border-b border-[var(--border)] bg-[var(--bg-soft)]/95 px-4 py-3 backdrop-blur-xl">
+      <header className="sticky top-16 z-20 -mx-4 mb-5 border-y border-[var(--border)] bg-[var(--bg-soft)]/95 px-4 py-3 backdrop-blur-xl sm:top-20 lg:top-0">
         <div className="grid grid-cols-3 items-center">
           <Link
             aria-label="Back to gym"
@@ -190,10 +190,10 @@ function PresetWorkoutStart({
       </header>
 
       <section className="mb-5">
-        <h1 className="text-4xl font-bold lowercase text-[var(--text)]">
+        <h1 className="text-3xl font-bold lowercase leading-tight text-[var(--text)] sm:text-4xl">
           {preset.name}
         </h1>
-        <p className="mt-3 text-lg font-bold text-zinc-500">
+        <p className="mt-3 text-base font-bold leading-7 text-zinc-500 sm:text-lg">
           {preset.description}
         </p>
       </section>
@@ -235,7 +235,7 @@ function PresetWorkoutStart({
           ))}
         </section>
 
-        <div className="fixed inset-x-5 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-sm lg:static lg:mx-0 lg:mt-6 lg:max-w-xs">
+        <div className="fixed inset-x-4 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-sm lg:static lg:mx-0 lg:mt-6 lg:max-w-xs">
           <button
             className="flex min-h-16 w-full items-center justify-center rounded-full bg-[var(--accent)] px-5 text-lg font-bold text-black shadow-xl shadow-[var(--accent)]/30"
             type="submit"

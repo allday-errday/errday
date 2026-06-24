@@ -6,16 +6,16 @@ type TodayHeaderProps = {
 
 export function TodayHeader({ dateLabel }: TodayHeaderProps) {
   return (
-    <header className="mb-10 flex items-end justify-between gap-5 pt-2 lg:mb-14">
+    <header className="mb-7 flex items-end justify-between gap-5 pt-1 sm:mb-10 lg:mb-14">
       <div className="max-w-4xl">
-        <p className="eyebrow mb-4 flex items-center gap-3">
-          <span className="inline-block h-px w-8 bg-[var(--accent)]" />
+        <p className="eyebrow mb-3 flex items-center gap-3 sm:mb-4">
+          <span className="inline-block h-px w-6 bg-[var(--accent)] sm:w-8" />
           Your daily system
         </p>
-        <h1 className="text-[clamp(3.4rem,7vw,7rem)] font-extrabold leading-[0.88] tracking-[-0.075em] text-white">
+        <h1 className="text-5xl font-extrabold leading-none text-white sm:text-6xl lg:text-7xl">
           Own today<span className="text-[var(--accent)]">.</span>
         </h1>
-        <p className="mt-6 text-base font-semibold text-zinc-400 sm:text-lg">
+        <p className="mt-4 text-sm font-semibold leading-6 text-zinc-400 sm:mt-6 sm:text-lg">
           {dateLabel} <span className="mx-2 text-zinc-700">/</span> One clear view of everything that matters.
         </p>
       </div>

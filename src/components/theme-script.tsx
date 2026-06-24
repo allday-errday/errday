@@ -1,19 +1,16 @@
-import { DEFAULT_THEME, THEME_STORAGE_KEY } from "@/lib/theme";
+import { ERRDAY_BRAND_THEME, LEGACY_THEME_STORAGE_KEY } from "@/lib/theme";
 
 const themeBootScript = `
   (() => {
+    const theme = ${JSON.stringify(ERRDAY_BRAND_THEME)};
+    const root = document.documentElement;
+    root.style.setProperty("--bg", theme.background);
+    root.style.setProperty("--accent", theme.accent);
+    root.style.setProperty("--signal", theme.secondary);
+    root.dataset.mode = "dark";
+    root.dataset.backdrop = theme.backdrop;
     try {
-      const fallback = ${JSON.stringify(DEFAULT_THEME)};
-      const stored = JSON.parse(localStorage.getItem("${THEME_STORAGE_KEY}") || "null") || fallback;
-      const hex = (value, defaultValue) => /^#[0-9a-f]{6}$/i.test(value || "") ? value : defaultValue;
-      const backdrop = ["grid", "aura", "clean"].includes(stored.backdrop) ? stored.backdrop : fallback.backdrop;
-      const mode = ["dark", "light"].includes(stored.mode) ? stored.mode : fallback.mode;
-      const root = document.documentElement;
-      root.style.setProperty("--bg", hex(stored.background, fallback.background));
-      root.style.setProperty("--accent", hex(stored.accent, fallback.accent));
-      root.style.setProperty("--signal", hex(stored.secondary, fallback.secondary));
-      root.dataset.backdrop = backdrop;
-      root.dataset.mode = mode;
+      localStorage.removeItem("${LEGACY_THEME_STORAGE_KEY}");
     } catch {}
   })();
 `;

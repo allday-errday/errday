@@ -13,7 +13,7 @@ type SetInputRowProps = {
 };
 
 const cellClassName =
-  "h-12 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 text-center text-lg font-semibold text-white outline-none transition placeholder:text-zinc-500 focus:border-[var(--accent)]";
+  "h-12 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 text-center text-base font-semibold text-white outline-none transition placeholder:text-zinc-500 focus:border-[var(--accent)] sm:text-lg";
 
 export function SetInputRow({
   exerciseId,
@@ -28,7 +28,7 @@ export function SetInputRow({
       <input name="workout_id" type="hidden" value={workoutId} />
       <input name="exercise_id" type="hidden" value={exerciseId} />
       <input name="exercise_name" type="hidden" value={exerciseName} />
-      <div className="grid grid-cols-[3rem_1fr_1fr_3rem] items-center gap-3">
+      <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,1fr)_2.75rem] items-center gap-2 sm:grid-cols-[3rem_1fr_1fr_3rem] sm:gap-3">
         <input
           aria-label="Set number"
           className={cellClassName}
@@ -57,7 +57,7 @@ export function SetInputRow({
         />
         <button
           aria-label="Add set"
-          className="grid size-12 place-items-center rounded-full bg-[var(--accent)] text-sm font-bold text-black transition hover:bg-[var(--accent-strong)]"
+          className="grid size-11 place-items-center rounded-full bg-[var(--accent)] text-xs font-bold text-black transition hover:bg-[var(--accent-strong)] sm:size-12 sm:text-sm"
           type="submit"
         >
           OK

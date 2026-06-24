@@ -8,7 +8,7 @@ export function WaterLogButtons() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="eyebrow">Hydration</p>
-            <h2 className="mt-3 text-2xl font-extrabold tracking-[-0.04em] text-white">
+            <h2 className="mt-3 text-2xl font-extrabold text-white">
               Top up your flow.
             </h2>
             <p className="mt-2 text-sm leading-6 text-zinc-500">One click. Logged instantly.</p>

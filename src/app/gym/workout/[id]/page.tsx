@@ -54,8 +54,8 @@ export default async function WorkoutPage({
 
   return (
     <div>
-      <header className="sticky top-0 z-20 -mx-4 mb-5 border-b border-[var(--border)] bg-[var(--bg-soft)]/95 px-4 py-3 backdrop-blur-xl">
-        <div className="flex items-center justify-between gap-3">
+      <header className="sticky top-16 z-20 -mx-4 mb-5 border-y border-[var(--border)] bg-[var(--bg-soft)]/95 px-4 py-3 backdrop-blur-xl sm:top-20 lg:top-0">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
             className="grid size-11 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] transition hover:bg-[var(--surface-2)]"
             href="/gym"
@@ -74,12 +74,12 @@ export default async function WorkoutPage({
             <WorkoutTimer startedAt={startedAt} />
           </div>
           {isActive ? (
-            <div className="flex items-center gap-2">
+            <div className="grid basis-full grid-cols-2 gap-2 sm:basis-auto sm:flex sm:items-center">
               <form action={discardWorkout}>
                 <input name="workout_id" type="hidden" value={workout.id} />
                 <input name="session_id" type="hidden" value={activeSession.id} />
                 <button
-                  className="min-h-12 rounded-lg border border-red-500/30 bg-red-500/10 px-3 text-xs font-semibold text-red-300 transition hover:bg-red-500/20"
+                  className="min-h-12 w-full rounded-lg border border-red-500/30 bg-red-500/10 px-3 text-xs font-semibold text-red-300 transition hover:bg-red-500/20"
                   type="submit"
                 >
                   Discard
@@ -165,7 +165,7 @@ export default async function WorkoutPage({
                     <p className="mb-5 text-lg font-semibold text-[var(--accent)]">
                       Rest Timer: 2min
                     </p>
-                    <div className="grid grid-cols-[3rem_1fr_1fr_3rem] gap-3 text-xs font-bold uppercase text-zinc-500">
+                    <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,1fr)_2.75rem] gap-2 text-xs font-bold uppercase text-zinc-500 sm:grid-cols-[3rem_1fr_1fr_3rem] sm:gap-3">
                       <span>Set</span>
                       <span className="text-center">Kg</span>
                       <span className="text-center">Reps</span>
@@ -174,19 +174,19 @@ export default async function WorkoutPage({
                     <div className="mt-3 space-y-3">
                       {sets.map((set) => (
                         <div
-                          className="grid grid-cols-[3rem_1fr_1fr_3rem] items-center gap-3"
+                          className="grid grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,1fr)_2.75rem] items-center gap-2 sm:grid-cols-[3rem_1fr_1fr_3rem] sm:gap-3"
                           key={set.id}
                         >
-                          <span className="text-2xl font-semibold text-[var(--text)]">
+                          <span className="text-xl font-semibold text-[var(--text)] sm:text-2xl">
                             {set.set_number}
                           </span>
-                          <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-3 text-center text-xl font-semibold text-white">
+                          <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-3 text-center text-lg font-semibold text-white sm:text-xl">
                             {set.weight_kg ?? "-"}
                           </div>
-                          <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-3 text-center text-xl font-semibold text-white">
+                          <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-3 text-center text-lg font-semibold text-white sm:text-xl">
                             {set.reps ?? "-"}
                           </div>
-                          <div className="grid size-12 place-items-center rounded-full bg-[var(--accent)] text-sm font-semibold text-white">
+                          <div className="grid size-11 place-items-center rounded-full bg-[var(--accent)] text-xs font-semibold text-white sm:size-12 sm:text-sm">
                             OK
                           </div>
                         </div>

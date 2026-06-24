@@ -53,7 +53,7 @@ export default async function FoodSearchPage({
           ) : null}
           <label className="grid gap-2 text-sm font-bold text-zinc-300">
             Search food
-            <div className="flex gap-2">
+            <div className="grid gap-2 sm:flex">
               <input
                 className="min-h-12 min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
                 defaultValue={query}
@@ -62,7 +62,7 @@ export default async function FoodSearchPage({
                 type="search"
               />
               <button
-                className="rounded-lg bg-[var(--accent)] px-4 text-sm font-bold text-black"
+                className="min-h-12 rounded-lg bg-[var(--accent)] px-4 text-sm font-bold text-black"
                 type="submit"
               >
                 Search
@@ -192,7 +192,7 @@ function ProductCard({
           <input name="protein100" type="hidden" value={product.proteinPer100g ?? ""} />
           <input name="carbs100" type="hidden" value={product.carbsPer100g ?? ""} />
           <input name="fat100" type="hidden" value={product.fatPer100g ?? ""} />
-          <div className="grid grid-cols-[1fr_1.2fr] gap-3">
+          <div className="grid gap-3 sm:grid-cols-[1fr_1.2fr]">
             <label className="grid gap-2 text-sm font-bold text-zinc-300">
               Grams
               <input

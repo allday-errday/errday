@@ -25,7 +25,7 @@ export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Your rhythm</p>
-          <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.05em] text-white sm:text-4xl">
+          <h2 className="mt-3 text-2xl font-extrabold leading-tight text-white sm:text-4xl">
             The day, mapped out.
           </h2>
         </div>
@@ -48,10 +48,10 @@ export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
         </div>
       </div>
 
-      <div className="surface-panel overflow-hidden p-3 sm:p-5">
+      <div className="surface-panel overflow-hidden p-2 sm:p-5">
         {items.map((item, index) => (
           <Link
-            className="group grid grid-cols-[3.25rem_2rem_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl px-2 py-4 transition hover:bg-white/[0.04] sm:grid-cols-[4.5rem_2.25rem_3rem_minmax(0,1fr)_auto] sm:gap-4 sm:px-4"
+            className="group grid grid-cols-[3rem_1.75rem_minmax(0,1fr)_auto] items-center gap-2 rounded-2xl px-2 py-3.5 transition hover:bg-white/[0.04] sm:grid-cols-[4.5rem_2.25rem_3rem_minmax(0,1fr)_auto] sm:gap-4 sm:px-4 sm:py-4"
             href={item.href}
             key={item.slot}
           >

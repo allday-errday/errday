@@ -87,8 +87,8 @@ export function CoachChat({ available }: CoachChatProps) {
 
   return (
     <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_270px]">
-      <section className="flex h-[min(720px,calc(100dvh-10rem))] min-h-[560px] flex-col overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_80%,transparent)] shadow-[0_30px_90px_-55px_black] backdrop-blur-xl">
-        <div className="flex items-center justify-between gap-4 border-b border-[var(--border)] px-5 py-4 sm:px-6">
+      <section className="flex h-[min(720px,calc(100dvh-12rem))] min-h-[30rem] flex-col overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_80%,transparent)] shadow-[0_30px_90px_-55px_black] backdrop-blur-xl sm:min-h-[560px] sm:rounded-[2rem]">
+        <div className="flex items-start justify-between gap-3 border-b border-[var(--border)] px-4 py-4 sm:items-center sm:px-6">
           <div className="flex items-center gap-3">
             <span className="grid size-10 place-items-center rounded-2xl bg-[var(--accent)] text-[#0b0c10] shadow-[0_0_24px_color-mix(in_srgb,var(--accent)_30%,transparent)]">
               <Sparkles className="size-5" />
@@ -98,7 +98,7 @@ export function CoachChat({ available }: CoachChatProps) {
               <p className="text-xs text-zinc-500">Local · private · free</p>
             </div>
           </div>
-          <span className={`rounded-full border px-3 py-1.5 text-xs font-black ${available ? "border-[var(--signal)]/25 bg-[color-mix(in_srgb,var(--signal)_9%,transparent)] text-[var(--signal)]" : "border-amber-400/25 bg-amber-400/10 text-amber-300"}`}>
+          <span className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-black ${available ? "border-[var(--signal)]/25 bg-[color-mix(in_srgb,var(--signal)_9%,transparent)] text-[var(--signal)]" : "border-amber-400/25 bg-amber-400/10 text-amber-300"}`}>
             {available ? "Local & ready" : "Ollama offline"}
           </span>
         </div>
@@ -110,7 +110,7 @@ export function CoachChat({ available }: CoachChatProps) {
                 <div className="grid size-14 place-items-center rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--accent)]">
                   <Sparkles className="size-6" />
                 </div>
-                <h3 className="mt-5 text-2xl font-black tracking-[-0.035em] text-white">
+                <h3 className="mt-5 text-2xl font-black text-white">
                   What are we working on?
                 </h3>
                 <p className="mt-2 max-w-md text-sm leading-6 text-zinc-500">

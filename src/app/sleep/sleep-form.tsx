@@ -13,7 +13,7 @@ export function SleepForm() {
 
   return (
     <form action={formAction} className="grid gap-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Date">
           <input
             className={inputClassName()}
@@ -36,7 +36,7 @@ export function SleepForm() {
         </Field>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid gap-3 sm:grid-cols-3">
         <Field label="Quality">
           <select className={inputClassName()} name="quality">
             <option value="">-</option>

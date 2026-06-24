@@ -17,7 +17,7 @@ export function SettingsForm({ profile }: SettingsFormProps) {
 
   return (
     <form action={formAction} className="grid gap-4">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Sex">
           <select
             className={inputClassName()}
@@ -43,7 +43,7 @@ export function SettingsForm({ profile }: SettingsFormProps) {
         </Field>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Height cm">
           <input
             className={inputClassName()}
@@ -68,7 +68,7 @@ export function SettingsForm({ profile }: SettingsFormProps) {
         </Field>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Goal">
           <select
             className={inputClassName()}
@@ -103,7 +103,7 @@ export function SettingsForm({ profile }: SettingsFormProps) {
         </Field>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Target kg">
           <input
             className={inputClassName()}

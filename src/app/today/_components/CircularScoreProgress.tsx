@@ -39,7 +39,7 @@ export function CircularScoreProgress({ score }: CircularScoreProgressProps) {
         />
       </svg>
       <span className="absolute grid place-items-center text-white">
-        <span className="text-6xl font-extrabold leading-none tracking-[-0.07em]">
+        <span className="text-5xl font-extrabold leading-none sm:text-6xl">
           {score}
         </span>
         <span className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-white/45">

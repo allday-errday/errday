@@ -85,7 +85,7 @@ function getFoodDetail(log?: DailyFlowFoodLog) {
     return "Ready to log";
   }
 
-  return `${log.food_items?.name ?? "Meal"} - ${log.calories} kcal`;
+  return `${log.display_name ?? log.food_items?.name ?? "Meal"} - ${log.calories} kcal`;
 }
 
 function createPlanItem(

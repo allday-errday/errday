@@ -41,6 +41,7 @@ export default async function TodayPage() {
     dashboard.nutritionTarget?.daily_calorie_target && dashboard.targetProtein
       ? dashboard.profile?.carbs_target_g ?? null
       : dashboard.profile?.carbs_target_g ?? null;
+  const fatTarget = dashboard.profile?.fat_target_g ?? null;
   const sleepHours = dashboard.todaySleep
     ? Number(dashboard.todaySleep.sleep_hours)
     : 0;
@@ -104,6 +105,13 @@ export default async function TodayPage() {
       helper: carbsTarget ? `/ ${carbsTarget} g` : "Set target",
     },
     {
+      icon: "fat",
+      label: "Fat",
+      progress: fatTarget && fatTarget > 0 ? dashboard.foodTotals.fatG / fatTarget : 0,
+      value: `${Math.round(dashboard.foodTotals.fatG)} g`,
+      helper: fatTarget ? `/ ${fatTarget} g` : "Set target",
+    },
+    {
       icon: "water",
       label: "Water",
       progress: waterTotalMl / waterTargetMl,
@@ -135,7 +143,7 @@ export default async function TodayPage() {
           <WaterLogButtons />
           <div className="surface-panel overflow-hidden p-6">
             <p className="eyebrow">Keep the streak</p>
-            <p className="mt-4 text-2xl font-extrabold tracking-[-0.04em] text-white">
+            <p className="mt-4 text-2xl font-extrabold text-white">
               Small inputs.<br />Big momentum.
             </p>
             <p className="mt-3 max-w-sm text-sm leading-6 text-zinc-400">

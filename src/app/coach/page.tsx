@@ -12,12 +12,12 @@ export default async function CoachPage() {
 
   return (
     <div className="mx-auto max-w-[1120px]">
-      <header className="mb-7 max-w-3xl">
+      <header className="mb-6 max-w-3xl sm:mb-7">
         <p className="eyebrow">Errday intelligence</p>
-        <h1 className="mt-3 text-4xl font-black tracking-[-0.055em] text-white sm:text-5xl">
+        <h1 className="mt-3 text-3xl font-black leading-tight text-white sm:text-5xl">
           Your health, in conversation.
         </h1>
-        <p className="mt-4 text-base leading-7 text-zinc-400">
+        <p className="mt-4 text-sm leading-6 text-zinc-400 sm:text-base sm:leading-7">
           Ask about training, meals or recovery — or analyze a photo privately
           with the AI running on your own PC.
         </p>

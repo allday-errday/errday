@@ -10,6 +10,7 @@ import {
 } from "@/lib/db/food";
 import { safeRead } from "@/lib/db/safe-read";
 import { FoodForm } from "./food-form";
+import { MacroLogForm } from "./macro-log-form";
 import { removeFoodLog } from "./actions";
 
 export default async function FoodPage() {
@@ -30,7 +31,7 @@ export default async function FoodPage() {
       <PageHeader subtitle="Track calories, macros and meals." title="Food" />
 
       <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="font-bold text-white">Search products</h2>
             <p className="mt-1 text-sm text-zinc-400">
@@ -38,7 +39,7 @@ export default async function FoodPage() {
             </p>
           </div>
           <Link
-            className="shrink-0 rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-bold text-black transition hover:bg-[var(--accent-strong)]"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-bold text-black transition hover:bg-[var(--accent-strong)]"
             href="/food/search"
           >
             Search
@@ -46,8 +47,19 @@ export default async function FoodPage() {
         </div>
       </section>
 
+      <section className="mb-5 rounded-2xl border border-[var(--accent)]/25 bg-[var(--surface-2)] p-5 shadow-lg shadow-[var(--accent)]/10">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-white">Quick Macros</h2>
+          <p className="mt-1 text-sm leading-6 text-zinc-400">
+            Log calories, protein, carbs and fat directly when the exact food
+            is not in the database yet.
+          </p>
+        </div>
+        <MacroLogForm />
+      </section>
+
       <section className="mb-5 rounded-2xl border border-white/10 bg-[var(--surface)] p-5 shadow-lg shadow-black/20">
-        <h2 className="mb-4 text-lg font-semibold text-white">Log Meal</h2>
+        <h2 className="mb-4 text-lg font-semibold text-white">Log saved food</h2>
         {items.length === 0 ? (
           <p className="text-sm leading-6 text-zinc-400">
             No food items found. Run migration 0004 in Supabase to seed foods.
@@ -83,10 +95,12 @@ export default async function FoodPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="font-semibold text-white">
-                      {log.food_items?.name ?? "Food"}
+                      {log.display_name ?? log.food_items?.name ?? "Food"}
                     </p>
                     <p className="mt-1 text-xs uppercase text-zinc-500">
-                      {Number(log.servings)} servings
+                      {log.source === "manual_macro"
+                        ? "Macro entry"
+                        : `${Number(log.servings)} servings`}
                     </p>
                   </div>
                   <p className="font-bold text-[var(--accent)]">{log.calories} kcal</p>

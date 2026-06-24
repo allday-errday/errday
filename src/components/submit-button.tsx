@@ -26,7 +26,7 @@ export function SubmitButton({
 
   return (
     <button
-      className={`min-h-13 rounded-xl px-5 text-sm font-extrabold transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:transform-none ${classes[variant]}`}
+      className={`min-h-12 rounded-xl px-5 text-sm font-extrabold transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:transform-none ${classes[variant]}`}
       disabled={pending}
       type="submit"
     >

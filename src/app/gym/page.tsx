@@ -51,12 +51,12 @@ export default async function GymPage() {
 
   return (
     <div className="mx-auto max-w-[1120px]">
-      <header className="mb-7 flex items-center justify-between">
+      <header className="mb-6 flex items-start justify-between gap-4 sm:mb-7 sm:items-center">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--accent)]">
             Errday Gym
           </p>
-          <h1 className="mt-2 text-4xl font-bold tracking-[-0.05em] text-[var(--text)] sm:text-5xl">
+          <h1 className="mt-2 text-3xl font-bold leading-tight text-[var(--text)] sm:text-5xl">
             Train without friction.
           </h1>
         </div>
@@ -72,21 +72,21 @@ export default async function GymPage() {
       </header>
 
       {activeSession ? (
-        <section className="flow-hero mb-7 overflow-hidden rounded-[2rem] border border-[var(--accent)]/35 p-6 shadow-[0_30px_80px_-45px_var(--accent)] sm:p-8">
+        <section className="flow-hero mb-7 overflow-hidden rounded-[1.5rem] border border-[var(--accent)]/35 p-5 shadow-[0_30px_80px_-45px_var(--accent)] sm:rounded-[2rem] sm:p-8">
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <div className="max-w-xl">
               <p className="eyebrow">Workout in progress</p>
-              <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] text-white sm:text-4xl">
+              <h2 className="mt-3 text-2xl font-black leading-tight text-white sm:text-4xl">
                 {activeWorkout?.name ?? "Your workout"}
               </h2>
               <p className="mt-3 text-sm leading-6 text-zinc-400">
                 Pick up exactly where you stopped. Your sets and timer are waiting.
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
               <WorkoutTimer startedAt={activeSession.started_at} />
               <Link
-                className="flex min-h-12 items-center justify-center rounded-full bg-[var(--accent)] px-6 text-sm font-black text-[#0b0c10] shadow-lg shadow-[var(--accent)]/20"
+                className="flex min-h-12 flex-1 items-center justify-center rounded-full bg-[var(--accent)] px-6 text-sm font-black text-[#0b0c10] shadow-lg shadow-[var(--accent)]/20 sm:flex-none"
                 href={`/gym/workout/${activeSession.workout_id}`}
               >
                 Continue
@@ -95,11 +95,11 @@ export default async function GymPage() {
           </div>
         </section>
       ) : (
-        <section className="flow-hero mb-7 overflow-hidden rounded-[2rem] border border-[var(--border-strong)] p-6 shadow-[0_30px_80px_-45px_var(--accent)] sm:p-8">
+        <section className="flow-hero mb-7 overflow-hidden rounded-[1.5rem] border border-[var(--border-strong)] p-5 shadow-[0_30px_80px_-45px_var(--accent)] sm:rounded-[2rem] sm:p-8">
           <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
             <div className="max-w-xl">
               <p className="eyebrow">Ready when you are</p>
-              <h2 className="mt-3 text-3xl font-black tracking-[-0.04em] text-white sm:text-4xl">
+              <h2 className="mt-3 text-2xl font-black leading-tight text-white sm:text-4xl">
                 One tap. Then lift.
               </h2>
               <p className="mt-3 text-sm leading-6 text-zinc-400 sm:text-base">
@@ -116,7 +116,7 @@ export default async function GymPage() {
               </button>
             </form>
           </div>
-          <div className="mt-8 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 sm:gap-3">
+          <div className="mt-7 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 sm:mt-8 sm:gap-3">
             <SnapshotMetric label="Workouts" value={`${weeklyWorkouts}`} />
             <SnapshotMetric label="Sets" value={`${weeklySets}`} />
             <SnapshotMetric label="Volume" value={`${Math.round(weeklyVolume).toLocaleString("de-CH")} kg`} />
@@ -130,14 +130,14 @@ export default async function GymPage() {
             <div className="mb-4 flex items-end justify-between gap-4">
               <div>
                 <p className="eyebrow">Pick a route</p>
-                <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-white">Your program</h2>
+                <h2 className="mt-2 text-2xl font-black text-white">Your program</h2>
               </div>
               <Link className="text-sm font-bold text-[var(--accent)]" href="/gym/templates">Templates</Link>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {gymPresets.map((preset) => (
                 <Link
-                  className="group rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20 transition hover:-translate-y-0.5 hover:border-[var(--accent)]/45 hover:bg-[var(--surface-2)]"
+                  className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20 transition hover:-translate-y-0.5 hover:border-[var(--accent)]/45 hover:bg-[var(--surface-2)] sm:rounded-3xl sm:p-5"
                   href={`/gym/workout/new?preset=${preset.slug}`}
                   key={preset.slug}
                 >
@@ -153,7 +153,7 @@ export default async function GymPage() {
             </div>
           </section>
 
-          <section className="grid grid-cols-2 gap-3">
+          <section className="grid gap-3 sm:grid-cols-2">
             <QuickLink href="/gym/workout/new" title="Build your own" value="Custom workout" />
             <QuickLink href="/gym/exercises" title="Find movements" value="Exercise library" />
           </section>

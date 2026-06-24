@@ -31,7 +31,7 @@ export type DailyPlanItem = {
 
 export type DailyFlowFoodLog = Pick<
   FoodLogWithItem,
-  "calories" | "logged_at" | "food_items"
+  "calories" | "display_name" | "logged_at" | "food_items"
 >;
 
 export type DailyFlowWorkoutLog = Pick<

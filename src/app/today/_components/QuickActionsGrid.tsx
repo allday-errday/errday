@@ -9,20 +9,19 @@ const actions = [
 
 export function QuickActionsGrid() {
   return (
-    <section className="surface-panel flex h-full min-h-[28rem] flex-col p-5 sm:p-7">
-      <div className="mb-6 flex items-end justify-between gap-4">
+    <section className="surface-panel flex h-full min-h-[22rem] flex-col p-5 sm:min-h-[28rem] sm:p-7">
+      <div className="mb-5 sm:mb-6">
         <div>
           <p className="eyebrow">Quick moves</p>
-          <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.05em] text-white">
+          <h2 className="mt-3 text-2xl font-extrabold leading-tight text-white sm:text-3xl">
             Move the day forward.
           </h2>
         </div>
-        <span className="text-2xl text-[var(--accent)]">↗</span>
       </div>
       <div className="grid flex-1 grid-cols-2 gap-3">
         {actions.map((action) => (
           <Link
-            className="group relative flex min-h-36 flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.08] bg-black/20 p-4 transition duration-300 hover:-translate-y-1 hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/[0.08] active:scale-[0.98]"
+            className="group relative flex min-h-32 flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.08] bg-black/20 p-4 transition duration-300 hover:-translate-y-1 hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/[0.08] active:scale-[0.98] sm:min-h-36"
             href={action.href}
             key={action.href}
           >
@@ -30,10 +29,9 @@ export function QuickActionsGrid() {
               <ActionIcon name={action.icon} />
             </span>
             <span>
-              <span className="block text-base font-extrabold text-white">{action.label}</span>
+              <span className="block text-sm font-extrabold leading-tight text-white sm:text-base">{action.label}</span>
               <span className="mt-1 block text-xs font-semibold text-zinc-500">{action.detail}</span>
             </span>
-            <span className="absolute right-4 top-4 text-zinc-700 transition group-hover:text-[var(--accent)]">↗</span>
           </Link>
         ))}
       </div>

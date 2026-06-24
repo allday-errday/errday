@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BrandLogo } from "@/components/brand-logo";
 import { NavIcon, navItems } from "@/components/nav-items";
 
 export function SideNav() {
@@ -12,24 +13,11 @@ export function SideNav() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.07] bg-[var(--bg)]/78 backdrop-blur-2xl">
-      <div className="mx-auto grid min-h-20 max-w-[1280px] grid-cols-[1fr_auto] items-center gap-x-4 px-5 py-4 sm:px-8 lg:grid-cols-[1fr_auto_1fr] lg:gap-x-8 lg:px-12 lg:py-0">
-        <Link className="group flex shrink-0 items-center gap-3 justify-self-start" href="/today">
-          <span className="relative grid size-10 place-items-center overflow-hidden rounded-xl bg-[var(--accent)] text-lg font-extrabold text-[#0a0910] shadow-[0_0_30px_rgba(143,130,255,0.25)] transition-transform group-hover:-rotate-3 group-hover:scale-105">
-            E
-            <span className="absolute -right-1 -top-1 size-3 rounded-full bg-[var(--signal)]" />
-          </span>
-          <span>
-            <span className="block text-lg font-extrabold tracking-[-0.04em] text-white">
-              errday
-            </span>
-            <span className="hidden text-[0.62rem] font-bold uppercase tracking-[0.18em] text-zinc-500 xl:block">
-              All day. Errday.
-            </span>
-          </span>
-        </Link>
+    <header className="sticky top-0 z-30 border-b border-white/[0.07] bg-[var(--bg)]/86 backdrop-blur-2xl">
+      <div className="mx-auto grid min-h-16 max-w-[1280px] grid-cols-[1fr_auto] items-center gap-x-4 px-4 py-3 sm:min-h-20 sm:px-8 sm:py-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-x-8 lg:px-12 lg:py-0">
+        <BrandLogo className="justify-self-start" href="/today" markClassName="size-10 sm:size-11" wordmarkClassName="text-lg sm:text-xl" />
 
-        <nav className="no-scrollbar order-3 col-span-2 -mx-5 mt-4 flex w-[calc(100%+2.5rem)] gap-1 overflow-x-auto px-5 sm:-mx-8 sm:w-[calc(100%+4rem)] sm:px-8 lg:order-none lg:col-span-1 lg:mx-0 lg:mt-0 lg:grid lg:w-[34rem] lg:grid-cols-5 lg:justify-self-center lg:overflow-visible lg:px-0">
+        <nav className="hidden lg:order-none lg:col-span-1 lg:mx-0 lg:mt-0 lg:grid lg:w-[34rem] lg:grid-cols-5 lg:justify-self-center lg:overflow-visible lg:px-0">
           {navItems.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -39,12 +27,11 @@ export function SideNav() {
                 aria-current={isActive ? "page" : undefined}
                 className={`relative flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full px-4 text-sm font-bold transition lg:w-full lg:px-2 ${
                   isActive
-                    ? "bg-white shadow-[0_8px_30px_rgba(255,255,255,0.08)]"
+                    ? "bg-[var(--accent)] text-[#111218] shadow-[0_10px_34px_rgba(139,130,246,0.22)]"
                     : "text-zinc-400 hover:bg-white/[0.05] hover:text-white"
                 }`}
                 href={item.href}
                 key={item.href}
-                style={isActive ? { color: "#101116" } : undefined}
               >
                 <NavIcon className="size-[1.05rem]" name={item.icon} />
                 <span>{item.label}</span>
@@ -54,14 +41,10 @@ export function SideNav() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-2 justify-self-end">
-          <span className="hidden items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-xs font-bold text-zinc-400 lg:flex">
-            <span className="size-2 rounded-full bg-[var(--signal)] shadow-[0_0_12px_var(--signal)]" />
-            Day live
-          </span>
           <Link
             aria-current={pathname === "/coach" ? "page" : undefined}
             aria-label="Open Errday Coach"
-            className={`grid size-11 place-items-center rounded-full border transition ${
+            className={`grid size-10 place-items-center rounded-full border transition sm:size-11 ${
               pathname === "/coach"
                 ? "border-[var(--signal)]/50 bg-[color-mix(in_srgb,var(--signal)_12%,transparent)] text-[var(--signal)]"
                 : "border-white/[0.09] bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white"
@@ -77,7 +60,7 @@ export function SideNav() {
           <Link
             aria-current={pathname === "/settings" ? "page" : undefined}
             aria-label="Open settings"
-            className={`grid size-11 place-items-center rounded-full border transition ${
+            className={`grid size-10 place-items-center rounded-full border transition sm:size-11 ${
               pathname === "/settings"
                 ? "border-[var(--accent)]/50 bg-[var(--accent-soft)] text-white"
                 : "border-white/[0.09] bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white"

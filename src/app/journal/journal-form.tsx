@@ -26,7 +26,7 @@ export function JournalForm() {
         />
       </Field>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid gap-3 sm:grid-cols-3">
         <RatingSelect label="Mood" name="mood" />
         <RatingSelect label="Energy" name="energy" />
         <RatingSelect label="Stress" name="stress" />
