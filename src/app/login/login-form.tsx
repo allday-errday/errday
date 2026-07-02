@@ -13,6 +13,14 @@ export function LoginForm() {
 
   return (
     <form action={formAction} className="grid gap-4">
+      <input
+        aria-hidden="true"
+        autoComplete="off"
+        className="absolute -left-[9999px] h-0 w-0 opacity-0"
+        name="website"
+        tabIndex={-1}
+        type="text"
+      />
       <Field label="Email">
         <input
           autoComplete="email"

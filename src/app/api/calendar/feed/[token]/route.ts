@@ -1,18 +1,34 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { buildCalendarIcs } from "@/lib/ics";
+import {
+  checkRateLimit,
+  clientIpFromHeaders,
+  rateLimitHeaders,
+} from "@/lib/security/rate-limit";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 import type { CalendarEvent } from "@/types/database";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ token: string }> },
 ) {
   const { token } = await params;
 
   if (!token || token.length < 32) {
     return new Response("Not found", { status: 404 });
+  }
+
+  // Calendar clients refresh at most every few minutes; anything faster
+  // per IP is token guessing.
+  const ip = clientIpFromHeaders(request.headers);
+  const rateLimit = checkRateLimit(`calendar-feed:${ip}`, 30, 5 * 60);
+  if (!rateLimit.allowed) {
+    return new Response("Too many requests", {
+      headers: rateLimitHeaders(rateLimit),
+      status: 429,
+    });
   }
 
   const { anonKey, url } = getSupabaseEnv();

@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { getSupabaseEnv } from "@/lib/supabase/env";
 
 export async function GET() {
+  // Local troubleshooting only — never expose config details in production.
+  if (process.env.NODE_ENV === "production") {
+    return new NextResponse("Not found", { status: 404 });
+  }
+
   const { anonKey, url } = getSupabaseEnv();
   let parsedUrl: URL | null = null;
 
