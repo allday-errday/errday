@@ -49,6 +49,13 @@ export function SignupForm() {
           Log in
         </Link>
       </p>
+      <p className="text-center text-xs text-zinc-600">
+        By creating an account you accept the{" "}
+        <Link className="font-semibold hover:text-zinc-400" href="/privacy">
+          privacy policy
+        </Link>
+        .
+      </p>
     </form>
   );
 }

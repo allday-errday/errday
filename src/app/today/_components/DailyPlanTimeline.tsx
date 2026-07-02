@@ -8,7 +8,7 @@ type DailyPlanTimelineProps = {
 };
 
 const statusStyles: Record<PlanItemStatus, string> = {
-  logged: "border-[var(--signal)] bg-[var(--signal)] text-[#11150c]",
+  logged: "border-[var(--signal)] bg-[var(--signal)] text-[var(--on-accent)]",
   upcoming: "border-[var(--accent)]/60 bg-[var(--accent-soft)] text-[var(--accent)]",
   missed: "border-white/15 bg-white/[0.03] text-zinc-600",
 };
@@ -36,7 +36,7 @@ export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
               <button
                 className={`min-h-10 rounded-full px-4 capitalize transition sm:px-5 ${
                   dayType === type
-                    ? "bg-white text-[#111218] shadow-sm"
+                    ? "bg-white text-[var(--on-accent)] shadow-sm"
                     : "text-zinc-500 hover:text-white"
                 }`}
                 type="submit"

@@ -91,7 +91,7 @@ export default async function WorkoutPage({
             </div>
           ) : (
             <Link
-              className="rounded-full bg-[var(--accent)] px-4 py-3 text-sm font-bold text-black"
+              className="rounded-full bg-[var(--accent)] px-4 py-3 text-sm font-bold text-[var(--on-accent)]"
               href="/gym/history"
             >
               Done

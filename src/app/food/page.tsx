@@ -39,7 +39,7 @@ export default async function FoodPage() {
             </p>
           </div>
           <Link
-            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-bold text-black transition hover:bg-[var(--accent-strong)]"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-bold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)]"
             href="/food/search"
           >
             Search

@@ -199,7 +199,7 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
                 <span
                   className={
                     isToday
-                      ? "grid size-6 place-items-center rounded-full bg-[var(--accent)] text-xs font-black text-[#111218]"
+                      ? "grid size-6 place-items-center rounded-full bg-[var(--accent)] text-xs font-black text-[var(--on-accent)]"
                       : undefined
                   }
                 >
@@ -234,7 +234,7 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
             </h2>
           </div>
           <button
-            className="flex min-h-10 items-center gap-1.5 rounded-full bg-[var(--accent)] px-4 text-sm font-bold text-[#111218] shadow-lg shadow-[var(--accent)]/20 transition hover:brightness-110"
+            className="flex min-h-10 items-center gap-1.5 rounded-full bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)] shadow-lg shadow-[var(--accent)]/20 transition hover:brightness-110"
             onClick={openCreate}
             type="button"
           >

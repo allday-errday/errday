@@ -19,7 +19,7 @@ export function AuthVisual({ mode }: AuthVisualProps) {
         />
 
         <div className="max-w-2xl">
-          <p className="eyebrow text-[#c9c3ff]">
+          <p className="eyebrow text-[var(--accent-strong)]">
             {mode === "login" ? "Welcome back" : "Your daily system"}
           </p>
           <div className="errday-mark-glow mt-5 w-fit sm:mt-8">

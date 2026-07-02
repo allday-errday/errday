@@ -237,7 +237,7 @@ function PresetWorkoutStart({
 
         <div className="fixed inset-x-4 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-sm lg:static lg:mx-0 lg:mt-6 lg:max-w-xs">
           <button
-            className="flex min-h-16 w-full items-center justify-center rounded-full bg-[var(--accent)] px-5 text-lg font-bold text-black shadow-xl shadow-[var(--accent)]/30"
+            className="flex min-h-16 w-full items-center justify-center rounded-full bg-[var(--accent)] px-5 text-lg font-bold text-[var(--on-accent)] shadow-xl shadow-[var(--accent)]/30"
             type="submit"
           >
             Start workout

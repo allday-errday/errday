@@ -25,7 +25,7 @@ export function QuickActionsGrid() {
             href={action.href}
             key={action.href}
           >
-            <span className="grid size-11 place-items-center rounded-xl bg-white/[0.06] text-[var(--accent)] transition group-hover:bg-[var(--accent)] group-hover:text-black">
+            <span className="grid size-11 place-items-center rounded-xl bg-white/[0.06] text-[var(--accent)] transition group-hover:bg-[var(--accent)] group-hover:text-[var(--on-accent)]">
               <ActionIcon name={action.icon} />
             </span>
             <span>

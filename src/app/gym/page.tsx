@@ -86,7 +86,7 @@ export default async function GymPage() {
             <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
               <WorkoutTimer startedAt={activeSession.started_at} />
               <Link
-                className="flex min-h-12 flex-1 items-center justify-center rounded-full bg-[var(--accent)] px-6 text-sm font-black text-[#0b0c10] shadow-lg shadow-[var(--accent)]/20 sm:flex-none"
+                className="flex min-h-12 flex-1 items-center justify-center rounded-full bg-[var(--accent)] px-6 text-sm font-black text-[var(--on-accent)] shadow-lg shadow-[var(--accent)]/20 sm:flex-none"
                 href={`/gym/workout/${activeSession.workout_id}`}
               >
                 Continue
@@ -108,7 +108,7 @@ export default async function GymPage() {
             </div>
             <form action={startEmptyWorkout}>
               <button
-                className="flex min-h-14 w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-7 text-base font-black text-[#0b0c10] shadow-xl shadow-[var(--accent)]/25 transition hover:-translate-y-0.5 sm:w-auto"
+                className="flex min-h-14 w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-7 text-base font-black text-[var(--on-accent)] shadow-xl shadow-[var(--accent)]/25 transition hover:-translate-y-0.5 sm:w-auto"
                 type="submit"
               >
                 <span className="text-xl">+</span>

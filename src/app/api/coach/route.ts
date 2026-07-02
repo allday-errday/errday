@@ -62,7 +62,12 @@ export async function POST(request: Request) {
     );
   }
 
-  const { messages }: { messages?: UIMessage[] } = await request.json();
+  let messages: UIMessage[] | undefined;
+  try {
+    ({ messages } = (await request.json()) as { messages?: UIMessage[] });
+  } catch {
+    return Response.json({ error: "Invalid request body." }, { status: 400 });
+  }
   if (!Array.isArray(messages) || messages.length === 0) {
     return Response.json({ error: "Messages are required." }, { status: 400 });
   }

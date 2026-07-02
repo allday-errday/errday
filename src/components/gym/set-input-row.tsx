@@ -64,7 +64,7 @@ export function SetInputRow({
         />
         <button
           aria-label="Add set"
-          className="grid size-11 place-items-center rounded-full bg-[var(--accent)] text-xs font-bold text-black transition hover:bg-[var(--accent-strong)] sm:size-12 sm:text-sm"
+          className="grid size-11 place-items-center rounded-full bg-[var(--accent)] text-xs font-bold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)] sm:size-12 sm:text-sm"
           type="submit"
         >
           OK

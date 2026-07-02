@@ -209,7 +209,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
           <div
             aria-labelledby="daily-stats-customizer-title"
             aria-modal="true"
-            className="relative z-10 w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/12 bg-[#15171c]/95 shadow-2xl shadow-black/50"
+            className="relative z-10 w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/12 bg-[var(--bg)]/95 shadow-2xl shadow-black/50"
             id="daily-stats-customizer"
             role="dialog"
           >
@@ -258,7 +258,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
                       <span
                         className={`grid size-11 shrink-0 place-items-center rounded-xl ${
                           on
-                            ? "bg-[var(--accent)] text-black"
+                            ? "bg-[var(--accent)] text-[var(--on-accent)]"
                             : "bg-white/[0.05] text-zinc-500"
                         }`}
                       >
@@ -275,7 +275,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
                       <span
                         className={`grid size-7 shrink-0 place-items-center rounded-full border text-xs font-black ${
                           on
-                            ? "border-[var(--accent)] bg-[var(--accent)] text-black"
+                            ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--on-accent)]"
                             : "border-white/10 text-zinc-600"
                         }`}
                       >
@@ -307,7 +307,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
                   Show all
                 </button>
                 <button
-                  className="rounded-full bg-white px-5 py-2 text-sm font-extrabold text-black transition hover:bg-[var(--accent)]"
+                  className="rounded-full bg-white px-5 py-2 text-sm font-extrabold text-[var(--on-accent)] transition hover:bg-[var(--accent)]"
                   onClick={() => setCustomizing(false)}
                   type="button"
                 >
@@ -333,7 +333,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
               }`}
               key={stat.icon}
             >
-              <div className="grid size-9 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)] transition group-hover:bg-[var(--accent)] group-hover:text-black">
+              <div className="grid size-9 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)] transition group-hover:bg-[var(--accent)] group-hover:text-[var(--on-accent)]">
                 <Icon className="size-5" name={stat.icon} />
               </div>
               <p className="mt-3 text-xs font-bold uppercase tracking-[0.13em] text-zinc-500">

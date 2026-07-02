@@ -51,7 +51,7 @@ export function WorkoutLogForm({ templates }: WorkoutLogFormProps) {
                   aria-hidden="true"
                   className={`grid size-10 shrink-0 place-items-center rounded-xl text-sm font-black ${
                     isSelected
-                      ? "bg-[var(--accent)] text-[#0b0c10]"
+                      ? "bg-[var(--accent)] text-[var(--on-accent)]"
                       : "bg-white/[0.05] text-zinc-500 group-hover:text-white"
                   }`}
                 >

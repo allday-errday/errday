@@ -27,7 +27,7 @@ export function SideNav() {
                 aria-current={isActive ? "page" : undefined}
                 className={`relative flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full px-4 text-sm font-bold transition lg:w-full lg:px-2 ${
                   isActive
-                    ? "bg-[var(--accent)] text-[#111218] shadow-[0_10px_34px_rgba(139,130,246,0.22)]"
+                    ? "bg-[var(--accent)] text-[var(--on-accent)] shadow-[0_10px_34px_rgba(139,130,246,0.22)]"
                     : "text-zinc-400 hover:bg-white/[0.05] hover:text-white"
                 }`}
                 href={item.href}

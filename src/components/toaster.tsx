@@ -68,7 +68,7 @@ export function Toaster() {
           className="pointer-events-auto flex items-center gap-2.5 rounded-full border border-[var(--accent)]/40 bg-[var(--bg-soft)]/95 px-4 py-2.5 text-sm font-bold text-white shadow-2xl shadow-black/50 backdrop-blur-xl [animation:fadeRise_0.25s_ease]"
           key={t.id}
         >
-          <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[var(--accent)] text-black">
+          <span className="grid size-5 shrink-0 place-items-center rounded-full bg-[var(--accent)] text-[var(--on-accent)]">
             <svg aria-hidden="true" className="size-3.5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" viewBox="0 0 24 24">
               <path d="m5 13 4 4L19 7" />
             </svg>

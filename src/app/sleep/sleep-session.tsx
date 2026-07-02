@@ -149,7 +149,7 @@ export function SleepSession({ goalHours, suggestedBedtime }: SleepSessionProps)
       >
         <Ring progress={0} label="15:00" hint="wind-down" />
         <button
-          className="mt-8 min-h-14 w-full max-w-xs rounded-full bg-[var(--accent)] text-base font-bold text-black transition hover:bg-[var(--accent-strong)]"
+          className="mt-8 min-h-14 w-full max-w-xs rounded-full bg-[var(--accent)] text-base font-bold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)]"
           onClick={startWinddown}
           type="button"
         >
@@ -176,7 +176,7 @@ export function SleepSession({ goalHours, suggestedBedtime }: SleepSessionProps)
         />
         <div className="mt-8 grid w-full max-w-xs gap-2">
           <button
-            className="min-h-14 rounded-full bg-[var(--accent)] text-base font-bold text-black transition hover:bg-[var(--accent-strong)]"
+            className="min-h-14 rounded-full bg-[var(--accent)] text-base font-bold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)]"
             onClick={() => startSleeping(Date.now())}
             type="button"
           >
@@ -212,7 +212,7 @@ export function SleepSession({ goalHours, suggestedBedtime }: SleepSessionProps)
           hint={reached ? `${goalHours}h done` : `of ${goalHours}h`}
         />
         <button
-          className="mt-8 min-h-14 w-full max-w-xs rounded-full bg-[var(--accent)] text-base font-bold text-black transition hover:bg-[var(--accent-strong)] disabled:opacity-60"
+          className="mt-8 min-h-14 w-full max-w-xs rounded-full bg-[var(--accent)] text-base font-bold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)] disabled:opacity-60"
           disabled={saving}
           onClick={wakeUp}
           type="button"

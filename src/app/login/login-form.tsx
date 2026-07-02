@@ -48,6 +48,15 @@ export function LoginForm() {
           Sign up
         </Link>
       </p>
+      <p className="text-center text-xs text-zinc-600">
+        <Link className="hover:text-zinc-400" href="/privacy">
+          Privacy
+        </Link>
+        <span className="mx-2">·</span>
+        <Link className="hover:text-zinc-400" href="/imprint">
+          Legal notice
+        </Link>
+      </p>
     </form>
   );
 }

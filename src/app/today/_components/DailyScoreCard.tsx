@@ -19,7 +19,7 @@ export function DailyScoreCard({ result }: DailyScoreCardProps) {
       <div className="relative flex h-full flex-col justify-between gap-10">
         <div className="flex items-start justify-between gap-5">
           <div>
-            <p className="eyebrow text-[#c4bdff]">Daily flow score</p>
+            <p className="eyebrow text-[var(--accent-strong)]">Daily flow score</p>
             <p className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.07] px-4 py-2 text-sm font-bold text-white">
               <span className="size-2 rounded-full bg-[var(--signal)] shadow-[0_0_12px_var(--signal)]" />
               {result.status} momentum

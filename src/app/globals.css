@@ -18,6 +18,8 @@
   --accent: #8b82f6;
   --accent-strong: color-mix(in srgb, var(--accent) 76%, white);
   --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
+  /* Text/icons sitting on accent or signal fills — same in both modes. */
+  --on-accent: #0b0c10;
   --signal: #c4bcff;
   --coral: #a99fff;
 

@@ -104,7 +104,7 @@ export function CoachChat({
       <section className="flex h-[min(720px,calc(100dvh-12rem))] min-h-[30rem] flex-col overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_80%,transparent)] shadow-[0_30px_90px_-55px_black] backdrop-blur-xl sm:min-h-[560px] sm:rounded-[2rem]">
         <div className="flex items-start justify-between gap-3 border-b border-[var(--border)] px-4 py-4 sm:items-center sm:px-6">
           <div className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-2xl bg-[var(--accent)] text-[#0b0c10] shadow-[0_0_24px_color-mix(in_srgb,var(--accent)_30%,transparent)]">
+            <span className="grid size-10 place-items-center rounded-2xl bg-[var(--accent)] text-[var(--on-accent)] shadow-[0_0_24px_color-mix(in_srgb,var(--accent)_30%,transparent)]">
               <Sparkles className="size-5" />
             </span>
             <div>
@@ -150,7 +150,7 @@ export function CoachChat({
                   <p className="text-[0.68rem] font-black uppercase tracking-[0.16em] text-zinc-600">
                     {message.role === "user" ? "You" : "Coach"}
                   </p>
-                  <MessageContent className={message.role === "user" ? "rounded-2xl bg-[var(--accent)] px-4 py-3 text-[#0b0c10]" : "text-zinc-200"}>
+                  <MessageContent className={message.role === "user" ? "rounded-2xl bg-[var(--accent)] px-4 py-3 text-[var(--on-accent)]" : "text-zinc-200"}>
                     {message.parts.map((part, index) => {
                       if (part.type === "text") {
                         return message.role === "assistant" ? (
@@ -251,9 +251,9 @@ export function CoachChat({
               value={input}
             />
             {isBusy ? (
-              <button aria-label="Stop response" className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white text-[#0b0c10]" onClick={stop} type="button"><span className="size-3 rounded-sm bg-[#0b0c10]" /></button>
+              <button aria-label="Stop response" className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white text-[var(--on-accent)]" onClick={stop} type="button"><span className="size-3 rounded-sm bg-[#0b0c10]" /></button>
             ) : (
-              <button aria-label="Send message" className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[var(--accent)] text-[#0b0c10] shadow-lg shadow-[var(--accent)]/20 disabled:cursor-not-allowed disabled:opacity-40" disabled={!available || (!input.trim() && !selectedFile)} type="submit"><Send className="size-5" /></button>
+              <button aria-label="Send message" className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[var(--accent)] text-[var(--on-accent)] shadow-lg shadow-[var(--accent)]/20 disabled:cursor-not-allowed disabled:opacity-40" disabled={!available || (!input.trim() && !selectedFile)} type="submit"><Send className="size-5" /></button>
             )}
           </form>
         </div>

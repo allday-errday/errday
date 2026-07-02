@@ -101,7 +101,7 @@ export default async function FoodSearchPage({
                 type="search"
               />
               <button
-                className="min-h-12 rounded-lg bg-[var(--accent)] px-4 text-sm font-bold text-black"
+                className="min-h-12 rounded-lg bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)]"
                 type="submit"
               >
                 Search
@@ -308,7 +308,7 @@ function ProductCard({
             </label>
           </div>
           <button
-            className="min-h-12 rounded-full bg-[var(--accent)] px-4 text-sm font-bold text-black shadow-sm shadow-[var(--accent)]/20"
+            className="min-h-12 rounded-full bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)] shadow-sm shadow-[var(--accent)]/20"
             type="submit"
           >
             Log product
