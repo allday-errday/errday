@@ -1,7 +1,7 @@
 -- Calendar system: events, per-user ICS feed tokens, and a secure feed function
 -- for the Apple Calendar subscription (webcal).
 
-create table public.calendar_events (
+create table if not exists public.calendar_events (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   title text not null check (char_length(title) between 1 and 200),
@@ -17,10 +17,10 @@ create table public.calendar_events (
   updated_at timestamptz not null default now()
 );
 
-create index calendar_events_user_date_idx
+create index if not exists calendar_events_user_date_idx
   on public.calendar_events (user_id, date);
 
-create table public.calendar_feed_tokens (
+create table if not exists public.calendar_feed_tokens (
   user_id uuid primary key references auth.users(id) on delete cascade,
   token text not null unique check (char_length(token) >= 32),
   created_at timestamptz not null default now()
@@ -28,6 +28,16 @@ create table public.calendar_feed_tokens (
 
 alter table public.calendar_events enable row level security;
 alter table public.calendar_feed_tokens enable row level security;
+
+drop policy if exists "owner_select" on public.calendar_events;
+drop policy if exists "owner_insert" on public.calendar_events;
+drop policy if exists "owner_update" on public.calendar_events;
+drop policy if exists "owner_delete" on public.calendar_events;
+
+drop policy if exists "owner_select" on public.calendar_feed_tokens;
+drop policy if exists "owner_insert" on public.calendar_feed_tokens;
+drop policy if exists "owner_update" on public.calendar_feed_tokens;
+drop policy if exists "owner_delete" on public.calendar_feed_tokens;
 
 create policy "owner_select" on public.calendar_events
   for select to authenticated using (user_id = auth.uid());

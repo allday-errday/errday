@@ -3,7 +3,7 @@
 -- cleaned canonical record in products + product_nutrition.
 
 -- 1. products — exactly one canonical record per product
-create table public.products (
+create table if not exists public.products (
   id uuid primary key default gen_random_uuid(),
   barcode text not null unique check (barcode ~ '^[0-9]{8,14}$'),
   name text not null,
@@ -19,11 +19,11 @@ create table public.products (
   updated_at timestamptz not null default now()
 );
 
-create index products_barcode_idx on public.products (barcode);
-create index products_status_idx on public.products (status);
+create index if not exists products_barcode_idx on public.products (barcode);
+create index if not exists products_status_idx on public.products (status);
 
 -- 2. product_nutrition — the final values shown in the app
-create table public.product_nutrition (
+create table if not exists public.product_nutrition (
   product_id uuid primary key references public.products(id) on delete cascade,
   kcal_100g numeric null check (kcal_100g >= 0 and kcal_100g <= 900),
   protein_100g numeric null check (protein_100g >= 0 and protein_100g <= 100),
@@ -42,7 +42,7 @@ create table public.product_nutrition (
 );
 
 -- 3. product_sources — every original data source, stored separately
-create table public.product_sources (
+create table if not exists public.product_sources (
   id uuid primary key default gen_random_uuid(),
   product_id uuid not null references public.products(id) on delete cascade,
   source text not null
@@ -54,11 +54,11 @@ create table public.product_sources (
   license text null
 );
 
-create index product_sources_product_idx on public.product_sources (product_id);
-create index product_sources_source_idx on public.product_sources (source);
+create index if not exists product_sources_product_idx on public.product_sources (product_id);
+create index if not exists product_sources_source_idx on public.product_sources (source);
 
 -- 4. product_images — multiple images per product
-create table public.product_images (
+create table if not exists public.product_images (
   id uuid primary key default gen_random_uuid(),
   product_id uuid not null references public.products(id) on delete cascade,
   image_type text not null default 'front'
@@ -68,10 +68,10 @@ create table public.product_images (
   created_at timestamptz not null default now()
 );
 
-create index product_images_product_idx on public.product_images (product_id);
+create index if not exists product_images_product_idx on public.product_images (product_id);
 
 -- 5. product_reports — users can flag broken products
-create table public.product_reports (
+create table if not exists public.product_reports (
   id uuid primary key default gen_random_uuid(),
   product_id uuid not null references public.products(id) on delete cascade,
   reported_by uuid null references auth.users(id) on delete set null,
@@ -82,7 +82,7 @@ create table public.product_reports (
   created_at timestamptz not null default now()
 );
 
-create index product_reports_product_idx on public.product_reports (product_id);
+create index if not exists product_reports_product_idx on public.product_reports (product_id);
 
 -- RLS: the catalog is shared and readable by every signed-in user.
 -- Writes go through the app (barcode lookup pipeline) with the user's session.
@@ -91,6 +91,23 @@ alter table public.product_nutrition enable row level security;
 alter table public.product_sources enable row level security;
 alter table public.product_images enable row level security;
 alter table public.product_reports enable row level security;
+
+drop policy if exists "Products are readable by authenticated users" on public.products;
+drop policy if exists "Products are insertable by authenticated users" on public.products;
+drop policy if exists "Products are updatable by authenticated users" on public.products;
+
+drop policy if exists "Product nutrition is readable by authenticated users" on public.product_nutrition;
+drop policy if exists "Product nutrition is insertable by authenticated users" on public.product_nutrition;
+drop policy if exists "Product nutrition is updatable by authenticated users" on public.product_nutrition;
+
+drop policy if exists "Product sources are readable by authenticated users" on public.product_sources;
+drop policy if exists "Product sources are insertable by authenticated users" on public.product_sources;
+
+drop policy if exists "Product images are readable by authenticated users" on public.product_images;
+drop policy if exists "Product images are insertable by authenticated users" on public.product_images;
+
+drop policy if exists "Product reports are readable by reporter" on public.product_reports;
+drop policy if exists "Product reports are insertable by reporter" on public.product_reports;
 
 create policy "Products are readable by authenticated users"
   on public.products for select to authenticated using (true);
@@ -138,6 +155,9 @@ begin
   return new;
 end;
 $$;
+
+drop trigger if exists products_touch_updated_at on public.products;
+drop trigger if exists product_nutrition_touch_updated_at on public.product_nutrition;
 
 create trigger products_touch_updated_at
   before update on public.products
