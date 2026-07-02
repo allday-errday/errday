@@ -73,5 +73,5 @@ export async function signup(
     };
   }
 
-  redirect("/today");
+  redirect("/onboarding");
 }

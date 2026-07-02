@@ -5,6 +5,7 @@ import { searchProducts } from "@/lib/food-search/client";
 import type { NormalizedFoodProduct } from "@/lib/food-search/types";
 import {
   lookupBarcode,
+  normalizeBarcode,
   type BarcodeLookupResult,
   type CanonicalProduct,
 } from "@/lib/products/lookup";
@@ -57,12 +58,16 @@ export default async function FoodSearchPage({
 }: FoodSearchPageProps) {
   const { supabase, user } = await requireUser();
   const params = await searchParams;
-  const query = params.q?.trim() ?? "";
-  const barcode = params.barcode?.trim() ?? "";
+  const query = params.q?.trim() ?? params.barcode?.trim() ?? "";
   const selectedSlot = isMealSlot(params.slot) ? params.slot : "";
-  const searchResult = query
-    ? await searchProducts(query)
-    : { error: null, products: [] };
+
+  // One relaxed search box: digits are treated as a barcode, everything
+  // else searches the Swiss food database by name.
+  const barcode = normalizeBarcode(query);
+  const searchResult =
+    query && !barcode
+      ? await searchProducts(query)
+      : { error: null, products: [] };
   const products = searchResult.products;
 
   let barcodeResult: BarcodeLookupResult | null = null;
@@ -92,7 +97,7 @@ export default async function FoodSearchPage({
                 className="min-h-12 min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
                 defaultValue={query}
                 name="q"
-                placeholder="Apfel, Poulet, Haferflocken..."
+                placeholder="Apfel, Poulet — or a barcode"
                 type="search"
               />
               <button
@@ -117,38 +122,6 @@ export default async function FoodSearchPage({
         </p>
       </section>
 
-      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
-        <form className="grid gap-3">
-          {selectedSlot ? (
-            <input name="slot" type="hidden" value={selectedSlot} />
-          ) : null}
-          <label className="grid gap-2 text-sm font-bold text-zinc-300">
-            Barcode
-            <div className="grid gap-2 sm:flex">
-              <input
-                className="min-h-12 min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
-                defaultValue={barcode}
-                inputMode="numeric"
-                name="barcode"
-                pattern="[0-9]*"
-                placeholder="7610032011234"
-                type="search"
-              />
-              <button
-                className="min-h-12 rounded-lg bg-[var(--accent)] px-4 text-sm font-bold text-black"
-                type="submit"
-              >
-                Look up
-              </button>
-            </div>
-          </label>
-        </form>
-        <p className="mt-3 text-xs leading-5 text-zinc-500">
-          Swiss supermarket products by barcode. Errday keeps its own cleaned
-          product database and fills gaps from Open Food Facts.
-        </p>
-      </section>
-
       {barcodeResult ? (
         <BarcodeResult result={barcodeResult} selectedSlot={selectedSlot} />
       ) : null}
@@ -158,7 +131,7 @@ export default async function FoodSearchPage({
 
       {!query ? (
         <EmptyState />
-      ) : searchResult.error ? null : products.length === 0 ? (
+      ) : barcode ? null : searchResult.error ? null : products.length === 0 ? (
         <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
           <h2 className="font-bold text-white">No product found</h2>
           <p className="mt-2 text-sm leading-6 text-zinc-500">

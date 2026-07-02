@@ -11,7 +11,7 @@ type AppShellProps = {
   children: ReactNode;
 };
 
-const authRoutes = new Set(["/login", "/signup"]);
+const authRoutes = new Set(["/login", "/signup", "/onboarding"]);
 
 export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();

@@ -15,6 +15,7 @@ import {
   createWorkoutTemplate,
   deleteWorkout,
   finishActiveWorkoutSession,
+  getActiveWorkoutSession,
   getWorkoutTemplate,
   startActiveWorkoutSession,
 } from "@/lib/db/gym";
@@ -113,6 +114,13 @@ export async function removeWorkout(formData: FormData) {
 
 export async function startEmptyWorkout() {
   const { supabase, user } = await requireUser();
+
+  // Double-tap guard: one active workout at a time — resume instead.
+  const existing = await getActiveWorkoutSession(supabase, user.id);
+  if (existing?.workout_id) {
+    redirect(`/gym/workout/${existing.workout_id}`);
+  }
+
   const workout = await createWorkout(supabase, {
     user_id: user.id,
     date: todayDateString(),
@@ -126,6 +134,12 @@ export async function startEmptyWorkout() {
 
 export async function startWorkoutFromSelection(formData: FormData) {
   const { supabase, user } = await requireUser();
+
+  const existing = await getActiveWorkoutSession(supabase, user.id);
+  if (existing?.workout_id) {
+    redirect(`/gym/workout/${existing.workout_id}`);
+  }
+
   const exerciseIds = formData
     .getAll("exercise_id")
     .filter((value): value is string => typeof value === "string");

@@ -2,9 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { ExerciseRow } from "@/components/gym/exercise-row";
-import { ExerciseThumbnail } from "@/components/gym/exercise-thumbnail";
 import { MuscleFilterChips } from "@/components/gym/muscle-filter-chips";
-import { SetInputRow } from "@/components/gym/set-input-row";
+import { WorkoutExercisePanel } from "@/components/gym/workout-exercise-panel";
 import { WorkoutTimer } from "@/components/gym/workout-timer";
 import { SubmitButton } from "@/components/submit-button";
 import { requireUser } from "@/lib/auth";
@@ -122,85 +121,30 @@ export default async function WorkoutPage({
         ) : (
           workout.workout_exercises.map((workoutExercise, index) => {
             const exercise = workoutExercise.exercises;
-            const sets = workout.workout_sets.filter(
-              (set) => set.exercise_id === workoutExercise.exercise_id,
-            );
-            const completedSets = sets.filter(
-              (set) => set.reps !== null || set.weight_kg !== null,
-            ).length;
+            const sets = workout.workout_sets
+              .filter((set) => set.exercise_id === workoutExercise.exercise_id)
+              .map((set) => ({
+                id: set.id,
+                set_number: set.set_number,
+                weight_kg: set.weight_kg === null ? null : Number(set.weight_kg),
+                reps: set.reps,
+              }));
             const nextSetNumber =
               Math.max(0, ...sets.map((set) => set.set_number)) + 1;
-            const isExpanded = index === 0;
 
             return (
-              <article key={workoutExercise.id}>
-                <div className="mb-4 flex items-center gap-4">
-                  <ExerciseThumbnail
-                    imageKey={exercise?.image_key}
-                    name={exercise?.name ?? "Exercise"}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <h2 className="truncate text-2xl font-semibold text-[var(--text)]">
-                      {exercise?.name ?? "Exercise"}
-                    </h2>
-                    {isExpanded ? (
-                      <p className="mt-3 text-base text-[var(--text)]">
-                        {exercise?.instructions ?? "Track clean reps and weight."}
-                      </p>
-                    ) : (
-                      <p className="mt-1 text-base text-zinc-500">
-                        {completedSets}/{workoutExercise.target_sets} Done
-                      </p>
-                    )}
-                  </div>
-                  <div className="text-zinc-600">
-                    <svg aria-hidden="true" className="size-6" fill="currentColor" viewBox="0 0 24 24">
-                      <circle cx="12" cy="5" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="12" cy="19" r="1.6" />
-                    </svg>
-                  </div>
-                </div>
-
-                {isExpanded ? (
-                  <div>
-                    <p className="mb-5 text-lg font-semibold text-[var(--accent)]">
-                      Rest Timer: 2min
-                    </p>
-                    <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,1fr)_2.75rem] gap-2 text-xs font-bold uppercase text-zinc-500 sm:grid-cols-[3rem_1fr_1fr_3rem] sm:gap-3">
-                      <span>Set</span>
-                      <span className="text-center">Kg</span>
-                      <span className="text-center">Reps</span>
-                      <span />
-                    </div>
-                    <div className="mt-3 space-y-3">
-                      {sets.map((set) => (
-                        <div
-                          className="grid grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,1fr)_2.75rem] items-center gap-2 sm:grid-cols-[3rem_1fr_1fr_3rem] sm:gap-3"
-                          key={set.id}
-                        >
-                          <span className="text-xl font-semibold text-[var(--text)] sm:text-2xl">
-                            {set.set_number}
-                          </span>
-                          <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-3 text-center text-lg font-semibold text-white sm:text-xl">
-                            {set.weight_kg ?? "-"}
-                          </div>
-                          <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-3 text-center text-lg font-semibold text-white sm:text-xl">
-                            {set.reps ?? "-"}
-                          </div>
-                          <div className="grid size-11 place-items-center rounded-full bg-[var(--accent)] text-xs font-semibold text-white sm:size-12 sm:text-sm">
-                            OK
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <SetInputRow
-                      exerciseId={workoutExercise.exercise_id}
-                      exerciseName={exercise?.name ?? "Exercise"}
-                      nextSetNumber={nextSetNumber}
-                      workoutId={workout.id}
-                    />
-                  </div>
-                ) : null}
-              </article>
+              <WorkoutExercisePanel
+                defaultExpanded={index === 0}
+                exerciseId={workoutExercise.exercise_id}
+                exerciseName={exercise?.name ?? "Exercise"}
+                imageKey={exercise?.image_key ?? null}
+                instructions={exercise?.instructions ?? null}
+                key={workoutExercise.id}
+                nextSetNumber={nextSetNumber}
+                sets={sets}
+                targetSets={workoutExercise.target_sets}
+                workoutId={workout.id}
+              />
             );
           })
         )}

@@ -38,7 +38,7 @@ export async function login(
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -47,5 +47,12 @@ export async function login(
     return { status: "error", message: error.message };
   }
 
-  redirect("/today");
+  // First login without a profile goes through onboarding.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("calorie_target")
+    .eq("id", data.user.id)
+    .maybeSingle<{ calorie_target: number | null }>();
+
+  redirect(profile?.calorie_target ? "/today" : "/onboarding");
 }

@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { FormMessage } from "@/components/form-message";
+import { SET_LOGGED_EVENT } from "@/components/gym/rest-timer";
 import { initialActionState } from "@/lib/forms";
 import { saveWorkoutSet } from "@/app/gym/actions";
 
@@ -22,6 +23,12 @@ export function SetInputRow({
   workoutId,
 }: SetInputRowProps) {
   const [state, formAction] = useActionState(saveWorkoutSet, initialActionState);
+
+  useEffect(() => {
+    if (state.status === "success") {
+      window.dispatchEvent(new Event(SET_LOGGED_EVENT));
+    }
+  }, [state]);
 
   return (
     <form action={formAction} className="mt-3 space-y-3">
