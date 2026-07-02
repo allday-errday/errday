@@ -2,13 +2,13 @@
 -- energy, sleep) to /api/health/ingest using a secret sync token, the same
 -- pattern as the Apple Calendar feed.
 
-create table public.health_sync_tokens (
+create table if not exists public.health_sync_tokens (
   user_id uuid primary key references auth.users(id) on delete cascade,
   token text not null unique check (char_length(token) >= 32),
   created_at timestamptz not null default now()
 );
 
-create table public.health_daily_metrics (
+create table if not exists public.health_daily_metrics (
   user_id uuid not null references auth.users(id) on delete cascade,
   date date not null,
   steps integer null check (steps >= 0 and steps <= 200000),
@@ -21,6 +21,16 @@ create table public.health_daily_metrics (
 
 alter table public.health_sync_tokens enable row level security;
 alter table public.health_daily_metrics enable row level security;
+
+drop policy if exists "owner_select" on public.health_sync_tokens;
+drop policy if exists "owner_insert" on public.health_sync_tokens;
+drop policy if exists "owner_update" on public.health_sync_tokens;
+drop policy if exists "owner_delete" on public.health_sync_tokens;
+
+drop policy if exists "owner_select" on public.health_daily_metrics;
+drop policy if exists "owner_insert" on public.health_daily_metrics;
+drop policy if exists "owner_update" on public.health_daily_metrics;
+drop policy if exists "owner_delete" on public.health_daily_metrics;
 
 create policy "owner_select" on public.health_sync_tokens
   for select to authenticated using (user_id = auth.uid());
