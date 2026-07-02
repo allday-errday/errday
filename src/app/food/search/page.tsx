@@ -3,16 +3,41 @@ import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { searchProducts } from "@/lib/food-search/client";
 import type { NormalizedFoodProduct } from "@/lib/food-search/types";
+import {
+  lookupBarcode,
+  type BarcodeLookupResult,
+  type CanonicalProduct,
+} from "@/lib/products/lookup";
+import { checkRateLimit } from "@/lib/security/rate-limit";
 import type { MealSlot } from "@/types/database";
 import { logFoodProduct } from "./actions";
 
 type FoodSearchPageProps = {
   searchParams: Promise<{
+    barcode?: string;
     error?: string;
     q?: string;
     slot?: string;
   }>;
 };
+
+function canonicalToNormalized(product: CanonicalProduct): NormalizedFoodProduct {
+  return {
+    brand: product.brand,
+    caloriesPer100g: product.nutrition.kcal100g,
+    carbsPer100g: product.nutrition.carbs100g,
+    category: product.category,
+    code: product.barcode,
+    fatPer100g: product.nutrition.fat100g,
+    imageUrl: product.imageUrl,
+    name: product.brand ? `${product.name} (${product.brand})` : product.name,
+    proteinPer100g: product.nutrition.protein100g,
+    servingSize: product.nutrition.servingSizeG
+      ? `${product.nutrition.servingSizeG} g`
+      : null,
+    source: "errday_products",
+  };
+}
 
 const mealSlots: Array<{ label: string; value: MealSlot }> = [
   { label: "Breakfast", value: "breakfast" },
@@ -30,14 +55,23 @@ function isMealSlot(value?: string): value is MealSlot {
 export default async function FoodSearchPage({
   searchParams,
 }: FoodSearchPageProps) {
-  await requireUser();
+  const { supabase, user } = await requireUser();
   const params = await searchParams;
   const query = params.q?.trim() ?? "";
+  const barcode = params.barcode?.trim() ?? "";
   const selectedSlot = isMealSlot(params.slot) ? params.slot : "";
   const searchResult = query
     ? await searchProducts(query)
     : { error: null, products: [] };
   const products = searchResult.products;
+
+  let barcodeResult: BarcodeLookupResult | null = null;
+  if (barcode) {
+    const lookupLimit = checkRateLimit(`barcode:${user.id}`, 30, 10 * 60);
+    barcodeResult = lookupLimit.allowed
+      ? await lookupBarcode(supabase, barcode)
+      : { status: "error", message: "Too many lookups. Try again in a few minutes." };
+  }
 
   return (
     <div>
@@ -83,6 +117,42 @@ export default async function FoodSearchPage({
         </p>
       </section>
 
+      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
+        <form className="grid gap-3">
+          {selectedSlot ? (
+            <input name="slot" type="hidden" value={selectedSlot} />
+          ) : null}
+          <label className="grid gap-2 text-sm font-bold text-zinc-300">
+            Barcode
+            <div className="grid gap-2 sm:flex">
+              <input
+                className="min-h-12 min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
+                defaultValue={barcode}
+                inputMode="numeric"
+                name="barcode"
+                pattern="[0-9]*"
+                placeholder="7610032011234"
+                type="search"
+              />
+              <button
+                className="min-h-12 rounded-lg bg-[var(--accent)] px-4 text-sm font-bold text-black"
+                type="submit"
+              >
+                Look up
+              </button>
+            </div>
+          </label>
+        </form>
+        <p className="mt-3 text-xs leading-5 text-zinc-500">
+          Swiss supermarket products by barcode. Errday keeps its own cleaned
+          product database and fills gaps from Open Food Facts.
+        </p>
+      </section>
+
+      {barcodeResult ? (
+        <BarcodeResult result={barcodeResult} selectedSlot={selectedSlot} />
+      ) : null}
+
       {params.error ? <ErrorMessage error={params.error} /> : null}
       {searchResult.error ? <ErrorMessage message={searchResult.error} /> : null}
 
@@ -114,6 +184,50 @@ export default async function FoodSearchPage({
         Back to manual food log
       </Link>
     </div>
+  );
+}
+
+function BarcodeResult({
+  result,
+  selectedSlot,
+}: {
+  result: BarcodeLookupResult;
+  selectedSlot: MealSlot | "";
+}) {
+  if (result.status === "found") {
+    const confidence = Math.round(result.product.confidenceScore * 100);
+    return (
+      <section className="mb-5 space-y-2">
+        <ProductCard
+          product={canonicalToNormalized(result.product)}
+          selectedSlot={selectedSlot}
+        />
+        <p className="px-1 text-xs text-zinc-500">
+          {result.product.status === "verified"
+            ? "Verified Errday product."
+            : `Data confidence ${confidence}% · Source: ${
+                result.product.primarySource === "open_food_facts"
+                  ? "Open Food Facts"
+                  : result.product.primarySource
+              }`}
+          {result.product.issues.length > 0
+            ? ` · Flagged: ${result.product.issues.join("; ")}`
+            : ""}
+        </p>
+      </section>
+    );
+  }
+
+  const messages: Record<string, string> = {
+    invalid_barcode: "That doesn't look like a valid barcode (8–14 digits).",
+    not_found:
+      "No product found for this barcode yet. You can log it manually on the Food page.",
+  };
+
+  return (
+    <p className="mb-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
+      {result.status === "error" ? result.message : messages[result.status]}
+    </p>
   );
 }
 

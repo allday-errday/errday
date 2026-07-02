@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { getCalendarFeedToken } from "@/lib/db/calendar";
 import { getProfile } from "@/lib/db/profile";
 import { safeRead } from "@/lib/db/safe-read";
+import { AppearanceToggle } from "./appearance-toggle";
 import { AppleCalendarCard } from "./apple-calendar-card";
 import { ReminderSettingsForm } from "./reminder-settings-form";
 import { logout } from "./actions";
@@ -27,9 +28,17 @@ export default async function SettingsPage() {
   return (
     <div>
       <PageHeader
-        subtitle="Your profile, goals and reminders. Errday keeps one clean brand mode for now."
+        subtitle="Your profile, goals, reminders and appearance."
         title="Settings"
       />
+
+      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+        <h2 className="text-lg font-semibold text-white">Appearance</h2>
+        <p className="mt-2 text-sm text-zinc-400">
+          Same design, two moods. Your choice is saved on this device.
+        </p>
+        <AppearanceToggle />
+      </section>
 
       <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
         <h2 className="mb-4 text-lg font-semibold text-white">Body Profile</h2>

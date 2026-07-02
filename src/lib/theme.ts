@@ -6,4 +6,7 @@ export const ERRDAY_BRAND_THEME = {
   secondary: "#c4bcff",
 } as const;
 
+export type ThemeMode = "dark" | "light";
+
+export const MODE_STORAGE_KEY = "errday.mode";
 export const LEGACY_THEME_STORAGE_KEY = "errday.appearance";

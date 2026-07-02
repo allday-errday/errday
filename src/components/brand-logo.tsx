@@ -63,7 +63,7 @@ export function ErrdayMark({
 
 export function ErrdayWordmark({ className = "" }: { className?: string }) {
   return (
-    <span className={`font-extrabold text-[#f3f4f7] ${className}`}>
+    <span className={`font-extrabold text-[var(--text)] ${className}`}>
       errday<span className="text-[var(--accent)]">.</span>
     </span>
   );
