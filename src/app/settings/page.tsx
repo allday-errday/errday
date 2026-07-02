@@ -1,14 +1,28 @@
+import { headers } from "next/headers";
 import { PageHeader } from "@/components/page-header";
 import { SubmitButton } from "@/components/submit-button";
 import { requireUser } from "@/lib/auth";
+import { getCalendarFeedToken } from "@/lib/db/calendar";
 import { getProfile } from "@/lib/db/profile";
+import { safeRead } from "@/lib/db/safe-read";
+import { AppleCalendarCard } from "./apple-calendar-card";
 import { ReminderSettingsForm } from "./reminder-settings-form";
 import { logout } from "./actions";
 import { SettingsForm } from "./settings-form";
 
 export default async function SettingsPage() {
   const { supabase, user } = await requireUser();
-  const profile = await getProfile(supabase, user.id);
+  const [profile, feedToken, headerList] = await Promise.all([
+    getProfile(supabase, user.id),
+    safeRead(getCalendarFeedToken(supabase, user.id), null, "calendar feed"),
+    headers(),
+  ]);
+  const host =
+    headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "localhost:3000";
+  const protocol =
+    headerList.get("x-forwarded-proto") ??
+    (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
+  const origin = `${protocol}://${host}`;
 
   return (
     <div>
@@ -49,6 +63,14 @@ export default async function SettingsPage() {
             Save your profile to calculate calorie and macro targets.
           </p>
         )}
+      </section>
+
+      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+        <h2 className="text-lg font-semibold text-white">Apple Calendar</h2>
+        <AppleCalendarCard
+          feedPath={feedToken ? `/api/calendar/feed/${feedToken.token}` : null}
+          origin={origin}
+        />
       </section>
 
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">

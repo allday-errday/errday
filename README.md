@@ -96,7 +96,27 @@ templates, workout logs and nutrition targets, run:
 supabase/migrations/0004_food_workout_tracking.sql
 ```
 
+For the calendar (events, AI coach calendar tools and the Apple Calendar feed), run:
+
+```text
+supabase/migrations/0009_calendar.sql
+```
+
 Apply migrations manually in order through the Supabase SQL Editor. Copy the full SQL file contents, paste into a new SQL Editor query, and run it.
+
+## Apple Calendar sync
+
+Errday publishes a private ICS feed that the iPhone Calendar app can subscribe to.
+
+1. Open Settings in Errday and enable the Apple Calendar feed. This creates a secret feed link (rotate or disable it anytime).
+2. On the iPhone: Settings → Apps → Calendar → Calendar Accounts → Add Account → Other → Add Subscribed Calendar, then paste the link.
+3. Events with a reminder include native alarms, so the phone rings without Errday being open.
+
+The phone must be able to reach the app's address, so deploy Errday (or use a tunnel) — a feed served only on `localhost` is not reachable from the phone. Apple refreshes subscribed calendars periodically.
+
+## AI coach calendar actions
+
+With a tool-capable Ollama model (for example `qwen3:4b` or `llama3.1:8b`, set via `OLLAMA_MODEL`), the coach can add, list and delete calendar events in chat ("Schedule leg day tomorrow at 18:00 with a reminder"). With models that cannot use tools (like `gemma3`), the coach still chats but calendar actions are disabled automatically.
 
 ## Local development
 

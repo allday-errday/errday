@@ -1,4 +1,10 @@
-export type NavIconName = "food" | "gym" | "journal" | "sleep" | "today";
+export type NavIconName =
+  | "calendar"
+  | "food"
+  | "gym"
+  | "journal"
+  | "sleep"
+  | "today";
 
 export type NavItem = {
   href: string;
@@ -12,6 +18,7 @@ export const navItems: NavItem[] = [
   { href: "/food", icon: "food", label: "Food" },
   { href: "/sleep", icon: "sleep", label: "Sleep" },
   { href: "/journal", icon: "journal", label: "Journal" },
+  { href: "/calendar", icon: "calendar", label: "Calendar" },
 ];
 
 export function NavIcon({
@@ -62,6 +69,18 @@ export function NavIcon({
         <path d="M7 11v10" />
         <path d="M15 3h2a3 3 0 0 1 3 3v15" />
         <path d="M15 3v9h5" />
+      </svg>
+    );
+  }
+
+  if (name === "calendar") {
+    return (
+      <svg {...common}>
+        <rect height="16" rx="2" width="18" x="3" y="5" />
+        <path d="M3 10h18" />
+        <path d="M8 3v4" />
+        <path d="M16 3v4" />
+        <path d="m9.5 15.5 1.5 1.5 3.5-3.5" />
       </svg>
     );
   }

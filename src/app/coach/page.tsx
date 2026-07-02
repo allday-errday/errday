@@ -1,5 +1,6 @@
 import { requireUser } from "@/lib/auth";
-import { isOllamaAvailable } from "@/lib/ai/ollama";
+import { modelSupportsTools } from "@/lib/ai/coach-tools";
+import { isOllamaAvailable, ollamaModelName } from "@/lib/ai/ollama";
 import { CoachChat } from "./coach-chat";
 
 export const metadata = {
@@ -9,6 +10,8 @@ export const metadata = {
 export default async function CoachPage() {
   await requireUser();
   const available = await isOllamaAvailable();
+  const modelName = ollamaModelName();
+  const calendarEnabled = modelSupportsTools(modelName);
 
   return (
     <div className="mx-auto max-w-[1120px]">
@@ -23,7 +26,11 @@ export default async function CoachPage() {
         </p>
       </header>
 
-      <CoachChat available={available} />
+      <CoachChat
+        available={available}
+        calendarEnabled={calendarEnabled}
+        modelName={modelName}
+      />
     </div>
   );
 }

@@ -14,7 +14,7 @@ export function BottomNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-md px-2 pb-[calc(0.55rem+env(safe-area-inset-bottom))] pt-2 lg:hidden">
       <div className="rounded-2xl border border-white/10 bg-[var(--bg-soft)]/95 px-2 py-2 shadow-2xl shadow-black/45 backdrop-blur-xl">
-        <div className="grid grid-cols-5 gap-1">
+        <div className="grid grid-cols-6 gap-1">
           {navItems.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(`${item.href}/`);

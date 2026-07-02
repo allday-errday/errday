@@ -5,6 +5,10 @@ import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { todayDateString } from "@/lib/dates";
 import {
+  deleteCalendarFeedToken,
+  rotateCalendarFeedToken,
+} from "@/lib/db/calendar";
+import {
   upsertBodyWeightLog,
   upsertNutritionTarget,
   upsertProfile,
@@ -172,4 +176,16 @@ export async function saveReminderSettings(
     status: "success",
     message: "Reminder settings saved.",
   };
+}
+
+export async function enableCalendarFeed() {
+  const { supabase, user } = await requireUser();
+  await rotateCalendarFeedToken(supabase, user.id);
+  revalidatePath("/settings");
+}
+
+export async function disableCalendarFeed() {
+  const { supabase, user } = await requireUser();
+  await deleteCalendarFeedToken(supabase, user.id);
+  revalidatePath("/settings");
 }

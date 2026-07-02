@@ -3,6 +3,7 @@ import { detectDayType } from "@/lib/daily-flow/plan";
 import { generateDailyPlan } from "@/lib/daily-flow/plan";
 import { calculateDailyFlowScore } from "@/lib/daily-flow/score";
 import { todayDateString } from "@/lib/dates";
+import { listCalendarEvents } from "@/lib/db/calendar";
 import {
   getDailyProfile,
   getDaySetting,
@@ -15,6 +16,7 @@ import { DailyScoreCard } from "./_components/DailyScoreCard";
 import { DailyStatsGrid, type DailyStat } from "./_components/DailyStatsGrid";
 import { QuickActionsGrid } from "./_components/QuickActionsGrid";
 import { TodayHeader } from "./_components/TodayHeader";
+import { UpcomingEvents } from "./_components/UpcomingEvents";
 import { WaterLogButtons } from "./_components/WaterLogButtons";
 
 const burnedCaloriesGoal = 300;
@@ -22,12 +24,25 @@ const burnedCaloriesGoal = 300;
 export default async function TodayPage() {
   const { supabase, user } = await requireUser();
   const today = todayDateString();
-  const [dashboard, dailyProfile, daySetting, waterTotalMl] = await Promise.all([
-    getTodayDashboard(supabase, user.id),
-    safeRead(getDailyProfile(supabase, user.id), null, "daily profile"),
-    safeRead(getDaySetting(supabase, user.id, today), null, "day setting"),
-    safeRead(getTodayWaterTotal(supabase, user.id, today), 0, "water total"),
-  ]);
+  const upcomingEnd = new Date(`${today}T00:00:00Z`);
+  upcomingEnd.setUTCDate(upcomingEnd.getUTCDate() + 7);
+  const [dashboard, dailyProfile, daySetting, waterTotalMl, upcomingEvents] =
+    await Promise.all([
+      getTodayDashboard(supabase, user.id),
+      safeRead(getDailyProfile(supabase, user.id), null, "daily profile"),
+      safeRead(getDaySetting(supabase, user.id, today), null, "day setting"),
+      safeRead(getTodayWaterTotal(supabase, user.id, today), 0, "water total"),
+      safeRead(
+        listCalendarEvents(
+          supabase,
+          user.id,
+          today,
+          upcomingEnd.toISOString().slice(0, 10),
+        ),
+        [],
+        "upcoming events",
+      ),
+    ]);
   const waterTargetMl = dailyProfile?.water_goal_ml ?? 2500;
   const sleepTargetHours = dailyProfile
     ? Number(dailyProfile.sleep_goal_hours)
@@ -141,6 +156,7 @@ export default async function TodayPage() {
         </div>
         <aside className="grid gap-5">
           <WaterLogButtons />
+          <UpcomingEvents events={upcomingEvents.slice(0, 4)} today={today} />
           <div className="surface-panel overflow-hidden p-6">
             <p className="eyebrow">Keep the streak</p>
             <p className="mt-4 text-2xl font-extrabold text-white">

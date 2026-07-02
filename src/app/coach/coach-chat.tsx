@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { Camera, ImagePlus, LoaderCircle, Send, Sparkles, X } from "lucide-react";
+import { CalendarCheck, Camera, ImagePlus, LoaderCircle, Send, Sparkles, X } from "lucide-react";
 import { FormEvent, useRef, useState } from "react";
 import {
   Conversation,
@@ -17,17 +17,31 @@ import {
 
 type CoachChatProps = {
   available: boolean;
+  calendarEnabled: boolean;
+  modelName: string;
 };
 
-const suggestions = [
+const baseSuggestions = [
   "Plan a simple push workout for today",
   "What should I eat before training?",
   "Help me understand last night's recovery",
 ];
 
+const calendarSuggestions = [
+  "Schedule leg day tomorrow at 18:00 with a reminder",
+  "What's on my calendar this week?",
+];
+
 const coachTransport = new DefaultChatTransport({ api: "/api/coach" });
 
-export function CoachChat({ available }: CoachChatProps) {
+export function CoachChat({
+  available,
+  calendarEnabled,
+  modelName,
+}: CoachChatProps) {
+  const suggestions = calendarEnabled
+    ? [...calendarSuggestions, ...baseSuggestions.slice(0, 2)]
+    : baseSuggestions;
   const [input, setInput] = useState("");
   const [files, setFiles] = useState<FileList>();
   const [fileError, setFileError] = useState<string | null>(null);
@@ -158,6 +172,15 @@ export function CoachChat({ available }: CoachChatProps) {
                         );
                       }
 
+                      if (part.type.startsWith("tool-")) {
+                        return (
+                          <ToolActivity
+                            key={`${message.id}-tool-${index}`}
+                            part={part as ToolPart}
+                          />
+                        );
+                      }
+
                       return null;
                     })}
                   </MessageContent>
@@ -178,8 +201,8 @@ export function CoachChat({ available }: CoachChatProps) {
         <div className="border-t border-[var(--border)] bg-[var(--bg)]/70 p-3 sm:p-4">
           {!available ? (
             <p className="mb-3 rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm leading-6 text-amber-200">
-              Start Ollama on this PC, make sure gemma3:4b is installed, then
-              reload this page.
+              Start Ollama on this PC, make sure {modelName} is installed
+              (ollama pull {modelName}), then reload this page.
             </p>
           ) : null}
           {error ? (
@@ -238,11 +261,79 @@ export function CoachChat({ available }: CoachChatProps) {
 
       <aside className="space-y-3">
         <InfoCard icon="01" title="Talk naturally">No commands. Tell it what happened, what you ate, or what feels off.</InfoCard>
-        <InfoCard icon="02" title="Snap a meal">Use the camera button. Food recognition returns an honest range with assumptions.</InfoCard>
-        <InfoCard icon="03" title="Stays local">Your chats and meal photos are processed on this PC, without a paid cloud API.</InfoCard>
+        {calendarEnabled ? (
+          <InfoCard icon="02" title="Plans for you">Say &ldquo;schedule leg day tomorrow at 18:00&rdquo; — the coach adds it to your calendar and iPhone.</InfoCard>
+        ) : (
+          <InfoCard icon="02" title="Calendar actions off">{`${modelName} cannot use tools. Set OLLAMA_MODEL to qwen3:4b to let the coach add calendar events.`}</InfoCard>
+        )}
+        <InfoCard icon="03" title="Snap a meal">Use the camera button. Food recognition returns an honest range with assumptions.</InfoCard>
+        <InfoCard icon="04" title="Stays local">Your chats and meal photos are processed on this PC, without a paid cloud API.</InfoCard>
         <p className="px-2 pt-2 text-xs leading-5 text-zinc-600">AI estimates can be wrong and are not medical advice.</p>
       </aside>
     </div>
+  );
+}
+
+type ToolPart = {
+  type: string;
+  state?: string;
+  output?: unknown;
+  errorText?: string;
+};
+
+const toolLabels: Record<string, { pending: string; done: string }> = {
+  "tool-addCalendarEvent": {
+    pending: "Adding to your calendar…",
+    done: "Added to your calendar",
+  },
+  "tool-listCalendarEvents": {
+    pending: "Checking your calendar…",
+    done: "Checked your calendar",
+  },
+  "tool-deleteCalendarEvent": {
+    pending: "Removing from your calendar…",
+    done: "Removed from your calendar",
+  },
+};
+
+function ToolActivity({ part }: { part: ToolPart }) {
+  const labels = toolLabels[part.type] ?? {
+    pending: "Working…",
+    done: "Done",
+  };
+
+  if (part.state === "output-error") {
+    return (
+      <p className="w-fit rounded-full border border-red-500/25 bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-300">
+        Calendar action failed{part.errorText ? ` — ${part.errorText}` : ""}
+      </p>
+    );
+  }
+
+  const isDone = part.state === "output-available";
+  const output = part.output as
+    | { event?: { title?: string; date?: string } }
+    | undefined;
+  const detail =
+    isDone && output?.event?.title
+      ? `: ${output.event.title} · ${output.event.date}`
+      : "";
+
+  return (
+    <p
+      className={`flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold ${
+        isDone
+          ? "border-[var(--accent)]/30 bg-[var(--accent-soft)] text-[var(--accent)]"
+          : "border-[var(--border)] bg-[var(--surface)] text-zinc-400"
+      }`}
+    >
+      {isDone ? (
+        <CalendarCheck className="size-3.5" />
+      ) : (
+        <LoaderCircle className="size-3.5 animate-spin" />
+      )}
+      {isDone ? `${labels.done}${detail}` : labels.pending}
+    </p>
   );
 }
 

@@ -353,3 +353,37 @@ export type WorkoutWithDetails = Workout & {
   workout_exercises: WorkoutExerciseWithExercise[];
   workout_sets: WorkoutSet[];
 };
+
+export type CalendarCategory =
+  | "workout"
+  | "meal"
+  | "sleep"
+  | "reminder"
+  | "general";
+
+export interface CalendarEvent {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string | null;
+  location: string | null;
+  date: string;
+  start_time: string | null;
+  end_time: string | null;
+  category: CalendarCategory;
+  reminder_minutes: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type CalendarEventInsert = Omit<
+  CalendarEvent,
+  "id" | "created_at" | "updated_at"
+> &
+  Partial<Pick<CalendarEvent, "id">>;
+
+export interface CalendarFeedToken {
+  user_id: string;
+  token: string;
+  created_at: string;
+}
