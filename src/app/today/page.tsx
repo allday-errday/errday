@@ -9,6 +9,7 @@ import {
   getDaySetting,
   getTodayWaterTotal,
 } from "@/lib/db/daily-flow";
+import { getHealthMetricsForDay } from "@/lib/db/health";
 import { safeRead } from "@/lib/db/safe-read";
 import { getTodayDashboard } from "@/lib/db/today";
 import { DailyPlanTimeline } from "./_components/DailyPlanTimeline";
@@ -20,29 +21,41 @@ import { UpcomingEvents } from "./_components/UpcomingEvents";
 import { WaterLogButtons } from "./_components/WaterLogButtons";
 
 const burnedCaloriesGoal = 300;
+const stepsGoal = 10_000;
 
 export default async function TodayPage() {
   const { supabase, user } = await requireUser();
   const today = todayDateString();
   const upcomingEnd = new Date(`${today}T00:00:00Z`);
   upcomingEnd.setUTCDate(upcomingEnd.getUTCDate() + 7);
-  const [dashboard, dailyProfile, daySetting, waterTotalMl, upcomingEvents] =
-    await Promise.all([
-      getTodayDashboard(supabase, user.id),
-      safeRead(getDailyProfile(supabase, user.id), null, "daily profile"),
-      safeRead(getDaySetting(supabase, user.id, today), null, "day setting"),
-      safeRead(getTodayWaterTotal(supabase, user.id, today), 0, "water total"),
-      safeRead(
-        listCalendarEvents(
-          supabase,
-          user.id,
-          today,
-          upcomingEnd.toISOString().slice(0, 10),
-        ),
-        [],
-        "upcoming events",
+  const [
+    dashboard,
+    dailyProfile,
+    daySetting,
+    waterTotalMl,
+    upcomingEvents,
+    healthMetrics,
+  ] = await Promise.all([
+    getTodayDashboard(supabase, user.id),
+    safeRead(getDailyProfile(supabase, user.id), null, "daily profile"),
+    safeRead(getDaySetting(supabase, user.id, today), null, "day setting"),
+    safeRead(getTodayWaterTotal(supabase, user.id, today), 0, "water total"),
+    safeRead(
+      listCalendarEvents(
+        supabase,
+        user.id,
+        today,
+        upcomingEnd.toISOString().slice(0, 10),
       ),
-    ]);
+      [],
+      "upcoming events",
+    ),
+    safeRead(
+      getHealthMetricsForDay(supabase, user.id, today),
+      null,
+      "health metrics",
+    ),
+  ]);
   const waterTargetMl = dailyProfile?.water_goal_ml ?? 2500;
   const sleepTargetHours = dailyProfile
     ? Number(dailyProfile.sleep_goal_hours)
@@ -60,8 +73,13 @@ export default async function TodayPage() {
   const sleepHours = dashboard.todaySleep
     ? Number(dashboard.todaySleep.sleep_hours)
     : 0;
+  // The watch's active energy already includes workouts, so it wins when synced.
+  const burnedCalories = healthMetrics?.active_energy_kcal
+    ? Math.round(Number(healthMetrics.active_energy_kcal))
+    : dashboard.workoutCalories;
+  const steps = healthMetrics?.steps ?? null;
   const scoreResult = calculateDailyFlowScore({
-    burnedCalories: dashboard.workoutCalories,
+    burnedCalories,
     burnedCaloriesGoal,
     caloriesConsumed: dashboard.foodTotals.calories,
     calorieTarget: dashboard.targetCalories,
@@ -98,9 +116,21 @@ export default async function TodayPage() {
     {
       icon: "burned",
       label: "Burned",
-      progress: dashboard.workoutCalories / burnedCaloriesGoal,
-      value: `${dashboard.workoutCalories.toLocaleString("en-US")}`,
-      helper: `/ ${burnedCaloriesGoal} kcal goal`,
+      progress: burnedCalories / burnedCaloriesGoal,
+      value: `${burnedCalories.toLocaleString("en-US")}`,
+      helper: healthMetrics?.active_energy_kcal
+        ? "kcal · Apple Health"
+        : `/ ${burnedCaloriesGoal} kcal goal`,
+    },
+    {
+      icon: "steps",
+      label: "Steps",
+      progress: steps !== null ? steps / stepsGoal : 0,
+      value: steps !== null ? steps.toLocaleString("en-US") : "—",
+      helper:
+        steps !== null
+          ? `/ ${stepsGoal.toLocaleString("en-US")} goal`
+          : "Connect Apple Health",
     },
     {
       icon: "protein",
@@ -156,19 +186,7 @@ export default async function TodayPage() {
         </div>
         <aside className="grid gap-5">
           <WaterLogButtons />
-          <UpcomingEvents events={upcomingEvents.slice(0, 4)} today={today} />
-          <div className="surface-panel overflow-hidden p-6">
-            <p className="eyebrow">Keep the streak</p>
-            <p className="mt-4 text-2xl font-extrabold text-white">
-              Small inputs.<br />Big momentum.
-            </p>
-            <p className="mt-3 max-w-sm text-sm leading-6 text-zinc-400">
-              Your score moves with every meal, session, glass and check-in.
-            </p>
-            <div className="mt-8 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
-              <div className="h-full w-2/3 rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--signal)]" />
-            </div>
-          </div>
+          <UpcomingEvents events={upcomingEvents.slice(0, 3)} today={today} />
         </aside>
       </div>
     </div>

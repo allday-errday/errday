@@ -22,10 +22,10 @@ const statusLabels: Record<PlanItemStatus, string> = {
 export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
   return (
     <section>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Your rhythm</p>
-          <h2 className="mt-3 text-2xl font-extrabold leading-tight text-white sm:text-4xl">
+          <h2 className="mt-2 text-lg font-extrabold leading-tight text-white sm:text-xl">
             The day, mapped out.
           </h2>
         </div>

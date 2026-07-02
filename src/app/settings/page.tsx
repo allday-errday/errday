@@ -3,19 +3,22 @@ import { PageHeader } from "@/components/page-header";
 import { SubmitButton } from "@/components/submit-button";
 import { requireUser } from "@/lib/auth";
 import { getCalendarFeedToken } from "@/lib/db/calendar";
+import { getHealthSyncToken } from "@/lib/db/health";
 import { getProfile } from "@/lib/db/profile";
 import { safeRead } from "@/lib/db/safe-read";
 import { AppearanceToggle } from "./appearance-toggle";
 import { AppleCalendarCard } from "./apple-calendar-card";
+import { AppleHealthCard } from "./apple-health-card";
 import { ReminderSettingsForm } from "./reminder-settings-form";
 import { logout } from "./actions";
 import { SettingsForm } from "./settings-form";
 
 export default async function SettingsPage() {
   const { supabase, user } = await requireUser();
-  const [profile, feedToken, headerList] = await Promise.all([
+  const [profile, feedToken, healthToken, headerList] = await Promise.all([
     getProfile(supabase, user.id),
     safeRead(getCalendarFeedToken(supabase, user.id), null, "calendar feed"),
+    safeRead(getHealthSyncToken(supabase, user.id), null, "health sync"),
     headers(),
   ]);
   const host =
@@ -80,6 +83,11 @@ export default async function SettingsPage() {
           feedPath={feedToken ? `/api/calendar/feed/${feedToken.token}` : null}
           origin={origin}
         />
+      </section>
+
+      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+        <h2 className="text-lg font-semibold text-white">Apple Health</h2>
+        <AppleHealthCard origin={origin} token={healthToken?.token ?? null} />
       </section>
 
       <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">

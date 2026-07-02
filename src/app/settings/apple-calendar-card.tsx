@@ -35,7 +35,7 @@ export function AppleCalendarCard({ feedPath, origin }: AppleCalendarCardProps) 
           alerts.
         </p>
         <button
-          className="mt-4 min-h-12 rounded-xl bg-white px-5 text-sm font-extrabold text-[#101116] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-4 min-h-12 rounded-xl bg-white px-5 text-sm font-extrabold text-[var(--bg)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isPending}
           onClick={() =>
             startTransition(async () => {

@@ -9,6 +9,10 @@ import {
   rotateCalendarFeedToken,
 } from "@/lib/db/calendar";
 import {
+  deleteHealthSyncToken,
+  rotateHealthSyncToken,
+} from "@/lib/db/health";
+import {
   upsertBodyWeightLog,
   upsertNutritionTarget,
   upsertProfile,
@@ -187,5 +191,17 @@ export async function enableCalendarFeed() {
 export async function disableCalendarFeed() {
   const { supabase, user } = await requireUser();
   await deleteCalendarFeedToken(supabase, user.id);
+  revalidatePath("/settings");
+}
+
+export async function enableHealthSync() {
+  const { supabase, user } = await requireUser();
+  await rotateHealthSyncToken(supabase, user.id);
+  revalidatePath("/settings");
+}
+
+export async function disableHealthSync() {
+  const { supabase, user } = await requireUser();
+  await deleteHealthSyncToken(supabase, user.id);
   revalidatePath("/settings");
 }

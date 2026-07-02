@@ -9,11 +9,11 @@ const actions = [
 
 export function QuickActionsGrid() {
   return (
-    <section className="surface-panel flex h-full min-h-[22rem] flex-col p-5 sm:min-h-[28rem] sm:p-7">
-      <div className="mb-5 sm:mb-6">
+    <section className="surface-panel flex h-full flex-col p-5 sm:p-6">
+      <div className="mb-4">
         <div>
           <p className="eyebrow">Quick moves</p>
-          <h2 className="mt-3 text-2xl font-extrabold leading-tight text-white sm:text-3xl">
+          <h2 className="mt-2 text-lg font-extrabold leading-tight text-white sm:text-xl">
             Move the day forward.
           </h2>
         </div>

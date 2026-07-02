@@ -5,7 +5,15 @@ import { createPortal } from "react-dom";
 
 export type DailyStat = {
   helper: string;
-  icon: "burned" | "calories" | "carbs" | "fat" | "protein" | "sleep" | "water";
+  icon:
+    | "burned"
+    | "calories"
+    | "carbs"
+    | "fat"
+    | "protein"
+    | "sleep"
+    | "steps"
+    | "water";
   label: string;
   progress: number;
   value: string;
@@ -15,14 +23,14 @@ type DailyStatsGridProps = {
   stats: DailyStat[];
 };
 
-const STORAGE_KEY = "errday.todayStats.v2";
+const STORAGE_KEY = "errday.todayStats.v3";
 const DEFAULT_VISIBLE: DailyStat["icon"][] = [
   "calories",
-  "protein",
-  "carbs",
-  "fat",
-  "water",
   "burned",
+  "protein",
+  "water",
+  "sleep",
+  "steps",
 ];
 const DEFAULT_SNAPSHOT = JSON.stringify(DEFAULT_VISIBLE);
 const CHANGE_EVENT = "errday:today-stats-change";
@@ -33,6 +41,7 @@ const STAT_ICONS = new Set<DailyStat["icon"]>([
   "fat",
   "protein",
   "sleep",
+  "steps",
   "water",
 ]);
 
@@ -164,11 +173,11 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
   const shown = stats.filter((stat) => visible.includes(stat.icon));
 
   return (
-    <section className="py-8 sm:py-10 lg:py-14">
-      <div className="mb-5 flex items-end justify-between gap-3 sm:mb-6">
+    <section className="py-6 sm:py-8">
+      <div className="mb-4 flex items-end justify-between gap-3 sm:mb-5">
         <div>
           <p className="eyebrow">At a glance</p>
-          <h2 className="mt-3 text-2xl font-extrabold leading-tight text-white sm:text-4xl">
+          <h2 className="mt-2 text-lg font-extrabold leading-tight text-white sm:text-xl">
             Your vital signals.
           </h2>
         </div>
@@ -319,18 +328,18 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
         <div className={gridClassName(shown.length)}>
           {shown.map((stat) => (
             <article
-              className={`group min-h-40 rounded-2xl border border-white/10 bg-[var(--bg-soft)]/80 p-4 text-left shadow-xl shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-white/20 sm:min-h-44 sm:p-5 ${
+              className={`group min-h-32 rounded-2xl border border-white/10 bg-[var(--bg-soft)]/80 p-4 text-left shadow-xl shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-white/20 ${
                 customizing ? "ring-1 ring-[var(--accent)]/30" : ""
               }`}
               key={stat.icon}
             >
-              <div className="grid size-11 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)] transition group-hover:bg-[var(--accent)] group-hover:text-black">
-                <Icon className="size-6" name={stat.icon} />
+              <div className="grid size-9 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)] transition group-hover:bg-[var(--accent)] group-hover:text-black">
+                <Icon className="size-5" name={stat.icon} />
               </div>
-              <p className="mt-5 text-xs font-bold uppercase tracking-[0.13em] text-zinc-500">
+              <p className="mt-3 text-xs font-bold uppercase tracking-[0.13em] text-zinc-500">
                 {stat.label}
               </p>
-              <p className="mt-2 whitespace-nowrap text-2xl font-extrabold text-white sm:text-3xl">
+              <p className="mt-1 whitespace-nowrap text-xl font-extrabold text-white sm:text-2xl">
                 {stat.value}
               </p>
               <p className="mt-1 whitespace-nowrap text-xs font-semibold leading-5 text-zinc-500">
@@ -430,6 +439,17 @@ function Icon({
         <path d="M20.5 14.5A7.5 7.5 0 0 1 9.5 3.5 8.5 8.5 0 1 0 20.5 14.5Z" />
         <path d="M16 4.5h3" />
         <path d="M17.5 3v3" />
+      </svg>
+    );
+  }
+
+  if (name === "steps") {
+    return (
+      <svg {...common}>
+        <path d="M7 3c1.8 0 3 1.6 3 4 0 1.8-.6 3-2.2 3S5 8.8 5 6.5C5 4.4 5.8 3 7 3Z" />
+        <path d="M6.2 12.5h3.4l.2 2.6a2 2 0 0 1-2 2.2 2 2 0 0 1-2-2.2l.4-2.6Z" />
+        <path d="M17 7c1.2 0 2 1.4 2 3.5 0 2.3-.8 3.5-2.8 3.5S14 12.8 14 11c0-2.4 1.2-4 3-4Z" />
+        <path d="M14.4 16.5h3.4l.4 2.4a2 2 0 0 1-2 2.3 2 2 0 0 1-2-2.3l.2-2.4Z" />
       </svg>
     );
   }
