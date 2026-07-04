@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft } from "lucide-react";
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { Field, inputClassName } from "@/components/field";
 import { FormMessage } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
@@ -133,23 +133,11 @@ export function OnboardingForm() {
         ) : null}
 
         {step === 3 ? (
-          <div className="grid gap-5">
-            <input
-              aria-label="Birthdate"
-              className={`${inputClassName()} text-lg`}
-              onChange={(event) => setBirthdate(event.target.value)}
-              type="date"
-              value={birthdate}
-            />
-            <button
-              className="min-h-12 rounded-xl bg-[var(--accent)] text-sm font-extrabold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-40"
-              disabled={!birthdate}
-              onClick={() => setStep(4)}
-              type="button"
-            >
-              Continue
-            </button>
-          </div>
+          <BirthdateStep
+            birthdate={birthdate}
+            onContinue={() => setStep(4)}
+            setBirthdate={setBirthdate}
+          />
         ) : null}
 
         {step === 4 ? (
@@ -190,6 +178,132 @@ export function OnboardingForm() {
         ) : null}
       </div>
     </form>
+  );
+}
+
+function BirthdateStep({
+  birthdate,
+  onContinue,
+  setBirthdate,
+}: {
+  birthdate: string;
+  onContinue: () => void;
+  setBirthdate: (value: string) => void;
+}) {
+  const [day, setDay] = useState(birthdate ? birthdate.slice(8, 10) : "");
+  const [month, setMonth] = useState(birthdate ? birthdate.slice(5, 7) : "");
+  const [year, setYear] = useState(birthdate ? birthdate.slice(0, 4) : "");
+  const monthRef = useRef<HTMLInputElement>(null);
+  const yearRef = useRef<HTMLInputElement>(null);
+
+  function compose(d: string, m: string, y: string) {
+    const dayNum = Number(d);
+    const monthNum = Number(m);
+    const yearNum = Number(y);
+    const currentYear = new Date().getFullYear();
+
+    if (
+      d.length < 1 ||
+      m.length < 1 ||
+      y.length !== 4 ||
+      dayNum < 1 ||
+      monthNum < 1 ||
+      monthNum > 12 ||
+      yearNum < 1900 ||
+      yearNum > currentYear
+    ) {
+      setBirthdate("");
+      return;
+    }
+
+    // Reject impossible dates like 31.02.
+    const date = new Date(Date.UTC(yearNum, monthNum - 1, dayNum));
+    if (
+      date.getUTCFullYear() !== yearNum ||
+      date.getUTCMonth() !== monthNum - 1 ||
+      date.getUTCDate() !== dayNum
+    ) {
+      setBirthdate("");
+      return;
+    }
+
+    setBirthdate(
+      `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`,
+    );
+  }
+
+  function handle(
+    raw: string,
+    maxLength: number,
+    setter: (value: string) => void,
+    next?: React.RefObject<HTMLInputElement | null>,
+  ) {
+    const value = raw.replace(/\D/g, "").slice(0, maxLength);
+    setter(value);
+    if (value.length === maxLength) {
+      next?.current?.focus();
+    }
+    return value;
+  }
+
+  const boxClassName =
+    "min-h-16 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] text-center text-2xl font-extrabold text-white outline-none transition placeholder:text-zinc-600 focus:border-[var(--accent)]";
+
+  return (
+    <div className="grid gap-5">
+      <div className="grid grid-cols-[1fr_1fr_1.4fr] gap-3">
+        <label className="grid gap-2 text-center text-xs font-bold uppercase tracking-wide text-zinc-500">
+          Day
+          <input
+            autoFocus
+            className={boxClassName}
+            inputMode="numeric"
+            onChange={(event) => {
+              const value = handle(event.target.value, 2, setDay, monthRef);
+              compose(value, month, year);
+            }}
+            placeholder="17"
+            value={day}
+          />
+        </label>
+        <label className="grid gap-2 text-center text-xs font-bold uppercase tracking-wide text-zinc-500">
+          Month
+          <input
+            className={boxClassName}
+            inputMode="numeric"
+            onChange={(event) => {
+              const value = handle(event.target.value, 2, setMonth, yearRef);
+              compose(day, value, year);
+            }}
+            placeholder="04"
+            ref={monthRef}
+            value={month}
+          />
+        </label>
+        <label className="grid gap-2 text-center text-xs font-bold uppercase tracking-wide text-zinc-500">
+          Year
+          <input
+            className={boxClassName}
+            inputMode="numeric"
+            onChange={(event) => {
+              const value = handle(event.target.value, 4, setYear);
+              compose(day, month, value);
+            }}
+            placeholder="2001"
+            ref={yearRef}
+            value={year}
+          />
+        </label>
+      </div>
+      <button
+        className="min-h-12 rounded-xl bg-[var(--accent)] text-sm font-extrabold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-40"
+        disabled={!birthdate}
+        onClick={onContinue}
+        type="button"
+      >
+        Continue
+      </button>
+    </div>
   );
 }
 
