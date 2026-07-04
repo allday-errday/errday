@@ -1,4 +1,8 @@
-export type FoodSource = "swiss_nutrition" | "manual" | "errday_products";
+export type FoodSource =
+  | "swiss_nutrition"
+  | "manual"
+  | "errday_products"
+  | "open_food_facts";
 
 export type NormalizedFoodProduct = {
   brand: string | null;
