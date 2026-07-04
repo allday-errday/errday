@@ -31,7 +31,7 @@ export default async function OnboardingPage() {
           Let&apos;s set up your day.
         </h1>
         <p className="mt-3 text-sm leading-6 text-zinc-400">
-          Three quick questions — then Errday knows your targets and Today is
+          A few quick taps — then Errday knows your targets and Today is
           ready for you.
         </p>
       </div>
