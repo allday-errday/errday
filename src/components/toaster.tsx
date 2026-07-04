@@ -11,6 +11,8 @@ const PARAM_MESSAGES: Record<string, string> = {
   sleep: "Sleep tracked",
   weight: "Weight logged",
   journal: "Reflection saved",
+  confirmed: "Email confirmed — welcome to Errday!",
+  profile: "Profile saved — your targets are set",
 };
 
 type Toast = { id: number; message: string };

@@ -2,7 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseEnv } from "./env";
 
-const publicRoutes = ["/login", "/signup", "/auth/callback", "/imprint", "/privacy"];
+const publicRoutes = [
+  "/login",
+  "/signup",
+  "/auth/callback",
+  "/auth/confirm",
+  "/imprint",
+  "/privacy",
+];
 
 function isPublicRoute(pathname: string) {
   return publicRoutes.some(
