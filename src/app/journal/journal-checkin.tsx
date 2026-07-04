@@ -55,41 +55,43 @@ export function JournalCheckin({
       <input name="energy" type="hidden" value={energy ?? ""} />
       <input name="stress" type="hidden" value={stress ?? ""} />
 
-      <div className="surface-panel overflow-hidden">
-        <div className="p-5 sm:p-7">
-          <div className="flex items-start justify-between gap-3">
-            <p className="eyebrow">
-              {hasToday ? "Today, revisited" : "Tonight's reflection"}
-            </p>
-            <button
-              aria-label="New prompt"
-              className="flex min-h-9 items-center gap-2 rounded-full border border-[var(--border)] px-3 text-xs font-bold text-zinc-500 transition hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
-              onClick={() =>
-                setPromptIndex((current) => (current + 1) % prompts.length)
-              }
-              type="button"
-            >
-              <Shuffle className="size-3.5" />
-              New prompt
-            </button>
-          </div>
-          <p
-            className="mt-3 text-2xl font-extrabold leading-snug text-white [animation:fadeRise_0.25s_ease]"
-            key={promptIndex}
-          >
-            {prompts[promptIndex]}
+      <div className="relative isolate overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
+        {/* Soft brand glow instead of hard section dividers. */}
+        <div className="absolute -right-24 -top-28 -z-10 size-80 rounded-full bg-[var(--accent)]/14 blur-3xl" />
+        <div className="absolute -bottom-32 -left-20 -z-10 size-72 rounded-full bg-[var(--signal)]/10 blur-3xl" />
+
+        <div className="flex items-start justify-between gap-3">
+          <p className="eyebrow">
+            {hasToday ? "Today, revisited" : "Tonight's reflection"}
           </p>
-
-          <textarea
-            autoFocus
-            className="mt-5 min-h-44 w-full resize-none bg-transparent text-lg leading-8 text-[var(--text)] outline-none focus-visible:outline-none placeholder:text-zinc-600"
-            defaultValue={defaultContent}
-            name="content"
-            placeholder="Let it out — no one else can read this..."
-          />
+          <button
+            aria-label="New prompt"
+            className="flex min-h-9 items-center gap-2 rounded-full px-3 text-xs font-bold text-zinc-500 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+            onClick={() =>
+              setPromptIndex((current) => (current + 1) % prompts.length)
+            }
+            type="button"
+          >
+            <Shuffle className="size-3.5" />
+            New prompt
+          </button>
         </div>
+        <p
+          className="mt-3 text-2xl font-extrabold leading-snug text-white [animation:fadeRise_0.25s_ease]"
+          key={promptIndex}
+        >
+          {prompts[promptIndex]}
+        </p>
 
-        <div className="space-y-5 border-t border-[var(--border)] p-5 sm:p-7">
+        <textarea
+          autoFocus
+          className="mt-4 min-h-44 w-full resize-none bg-transparent text-lg leading-8 text-[var(--text)] outline-none focus-visible:outline-none placeholder:text-zinc-600"
+          defaultValue={defaultContent}
+          name="content"
+          placeholder="Let it out — no one else can read this..."
+        />
+
+        <div className="mt-6 space-y-5">
           <EmojiScale
             emojis={moodEmoji}
             label="Mood"
@@ -110,7 +112,7 @@ export function JournalCheckin({
           />
         </div>
 
-        <div className="border-t border-[var(--border)] p-5 sm:px-7">
+        <div className="mt-7">
           <FormMessage state={state} />
           <div className="grid">
             <SubmitButton pendingLabel="Saving...">
