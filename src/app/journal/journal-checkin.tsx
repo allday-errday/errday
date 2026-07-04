@@ -1,5 +1,6 @@
 "use client";
 
+import { Shuffle } from "lucide-react";
 import { useActionState, useState } from "react";
 import { FormMessage } from "@/components/form-message";
 import { SubmitButton } from "@/components/submit-button";
@@ -18,6 +19,8 @@ const prompts = [
 ];
 
 const moodEmoji = ["😔", "🙁", "😐", "🙂", "😄"];
+const energyEmoji = ["🪫", "😴", "😌", "⚡", "🚀"];
+const stressEmoji = ["🧘", "😌", "😬", "😣", "🤯"];
 
 type JournalCheckinProps = {
   defaultMood: number | null;
@@ -41,7 +44,9 @@ export function JournalCheckin({
   const [mood, setMood] = useState<number | null>(defaultMood);
   const [energy, setEnergy] = useState<number | null>(defaultEnergy);
   const [stress, setStress] = useState<number | null>(defaultStress);
-  const prompt = prompts[new Date().getDate() % prompts.length];
+  const [promptIndex, setPromptIndex] = useState(
+    () => new Date().getDate() % prompts.length,
+  );
 
   return (
     <form action={formAction}>
@@ -50,91 +55,107 @@ export function JournalCheckin({
       <input name="energy" type="hidden" value={energy ?? ""} />
       <input name="stress" type="hidden" value={stress ?? ""} />
 
-      <div className="rounded-[1.75rem] border border-[var(--border)] bg-gradient-to-b from-[var(--surface-2)] to-[var(--surface)] p-6">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--accent)]">
-          {hasToday ? "Today, revisited" : "Tonight's reflection"}
-        </p>
-        <p className="mt-2 text-xl font-bold leading-7 text-white">{prompt}</p>
+      <div className="surface-panel overflow-hidden">
+        <div className="p-5 sm:p-7">
+          <div className="flex items-start justify-between gap-3">
+            <p className="eyebrow">
+              {hasToday ? "Today, revisited" : "Tonight's reflection"}
+            </p>
+            <button
+              aria-label="New prompt"
+              className="flex min-h-9 items-center gap-2 rounded-full border border-[var(--border)] px-3 text-xs font-bold text-zinc-500 transition hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+              onClick={() =>
+                setPromptIndex((current) => (current + 1) % prompts.length)
+              }
+              type="button"
+            >
+              <Shuffle className="size-3.5" />
+              New prompt
+            </button>
+          </div>
+          <p
+            className="mt-3 text-2xl font-extrabold leading-snug text-white [animation:fadeRise_0.25s_ease]"
+            key={promptIndex}
+          >
+            {prompts[promptIndex]}
+          </p>
 
-        <textarea
-          autoFocus
-          className="mt-5 min-h-44 w-full resize-y rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 text-base leading-7 text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-[var(--accent)]/70"
-          defaultValue={defaultContent}
-          name="content"
-          placeholder="Let it out..."
-        />
-      </div>
+          <textarea
+            autoFocus
+            className="mt-5 min-h-44 w-full resize-y bg-transparent text-lg leading-8 text-[var(--text)] outline-none placeholder:text-zinc-600"
+            defaultValue={defaultContent}
+            name="content"
+            placeholder="Let it out — no one else can read this..."
+          />
+        </div>
 
-      <div className="mt-4 grid gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
-        <Scale
-          emojis={moodEmoji}
-          hint="rough → great"
-          label="Mood"
-          onSelect={setMood}
-          value={mood}
-        />
-        <Scale
-          hint="drained → wired"
-          label="Energy"
-          onSelect={setEnergy}
-          value={energy}
-        />
-        <Scale
-          hint="calm → tense"
-          label="Stress"
-          onSelect={setStress}
-          value={stress}
-        />
-      </div>
+        <div className="space-y-5 border-t border-[var(--border)] p-5 sm:p-7">
+          <EmojiScale
+            emojis={moodEmoji}
+            label="Mood"
+            onSelect={setMood}
+            value={mood}
+          />
+          <EmojiScale
+            emojis={energyEmoji}
+            label="Energy"
+            onSelect={setEnergy}
+            value={energy}
+          />
+          <EmojiScale
+            emojis={stressEmoji}
+            label="Stress"
+            onSelect={setStress}
+            value={stress}
+          />
+        </div>
 
-      <div className="mt-4">
-        <FormMessage state={state} />
-      </div>
-      <div className="mt-2">
-        <SubmitButton pendingLabel="Saving...">
-          {hasToday ? "Update today's entry" : "Save reflection"}
-        </SubmitButton>
+        <div className="border-t border-[var(--border)] p-5 sm:px-7">
+          <FormMessage state={state} />
+          <div className="grid">
+            <SubmitButton pendingLabel="Saving...">
+              {hasToday ? "Update today's entry" : "Save reflection"}
+            </SubmitButton>
+          </div>
+        </div>
       </div>
     </form>
   );
 }
 
-function Scale({
+function EmojiScale({
   emojis,
-  hint,
   label,
   onSelect,
   value,
 }: {
-  emojis?: string[];
-  hint: string;
+  emojis: string[];
   label: string;
   onSelect: (value: number) => void;
   value: number | null;
 }) {
   return (
-    <div>
-      <div className="mb-2 flex items-baseline justify-between">
-        <span className="text-sm font-semibold text-white">{label}</span>
-        <span className="text-xs text-zinc-500">{hint}</span>
-      </div>
-      <div className="grid grid-cols-5 gap-2">
+    <div className="flex items-center justify-between gap-4">
+      <span className="w-16 shrink-0 text-sm font-bold text-zinc-400">
+        {label}
+      </span>
+      <div className="flex flex-1 justify-between gap-1 sm:justify-end sm:gap-2">
         {[1, 2, 3, 4, 5].map((n) => {
           const active = value === n;
           return (
             <button
-              aria-label={`${label} ${n}`}
+              aria-label={`${label} ${n} of 5`}
               aria-pressed={active}
-              className={`flex min-h-12 items-center justify-center rounded-xl border text-base font-bold transition ${
+              className={`grid size-11 place-items-center rounded-full text-xl transition duration-200 sm:size-12 ${
                 active
-                  ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]"
-                  : "border-[var(--border)] bg-[var(--surface-2)] text-zinc-400 hover:border-[var(--border-strong)] hover:text-zinc-200"
+                  ? "scale-110 bg-[var(--accent-soft)] shadow-lg shadow-[var(--accent)]/20 ring-2 ring-[var(--accent)]"
+                  : "opacity-45 grayscale hover:opacity-100 hover:grayscale-0 active:scale-95"
               }`}
               key={n}
               onClick={() => onSelect(n)}
               type="button"
             >
-              {emojis ? <span className="text-xl">{emojis[n - 1]}</span> : n}
+              {emojis[n - 1]}
             </button>
           );
         })}
