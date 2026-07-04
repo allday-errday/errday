@@ -82,7 +82,7 @@ export function JournalCheckin({
 
           <textarea
             autoFocus
-            className="mt-5 min-h-44 w-full resize-y bg-transparent text-lg leading-8 text-[var(--text)] outline-none placeholder:text-zinc-600"
+            className="mt-5 min-h-44 w-full resize-none bg-transparent text-lg leading-8 text-[var(--text)] outline-none focus-visible:outline-none placeholder:text-zinc-600"
             defaultValue={defaultContent}
             name="content"
             placeholder="Let it out — no one else can read this..."
