@@ -9,6 +9,6 @@ export const config = {
   // Pages only: API routes enforce auth themselves and must not be
   // redirected to /login (e.g. the public Apple Calendar ICS feed).
   matcher: [
-    "/((?!api/|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|webmanifest)$).*)",
+    "/((?!api/|_next/static|_next/image|favicon.ico|.*\\.(?:js|svg|png|jpg|jpeg|gif|webp|ico|txt|xml|webmanifest)$).*)",
   ],
 };

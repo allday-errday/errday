@@ -1,7 +1,7 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ERRDAY_BRAND_THEME, MODE_STORAGE_KEY, type ThemeMode } from "@/lib/theme";
 
 function applyMode(mode: ThemeMode) {
@@ -22,11 +22,13 @@ function applyMode(mode: ThemeMode) {
 }
 
 export function AppearanceToggle() {
-  const [mode, setMode] = useState<ThemeMode>("dark");
+  const [mode, setMode] = useState<ThemeMode>(() => {
+    if (typeof document === "undefined") {
+      return "dark";
+    }
 
-  useEffect(() => {
-    setMode(document.documentElement.dataset.mode === "light" ? "light" : "dark");
-  }, []);
+    return document.documentElement.dataset.mode === "light" ? "light" : "dark";
+  });
 
   function select(next: ThemeMode) {
     setMode(next);

@@ -15,10 +15,12 @@ function format(seconds: number) {
 export function RestTimer() {
   const [remaining, setRemaining] = useState<number | null>(null);
   const endsAtRef = useRef<number | null>(null);
+  const notifiedRef = useRef(false);
 
   useEffect(() => {
     function start() {
       endsAtRef.current = Date.now() + restSeconds * 1_000;
+      notifiedRef.current = false;
       setRemaining(restSeconds);
     }
 
@@ -33,6 +35,10 @@ export function RestTimer() {
       try {
         navigator.vibrate?.([200, 100, 200]);
       } catch {}
+      if (!notifiedRef.current) {
+        notifiedRef.current = true;
+        notifyRestDone().catch(console.error);
+      }
       const timeout = window.setTimeout(() => setRemaining(null), 4_000);
       return () => window.clearTimeout(timeout);
     }
@@ -49,6 +55,7 @@ export function RestTimer() {
   function toggle() {
     if (remaining === null) {
       endsAtRef.current = Date.now() + restSeconds * 1_000;
+      notifiedRef.current = false;
       setRemaining(restSeconds);
     } else {
       endsAtRef.current = null;
@@ -98,4 +105,24 @@ export function RestTimer() {
       <span className="text-sm font-extrabold tabular-nums">2:00</span>
     </button>
   );
+}
+
+async function notifyRestDone() {
+  if (!("Notification" in window) || Notification.permission !== "granted") {
+    return;
+  }
+
+  const options = {
+    body: "Your rest timer is over. Ready for the next set?",
+    icon: "/icons/icon-192.png",
+    tag: "errday-rest-timer",
+  };
+
+  if ("serviceWorker" in navigator) {
+    const registration = await navigator.serviceWorker.ready;
+    await registration.showNotification("Rest timer finished", options);
+    return;
+  }
+
+  new Notification("Rest timer finished", options);
 }

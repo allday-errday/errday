@@ -1,10 +1,28 @@
 {
+  "id": "/today",
   "name": "Errday",
   "short_name": "Errday",
   "description": "Personal all-day tracker for fitness, nutrition, sleep and journaling.",
   "start_url": "/today",
+  "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#15171c",
   "theme_color": "#8b82f6",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "categories": ["health", "fitness", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }

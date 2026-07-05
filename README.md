@@ -114,6 +114,10 @@ Errday publishes a private ICS feed that the iPhone Calendar app can subscribe t
 
 The phone must be able to reach the app's address, so deploy Errday (or use a tunnel) — a feed served only on `localhost` is not reachable from the phone. Apple refreshes subscribed calendars periodically.
 
+## iPhone app and push notifications
+
+See `docs/ios-mobile-testing.md` for the Home Screen app install flow, Web Push setup, Vercel cron reminders and the Capacitor iOS wrapper.
+
 ## AI coach calendar actions
 
 With a tool-capable Ollama model (for example `qwen3:4b` or `llama3.1:8b`, set via `OLLAMA_MODEL`), the coach can add, list and delete calendar events in chat ("Schedule leg day tomorrow at 18:00 with a reminder"). With models that cannot use tools (like `gemma3`), the coach still chats but calendar actions are disabled automatically.

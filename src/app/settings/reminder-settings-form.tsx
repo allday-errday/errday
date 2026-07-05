@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { FormMessage } from "@/components/form-message";
+import { PushNotificationControls } from "@/components/push-notification-controls";
 import { SubmitButton } from "@/components/submit-button";
 import { initialActionState } from "@/lib/forms";
 import type { Profile } from "@/types/database";
@@ -32,8 +33,9 @@ export function ReminderSettingsForm({ profile }: ReminderSettingsFormProps) {
         Enable daily reminders
       </label>
       <p className="text-sm text-zinc-500">
-        Browser reminders will appear when this app is open and notifications are allowed.
+        Push reminders can reach this device after Errday is installed from Safari.
       </p>
+      <PushNotificationControls />
 
       <div className="grid gap-3 sm:grid-cols-2">
         <ReminderTimeField

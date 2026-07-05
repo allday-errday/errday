@@ -53,7 +53,7 @@ export default async function WorkoutPage({
 
   return (
     <div>
-      <header className="sticky top-16 z-20 -mx-4 mb-5 border-y border-[var(--border)] bg-[var(--bg-soft)]/95 px-4 py-3 backdrop-blur-xl sm:top-20 lg:top-0">
+      <header className="sticky top-0 z-20 -mx-4 mb-5 border-y border-[var(--border)] bg-[var(--bg-soft)]/95 px-4 py-3 backdrop-blur-xl lg:top-0">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
             className="grid size-11 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] transition hover:bg-[var(--surface-2)]"
@@ -151,7 +151,7 @@ export default async function WorkoutPage({
       </section>
 
       <section
-        className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20"
+        className="mt-10 rounded-2xl border border-[var(--accent)]/35 bg-[var(--surface)] p-4 shadow-sm shadow-black/20"
         id="add-exercises"
       >
         <h2 className="text-xl font-bold text-white">Add Exercises</h2>

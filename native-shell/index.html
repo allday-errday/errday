@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Errday</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      body {
+        display: grid;
+        min-height: 100dvh;
+        margin: 0;
+        place-items: center;
+        background:
+          radial-gradient(circle at 75% 0%, rgba(139, 130, 246, 0.24), transparent 34rem),
+          #15171c;
+        color: #f3f4f7;
+      }
+
+      main {
+        width: min(22rem, calc(100vw - 3rem));
+        text-align: center;
+      }
+
+      .mark {
+        width: 5rem;
+        height: 5rem;
+        margin: 0 auto 1.2rem;
+        border-radius: 999px;
+        background: url("/icons/icon-192.png") center / cover no-repeat;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2rem;
+        line-height: 1;
+      }
+
+      p {
+        margin: 1rem 0 0;
+        color: #a4abb8;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="mark" aria-hidden="true"></div>
+      <h1>Errday.</h1>
+      <p>Set CAPACITOR_SERVER_URL before syncing iOS to load the live mobile app.</p>
+    </main>
+  </body>
+</html>
