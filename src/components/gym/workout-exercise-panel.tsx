@@ -41,16 +41,16 @@ export function WorkoutExercisePanel({
   ).length;
 
   return (
-    <article>
+    <article className="min-w-0">
       <button
         aria-expanded={expanded}
-        className="mb-4 flex w-full items-center gap-4 text-left"
+        className="mb-4 flex w-full min-w-0 items-center gap-3 text-left sm:gap-4"
         onClick={() => setExpanded((value) => !value)}
         type="button"
       >
         <ExerciseThumbnail imageKey={imageKey} name={exerciseName} />
         <div className="min-w-0 flex-1">
-          <h2 className="truncate text-xl font-semibold text-[var(--text)] sm:text-2xl">
+          <h2 className="line-clamp-2 text-xl font-semibold leading-tight text-[var(--text)] [overflow-wrap:anywhere] sm:text-2xl">
             {exerciseName}
           </h2>
           <p className="mt-1 text-sm text-zinc-500">
@@ -69,12 +69,12 @@ export function WorkoutExercisePanel({
       </button>
 
       {expanded ? (
-        <div>
+        <div className="min-w-0">
           {instructions ? (
             <p className="mb-4 text-sm leading-6 text-zinc-400">{instructions}</p>
           ) : null}
           <RestTimer />
-          <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,1fr)_2.75rem] gap-2 text-xs font-bold uppercase text-zinc-500 sm:grid-cols-[3rem_1fr_1fr_3rem] sm:gap-3">
+          <div className="grid min-w-0 grid-cols-[2rem_minmax(0,1fr)_minmax(0,1fr)_2.5rem] gap-1.5 text-xs font-bold uppercase text-zinc-500 sm:grid-cols-[3rem_1fr_1fr_3rem] sm:gap-3">
             <span>Set</span>
             <span className="text-center">Kg</span>
             <span className="text-center">Reps</span>
@@ -83,19 +83,19 @@ export function WorkoutExercisePanel({
           <div className="mt-3 space-y-3">
             {sets.map((set) => (
               <div
-                className="grid grid-cols-[2.5rem_minmax(0,1fr)_minmax(0,1fr)_2.75rem] items-center gap-2 sm:grid-cols-[3rem_1fr_1fr_3rem] sm:gap-3"
+                className="grid min-w-0 grid-cols-[2rem_minmax(0,1fr)_minmax(0,1fr)_2.5rem] items-center gap-1.5 sm:grid-cols-[3rem_1fr_1fr_3rem] sm:gap-3"
                 key={set.id}
               >
-                <span className="text-lg font-semibold text-[var(--text)] sm:text-xl">
+                <span className="text-base font-semibold text-[var(--text)] sm:text-xl">
                   {set.set_number}
                 </span>
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-3 text-center text-lg font-semibold text-white">
+                <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-1.5 py-3 text-center text-base font-semibold text-white sm:px-2 sm:text-lg">
                   {set.weight_kg ?? "-"}
                 </div>
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-2 py-3 text-center text-lg font-semibold text-white">
+                <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-1.5 py-3 text-center text-base font-semibold text-white sm:px-2 sm:text-lg">
                   {set.reps ?? "-"}
                 </div>
-                <div className="grid size-11 place-items-center rounded-full bg-[var(--signal)]/15 text-[var(--signal)]">
+                <div className="grid size-10 place-items-center rounded-full bg-[var(--signal)]/15 text-[var(--signal)] sm:size-11">
                   <svg aria-hidden="true" className="size-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" viewBox="0 0 24 24">
                     <path d="m5 13 4 4L19 7" />
                   </svg>
