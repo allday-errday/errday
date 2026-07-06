@@ -8,6 +8,7 @@ const PARAM_MESSAGES: Record<string, string> = {
   meal: "Meal logged",
   food: "Meal logged",
   workout: "Workout saved",
+  discarded: "Workout discarded",
   sleep: "Sleep tracked",
   weight: "Weight logged",
   journal: "Reflection saved",

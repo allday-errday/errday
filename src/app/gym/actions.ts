@@ -253,7 +253,7 @@ export async function discardWorkout(formData: FormData) {
   revalidatePath("/gym");
   revalidatePath("/gym/history");
   revalidatePath("/today");
-  redirect("/gym");
+  redirect("/gym?toast=discarded");
 }
 
 export async function saveCustomExercise(

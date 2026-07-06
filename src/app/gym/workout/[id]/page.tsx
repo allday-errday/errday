@@ -14,9 +14,9 @@ import {
 } from "@/lib/db/gym";
 import {
   addExerciseToCurrentWorkout,
-  discardWorkout,
   finishWorkout,
 } from "../../actions";
+import { DiscardWorkoutButton } from "./discard-workout-button";
 
 type WorkoutPageProps = {
   params: Promise<{ id: string }>;
@@ -74,16 +74,12 @@ export default async function WorkoutPage({
           </div>
           {isActive ? (
             <div className="grid basis-full grid-cols-2 gap-2 sm:basis-auto sm:flex sm:items-center">
-              <form action={discardWorkout}>
-                <input name="workout_id" type="hidden" value={workout.id} />
-                <input name="session_id" type="hidden" value={activeSession.id} />
-                <button
-                  className="min-h-12 w-full rounded-lg border border-red-500/30 bg-red-500/10 px-3 text-xs font-semibold text-red-300 transition hover:bg-red-500/20"
-                  type="submit"
-                >
-                  Discard
-                </button>
-              </form>
+              <DiscardWorkoutButton
+                sessionId={activeSession.id}
+                setCount={totalSets}
+                workoutId={workout.id}
+                workoutName={workout.name ?? "Workout"}
+              />
               <form action={finishWorkout}>
                 <input name="session_id" type="hidden" value={activeSession.id} />
                 <SubmitButton pendingLabel="Finishing...">Finish</SubmitButton>
