@@ -7,7 +7,7 @@ import {
   PLAN_TIMES_COOKIE,
 } from "@/lib/daily-flow/plan-times";
 import { calculateDailyFlowScore } from "@/lib/daily-flow/score";
-import { todayDateString } from "@/lib/dates";
+import { shiftDateString, todayDateString } from "@/lib/dates";
 import { listCalendarEvents } from "@/lib/db/calendar";
 import {
   getDailyProfile,
@@ -20,7 +20,7 @@ import { getTodayDashboard } from "@/lib/db/today";
 import { DailyPlanTimeline } from "./_components/DailyPlanTimeline";
 import { DailyScoreCard } from "./_components/DailyScoreCard";
 import { DailyStatsGrid, type DailyStat } from "./_components/DailyStatsGrid";
-import { DaySwipeNavigator, shiftDate } from "./_components/DaySwipeNavigator";
+import { DaySwipeNavigator } from "./_components/DaySwipeNavigator";
 import { QuickActionsGrid } from "./_components/QuickActionsGrid";
 import { TodayHeader } from "./_components/TodayHeader";
 import { UpcomingEvents } from "./_components/UpcomingEvents";
@@ -205,8 +205,8 @@ export default async function TodayPage({
         <TodayHeader
           dateLabel={formatLocalDate(new Date(`${today}T12:00:00`))}
           isToday={isToday}
-          nextHref={isToday ? null : `/today?date=${shiftDate(today, 1)}`}
-          prevHref={`/today?date=${shiftDate(today, -1)}`}
+          nextHref={isToday ? null : `/today?date=${shiftDateString(today, 1)}`}
+          prevHref={`/today?date=${shiftDateString(today, -1)}`}
         />
         <div className="grid items-stretch gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(22rem,0.7fr)]">
           <DailyScoreCard result={scoreResult} />
