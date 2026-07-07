@@ -9,17 +9,9 @@ import type {
   PlanItemStatus,
 } from "./types";
 import type { MealSlot } from "@/types/database";
+import { defaultPlanTimes } from "./plan-times";
 
-const targetTimes: Record<DailyPlanSlot, string> = {
-  breakfast: "10:00",
-  lunch: "13:00",
-  pre_workout: "14:30",
-  workout: "16:00",
-  post_workout: "17:30",
-  dinner: "19:30",
-  snack: "21:00",
-  sleep: "22:30",
-};
+const targetTimes: Record<DailyPlanSlot, string> = defaultPlanTimes;
 
 const slotLabels: Record<DailyPlanSlot, string> = {
   breakfast: "Breakfast",
@@ -47,6 +39,7 @@ export type GenerateDailyPlanInput = {
   dayType?: DayType;
   foodLogs: DailyFlowFoodLog[];
   now?: Date;
+  planTimes?: Partial<Record<DailyPlanSlot, string>>;
   suggestedBedtime?: string | null;
   sleepLog?: DailyFlowSleepLog | null;
   workoutLogs: DailyFlowWorkoutLog[];
@@ -92,6 +85,7 @@ function createPlanItem(
   slot: DailyPlanSlot,
   status: PlanItemStatus,
   detail: string,
+  times: Record<DailyPlanSlot, string> = targetTimes,
 ): DailyPlanItem {
   return {
     detail,
@@ -100,7 +94,7 @@ function createPlanItem(
     label: slotLabels[slot],
     slot,
     status,
-    targetTime: targetTimes[slot],
+    targetTime: times[slot],
   };
 }
 
@@ -111,11 +105,15 @@ export function detectDayType(input: Pick<GenerateDailyPlanInput, "workoutLogs" 
 export function generateDailyPlan(input: GenerateDailyPlanInput) {
   const now = input.now ?? new Date();
   const dayType = input.dayType ?? detectDayType(input);
+  const times: Record<DailyPlanSlot, string> = {
+    ...targetTimes,
+    ...input.planTimes,
+  };
   const meals = sortByTime(input.foodLogs);
   const workouts = sortByTime([...input.workoutLogs, ...input.workouts]);
   const workoutAnchor = workouts[0];
   const workoutTime = workoutAnchor ? getItemTime(workoutAnchor) : null;
-  const sleepTargetTime = input.suggestedBedtime?.slice(0, 5) ?? targetTimes.sleep;
+  const sleepTargetTime = input.suggestedBedtime?.slice(0, 5) ?? times.sleep;
 
   if (dayType === "rest") {
     const slots: DailyPlanSlot[] = ["breakfast", "lunch", "dinner", "snack", "sleep"];
@@ -128,14 +126,16 @@ export function generateDailyPlan(input: GenerateDailyPlanInput) {
             slot,
             statusForSlot(now, sleepTargetTime, Boolean(input.sleepLog)),
             input.sleepLog ? `${Number(input.sleepLog.sleep_hours)}h logged` : "Suggested bedtime",
+            times,
           );
         }
 
         const meal = slot === "snack" ? meals[3] : meals[index];
         return createPlanItem(
           slot,
-          statusForSlot(now, targetTimes[slot], Boolean(meal)),
+          statusForSlot(now, times[slot], Boolean(meal)),
           getFoodDetail(meal),
+          times,
         );
       }),
     };
@@ -177,7 +177,7 @@ export function generateDailyPlan(input: GenerateDailyPlanInput) {
         const detail = workout
           ? `${workout.name ?? "Workout"} logged`
           : "Planned training block";
-        return createPlanItem(slot, statusForSlot(now, targetTimes.workout, logged), detail);
+        return createPlanItem(slot, statusForSlot(now, times.workout, logged), detail, times);
       }
 
       if (slot === "sleep") {
@@ -185,14 +185,16 @@ export function generateDailyPlan(input: GenerateDailyPlanInput) {
           slot,
           statusForSlot(now, sleepTargetTime, Boolean(input.sleepLog)),
           input.sleepLog ? `${Number(input.sleepLog.sleep_hours)}h logged` : "Suggested bedtime",
+          times,
         );
       }
 
       const meal = slotMeals[slot];
       return createPlanItem(
         slot,
-        statusForSlot(now, targetTimes[slot], Boolean(meal)),
+        statusForSlot(now, times[slot], Boolean(meal)),
         getFoodDetail(meal),
+        times,
       );
     }),
   };
