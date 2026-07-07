@@ -3,6 +3,8 @@ import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { searchProducts } from "@/lib/food-search/client";
 import { searchGenericFoods, type GenericFood } from "@/lib/db/generic-foods";
+import { AiEstimateSection } from "./ai-estimate-section";
+import { FoodResultRow } from "./food-result-row";
 import type { NormalizedFoodProduct } from "@/lib/food-search/types";
 import {
   lookupBarcode,
@@ -12,7 +14,6 @@ import {
 } from "@/lib/products/lookup";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import type { MealSlot } from "@/types/database";
-import { logFoodProduct } from "./actions";
 
 type FoodSearchPageProps = {
   searchParams: Promise<{
@@ -145,17 +146,20 @@ export default async function FoodSearchPage({
         <EmptyState />
       ) : barcode ? null : searchResult.error ? null : products.length === 0 &&
         usdaProducts.length === 0 ? (
-        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
-          <h2 className="font-bold text-white">No product found</h2>
-          <p className="mt-2 text-sm leading-6 text-zinc-500">
-            Try another name, a synonym or a broader search term.
-          </p>
-        </section>
+        <>
+          <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+            <h2 className="font-bold text-white">No product found</h2>
+            <p className="mt-2 text-sm leading-6 text-zinc-500">
+              Try another name, a synonym — or let the AI estimate it below.
+            </p>
+          </section>
+          <AiEstimateSection query={query} selectedSlot={selectedSlot} />
+        </>
       ) : (
         <>
           <section className="space-y-3">
             {products.map((product) => (
-              <ProductCard
+              <FoodResultRow
                 key={product.code}
                 product={product}
                 selectedSlot={selectedSlot}
@@ -169,7 +173,7 @@ export default async function FoodSearchPage({
               </p>
               <div className="space-y-3">
                 {usdaProducts.map((product) => (
-                  <ProductCard
+                  <FoodResultRow
                     key={product.code}
                     product={product}
                     selectedSlot={selectedSlot}
@@ -178,6 +182,7 @@ export default async function FoodSearchPage({
               </div>
             </section>
           ) : null}
+          <AiEstimateSection query={query} selectedSlot={selectedSlot} />
         </>
       )}
 
@@ -202,7 +207,7 @@ function BarcodeResult({
     const confidence = Math.round(result.product.confidenceScore * 100);
     return (
       <section className="mb-5 space-y-2">
-        <ProductCard
+        <FoodResultRow
           product={canonicalToNormalized(result.product)}
           selectedSlot={selectedSlot}
         />
@@ -268,89 +273,6 @@ function ErrorMessage({
   );
 }
 
-function ProductCard({
-  product,
-  selectedSlot,
-}: {
-  product: NormalizedFoodProduct;
-  selectedSlot: MealSlot | "";
-}) {
-  const canLog = product.caloriesPer100g !== null;
-
-  return (
-    <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
-      <div className="flex gap-3">
-        <ProductImage product={product} />
-        <div className="min-w-0 flex-1">
-          <h2 className="line-clamp-2 font-bold text-white">{product.name}</h2>
-          <p className="mt-1 truncate text-sm text-zinc-500">
-            {product.category ?? (product.source === "usda_fdc" ? "USDA database" : "Schweizer Nährwertdatenbank")}
-          </p>
-          <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-            <Metric label="kcal/100g" value={formatMacro(product.caloriesPer100g)} />
-            <Metric label="Protein" value={formatMacro(product.proteinPer100g, "g")} />
-            <Metric label="Carbs" value={formatMacro(product.carbsPer100g, "g")} />
-            <Metric label="Fat" value={formatMacro(product.fatPer100g, "g")} />
-          </div>
-        </div>
-      </div>
-
-      {!canLog ? (
-        <p className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
-          Calories are unknown. Logging is disabled for this product.
-        </p>
-      ) : (
-        <form action={logFoodProduct} className="mt-4 grid gap-3">
-          <input name="code" type="hidden" value={product.code} />
-          <input name="name" type="hidden" value={product.name} />
-          <input name="brand" type="hidden" value={product.brand ?? ""} />
-          <input name="source" type="hidden" value={product.source} />
-          <input name="image_url" type="hidden" value={product.imageUrl ?? ""} />
-          <input name="serving_size" type="hidden" value={product.servingSize ?? ""} />
-          <input name="cal100" type="hidden" value={product.caloriesPer100g ?? ""} />
-          <input name="protein100" type="hidden" value={product.proteinPer100g ?? ""} />
-          <input name="carbs100" type="hidden" value={product.carbsPer100g ?? ""} />
-          <input name="fat100" type="hidden" value={product.fatPer100g ?? ""} />
-          <div className="grid gap-3 sm:grid-cols-[1fr_1.2fr]">
-            <label className="grid gap-2 text-sm font-bold text-zinc-300">
-              Grams
-              <input
-                className="min-h-11 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
-                defaultValue="100"
-                min="1"
-                name="grams"
-                step="1"
-                type="number"
-              />
-            </label>
-            <label className="grid gap-2 text-sm font-bold text-zinc-300">
-              Meal
-              <select
-                className="min-h-11 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
-                defaultValue={selectedSlot}
-                name="meal_slot"
-              >
-                <option value="">Infer</option>
-                {mealSlots.map((slot) => (
-                  <option key={slot.value} value={slot.value}>
-                    {slot.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-          <button
-            className="min-h-12 rounded-full bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)] shadow-sm shadow-[var(--accent)]/20"
-            type="submit"
-          >
-            Log product
-          </button>
-        </form>
-      )}
-    </article>
-  );
-}
-
 function genericToNormalized(food: GenericFood): NormalizedFoodProduct {
   return {
     brand: null,
@@ -365,30 +287,4 @@ function genericToNormalized(food: GenericFood): NormalizedFoodProduct {
     servingSize: "100 g",
     source: "usda_fdc",
   };
-}
-
-// Deliberately image-free: a clean monogram tile instead of product photos.
-function ProductImage({ product }: { product: NormalizedFoodProduct }) {
-  return (
-    <div className="grid size-20 shrink-0 place-items-center rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] text-lg font-bold text-[var(--accent)]">
-      {product.name.slice(0, 2).toUpperCase()}
-    </div>
-  );
-}
-
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)] p-2">
-      <p className="text-zinc-500">{label}</p>
-      <p className="mt-1 font-bold text-white">{value}</p>
-    </div>
-  );
-}
-
-function formatMacro(value: number | null, unit = "") {
-  if (value === null) {
-    return "unknown";
-  }
-
-  return `${Math.round(value * 10) / 10}${unit}`;
 }
