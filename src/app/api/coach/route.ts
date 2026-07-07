@@ -26,7 +26,8 @@ Never say that you saved or changed data.`;
   }
 
   return `${base}
-You can manage the user's Errday calendar with your tools. When the user asks to schedule, plan, or be reminded of something, add it with addCalendarEvent — resolve relative dates like "tomorrow" from today's date, and only claim an event was saved after the tool confirms it. Before adding to a day you have not seen, check it with listCalendarEvents to avoid duplicates. Calendar events sync to the user's Apple Calendar automatically.`;
+You can manage the user's Errday calendar and food diary with your tools. When the user asks to schedule, plan, or be reminded of something, add it with addCalendarEvent — resolve relative dates like "tomorrow" from today's date, and only claim an event was saved after the tool confirms it. Before adding to a day you have not seen, check it with listCalendarEvents to avoid duplicates. Calendar events sync to the user's Apple Calendar automatically.
+When the user tells you what they ate or asks you to track a meal, log it with logMeal (estimate calories and macros realistically when unknown, and say they are estimates). When you give food tips and the user wants one, offer to log it right away. Only claim a meal was logged after the tool confirms it.`;
 }
 
 export async function POST(request: Request) {
