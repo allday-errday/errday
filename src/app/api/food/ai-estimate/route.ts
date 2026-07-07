@@ -1,4 +1,4 @@
-import { generateObject } from "ai";
+import { generateText } from "ai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCoachModel, isCoachAvailable } from "@/lib/ai/provider";
@@ -55,15 +55,28 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { object } = await generateObject({
+    const { text } = await generateText({
       model: getCoachModel(),
-      schema: estimateSchema,
       prompt: `You are a nutrition database assistant. The user searched a food database for "${query}" and wants realistic nutrition estimates.
-Return 1-5 matching foods or common variants (e.g. cooked/raw, with/without toppings). Use metric values per 100 g and a realistic typical serving in grams. Be conservative and realistic — no exaggerated values. Use the same language as the query for the names.`,
+Return 1-5 matching foods or common variants (e.g. cooked/raw, with/without toppings). Use metric values per 100 g and a realistic typical serving in grams. Be conservative and realistic — no exaggerated values. Use the same language as the query for the names.
+Respond with ONLY valid JSON, no markdown and no extra text, exactly in this shape:
+{"foods":[{"name":"...","caloriesPer100g":0,"proteinPer100g":0,"carbsPer100g":0,"fatPer100g":0,"typicalServingG":100}]}`,
     });
 
-    return NextResponse.json({ foods: object.foods });
-  } catch {
+    const cleaned = text
+      .trim()
+      .replace(/^```(?:json)?/i, "")
+      .replace(/```$/, "")
+      .trim();
+    const start = cleaned.indexOf("{");
+    const end = cleaned.lastIndexOf("}");
+    const parsed = estimateSchema.parse(
+      JSON.parse(cleaned.slice(start, end + 1)),
+    );
+
+    return NextResponse.json({ foods: parsed.foods });
+  } catch (error) {
+    console.error("AI estimate failed", error);
     return NextResponse.json(
       { error: "The AI could not create an estimate. Try again." },
       { status: 502 },
