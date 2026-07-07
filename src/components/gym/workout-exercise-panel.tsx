@@ -73,7 +73,7 @@ export function WorkoutExercisePanel({
           {instructions ? (
             <p className="mb-4 text-sm leading-6 text-zinc-400">{instructions}</p>
           ) : null}
-          <RestTimer />
+          <RestTimer exerciseName={exerciseName} />
           <div className="grid min-w-0 grid-cols-[2rem_minmax(0,1fr)_minmax(0,1fr)_2.5rem] gap-1.5 text-xs font-bold uppercase text-zinc-500 sm:grid-cols-[3rem_1fr_1fr_3rem] sm:gap-3">
             <span>Set</span>
             <span className="text-center">Kg</span>
