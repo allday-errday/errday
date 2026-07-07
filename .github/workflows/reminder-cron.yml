@@ -1,0 +1,26 @@
+# Calls the Errday reminder endpoint every 15 minutes.
+# Vercel's Hobby plan only allows daily crons, so this workflow provides
+# the fine-grained schedule. Requires the repository secret CRON_SECRET
+# (same value as the Vercel env var CRON_SECRET).
+name: Reminder push cron
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call reminder endpoint
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "CRON_SECRET repository secret is not set — skipping."
+            exit 0
+          fi
+          curl -fsS -m 30 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            https://www.errday.ch/api/notifications/reminders
