@@ -1,5 +1,6 @@
 export type FoodSource =
   | "swiss_nutrition"
+  | "usda_fdc"
   | "manual"
   | "errday_products"
   | "open_food_facts";
