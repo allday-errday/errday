@@ -10,7 +10,6 @@ import {
   listWorkoutTemplates,
 } from "@/lib/db/gym";
 import { safeRead } from "@/lib/db/safe-read";
-import { gymPresets } from "@/lib/gym/presets";
 import { startEmptyWorkout } from "./actions";
 import { WorkoutLogForm } from "./workout-log-form";
 
@@ -103,7 +102,7 @@ export default async function GymPage() {
                 One tap. Then lift.
               </h2>
               <p className="mt-3 text-sm leading-6 text-zinc-400 sm:text-base">
-                Start empty or choose a program below. No setup maze, no tiny dropdowns.
+                Start empty and build the session as you lift. No setup maze.
               </p>
             </div>
             <form action={startEmptyWorkout}>
@@ -126,33 +125,6 @@ export default async function GymPage() {
 
       <div className="grid items-start gap-7 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)]">
         <div className="min-w-0 space-y-7">
-          <section>
-            <div className="mb-4 flex items-end justify-between gap-4">
-              <div>
-                <p className="eyebrow">Pick a route</p>
-                <h2 className="mt-2 text-2xl font-black text-white">Your program</h2>
-              </div>
-              <Link className="text-sm font-bold text-[var(--accent)]" href="/gym/templates">Templates</Link>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {gymPresets.map((preset) => (
-                <Link
-                  className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20 transition hover:-translate-y-0.5 hover:border-[var(--accent)]/45 hover:bg-[var(--surface-2)] sm:rounded-3xl sm:p-5"
-                  href={`/gym/workout/new?preset=${preset.slug}`}
-                  key={preset.slug}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="grid size-12 place-items-center rounded-2xl bg-[var(--accent-soft)] text-lg font-black text-[var(--accent)]">{preset.key}</div>
-                    <span className="rounded-full border border-[var(--border)] px-2.5 py-1 text-xs font-bold text-zinc-500">{preset.exerciseSlugs.length} exercises</span>
-                  </div>
-                  <h3 className="mt-6 text-xl font-black text-white">{preset.name}</h3>
-                  <p className="mt-2 line-clamp-2 text-sm leading-6 text-zinc-500">{preset.description}</p>
-                  <p className="mt-5 text-sm font-bold text-[var(--accent)]">Start plan →</p>
-                </Link>
-              ))}
-            </div>
-          </section>
-
           <section className="grid gap-3 sm:grid-cols-2">
             <QuickLink href="/gym/workout/new" title="Build your own" value="Custom workout" />
             <QuickLink href="/gym/exercises" title="Find movements" value="Exercise library" />

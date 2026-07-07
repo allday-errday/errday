@@ -186,6 +186,23 @@ export async function addExerciseToCurrentWorkout(formData: FormData) {
 export async function finishWorkout(formData: FormData) {
   const { supabase, user } = await requireUser();
   const sessionId = formString(formData, "session_id");
+  const workoutId = formString(formData, "workout_id");
+  const title = formString(formData, "title").slice(0, 120);
+  const note = formString(formData, "note").slice(0, 600);
+
+  if (workoutId && (title || note)) {
+    const patch: { name?: string; note?: string } = {};
+    if (title) patch.name = title;
+    if (note) patch.note = note;
+    const { error: workoutError } = await supabase
+      .from("workouts")
+      .update(patch)
+      .eq("id", workoutId)
+      .eq("user_id", user.id);
+    if (workoutError) {
+      console.error("Could not update workout title/note", workoutError);
+    }
+  }
 
   if (sessionId) {
     const { data: session, error: sessionError } = await supabase
@@ -215,7 +232,7 @@ export async function finishWorkout(formData: FormData) {
       await createWorkoutLog(supabase, {
         user_id: user.id,
         workout_template_id: null,
-        name: session.workouts?.name ?? "Workout",
+        name: title || (session.workouts?.name ?? "Workout"),
         category: "strength",
         duration_minutes: durationMinutes,
         calories_burned: 0,
@@ -223,7 +240,7 @@ export async function finishWorkout(formData: FormData) {
         started_at: session.started_at,
         ended_at: endedAt.toISOString(),
         plan_slot: "workout",
-        notes: "Completed from active workout.",
+        notes: note || "Completed from active workout.",
       });
     }
 
