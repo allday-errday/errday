@@ -78,3 +78,12 @@ export function localDayRange(
     startIso: start.toISOString(),
   };
 }
+
+export function shiftDateString(date: string, delta: number) {
+  const base = new Date(`${date}T12:00:00`);
+  base.setDate(base.getDate() + delta);
+  const year = base.getFullYear();
+  const month = String(base.getMonth() + 1).padStart(2, "0");
+  const day = String(base.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
