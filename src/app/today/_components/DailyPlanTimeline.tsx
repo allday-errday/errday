@@ -58,13 +58,16 @@ export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
             <span className="text-sm font-extrabold tabular-nums text-zinc-500 sm:text-base">
               {item.targetTime}
             </span>
-            <span className="relative flex h-full items-center justify-center">
-              <span className={`z-10 grid size-7 place-items-center rounded-full border text-xs font-extrabold ${statusStyles[item.status]}`}>
+            <span className="relative flex items-center justify-center self-stretch">
+              {index > 0 ? (
+                <span className="absolute left-1/2 top-0 h-[calc(50%-1.1rem)] w-px -translate-x-1/2 bg-white/10" />
+              ) : null}
+              {index < items.length - 1 ? (
+                <span className="absolute bottom-0 left-1/2 h-[calc(50%-1.1rem)] w-px -translate-x-1/2 bg-white/10" />
+              ) : null}
+              <span className={`relative z-10 grid size-7 place-items-center rounded-full border text-xs font-extrabold ${statusStyles[item.status]}`}>
                 {item.status === "logged" ? "✓" : ""}
               </span>
-              {index < items.length - 1 ? (
-                <span className="absolute top-[calc(50%+0.875rem)] h-[calc(100%+1rem)] w-px bg-white/10" />
-              ) : null}
             </span>
             <span className="hidden size-11 place-items-center rounded-xl bg-white/[0.04] text-[var(--accent)] transition group-hover:bg-[var(--accent-soft)] sm:grid">
               <PlanIcon slot={item.slot} />
