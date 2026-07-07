@@ -3,19 +3,16 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { ExerciseRow } from "@/components/gym/exercise-row";
 import { MuscleFilterChips } from "@/components/gym/muscle-filter-chips";
+import { FinishWorkoutDialog } from "@/components/gym/finish-workout-dialog";
 import { WorkoutExercisePanel } from "@/components/gym/workout-exercise-panel";
 import { WorkoutTimer } from "@/components/gym/workout-timer";
-import { SubmitButton } from "@/components/submit-button";
 import { requireUser } from "@/lib/auth";
 import { searchExercises } from "@/lib/db/exercises";
 import {
   getActiveWorkoutSession,
   getWorkoutWithSets,
 } from "@/lib/db/gym";
-import {
-  addExerciseToCurrentWorkout,
-  finishWorkout,
-} from "../../actions";
+import { addExerciseToCurrentWorkout } from "../../actions";
 import { DiscardWorkoutButton } from "./discard-workout-button";
 
 type WorkoutPageProps = {
@@ -80,10 +77,11 @@ export default async function WorkoutPage({
                 workoutId={workout.id}
                 workoutName={workout.name ?? "Workout"}
               />
-              <form action={finishWorkout}>
-                <input name="session_id" type="hidden" value={activeSession.id} />
-                <SubmitButton pendingLabel="Finishing...">Finish</SubmitButton>
-              </form>
+              <FinishWorkoutDialog
+                sessionId={activeSession.id}
+                workoutId={workout.id}
+                workoutName={workout.name ?? "Workout"}
+              />
             </div>
           ) : (
             <Link
