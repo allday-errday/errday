@@ -55,8 +55,9 @@ export async function getTodayWorkouts(
 export async function getTodayDashboard(
   supabase: SupabaseClient,
   userId: string,
+  date?: string,
 ) {
-  const today = todayDateString();
+  const today = date ?? todayDateString();
   const [
     profile,
     nutritionTarget,
@@ -101,7 +102,10 @@ export async function getTodayDashboard(
     ),
   ]);
 
-  const todaySleep = sleepLogs.find((log) => log.date === today) ?? sleepLogs[0];
+  const isActualToday = today === todayDateString();
+  const todaySleep =
+    sleepLogs.find((log) => log.date === today) ??
+    (isActualToday ? sleepLogs[0] : undefined);
   const todayJournal = journalEntries.find((entry) => entry.date === today);
   const foodTotals = calculateFoodLogTotals(foodLogs);
   const workoutCalories = workoutLogs.reduce(
