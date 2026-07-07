@@ -5,7 +5,7 @@ import {
   type UIMessage,
 } from "ai";
 import { buildCoachTools, modelSupportsTools } from "@/lib/ai/coach-tools";
-import { getOllamaModel, isOllamaAvailable } from "@/lib/ai/ollama";
+import { getCoachModel, isCoachAvailable } from "@/lib/ai/provider";
 import { checkAiCoachRateLimit, rateLimitHeaders } from "@/lib/ai/rate-limit";
 import { todayDateString } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
@@ -55,9 +55,9 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!(await isOllamaAvailable())) {
+  if (!(await isCoachAvailable())) {
     return Response.json(
-      { error: "Local AI is offline. Start Ollama and reload Errday." },
+      { error: "The coach AI is offline. Check the AI configuration." },
       { status: 503 },
     );
   }
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
   const recentMessages = messages.slice(-12);
   const result = streamText({
     messages: await convertToModelMessages(recentMessages),
-    model: getOllamaModel(),
+    model: getCoachModel(),
     stopWhen: stepCountIs(5),
     system: coachInstructions(withTools),
     tools: withTools ? buildCoachTools(supabase, user.id) : undefined,
