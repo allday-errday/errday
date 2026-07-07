@@ -2,15 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, type ReactNode } from "react";
-
-function shiftDate(date: string, delta: number) {
-  const base = new Date(`${date}T12:00:00`);
-  base.setDate(base.getDate() + delta);
-  const year = base.getFullYear();
-  const month = String(base.getMonth() + 1).padStart(2, "0");
-  const day = String(base.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
+import { shiftDateString } from "@/lib/dates";
 
 type DaySwipeNavigatorProps = {
   children: ReactNode;
@@ -27,7 +19,7 @@ export function DaySwipeNavigator({
   const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   function goTo(delta: number) {
-    const target = shiftDate(date, delta);
+    const target = shiftDateString(date, delta);
     router.push(`/today?date=${target}`);
   }
 
@@ -88,5 +80,3 @@ export function DaySwipeNavigator({
     </div>
   );
 }
-
-export { shiftDate };
