@@ -301,6 +301,10 @@ const toolLabels: Record<string, { pending: string; done: string }> = {
     pending: "Removing from your calendar…",
     done: "Removed from your calendar",
   },
+  "tool-logMeal": {
+    pending: "Logging your meal…",
+    done: "Meal logged",
+  },
 };
 
 function ToolActivity({ part }: { part: ToolPart }) {
@@ -319,12 +323,17 @@ function ToolActivity({ part }: { part: ToolPart }) {
 
   const isDone = part.state === "output-available";
   const output = part.output as
-    | { event?: { title?: string; date?: string } }
+    | {
+        event?: { title?: string; date?: string };
+        meal?: { name?: string; calories?: number };
+      }
     | undefined;
   const detail =
     isDone && output?.event?.title
       ? `: ${output.event.title} · ${output.event.date}`
-      : "";
+      : isDone && output?.meal?.name
+        ? `: ${output.meal.name} · ${output.meal.calories} kcal`
+        : "";
 
   return (
     <p
