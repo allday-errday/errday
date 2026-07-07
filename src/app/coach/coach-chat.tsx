@@ -18,6 +18,7 @@ import {
 type CoachChatProps = {
   available: boolean;
   calendarEnabled: boolean;
+  cloud: boolean;
   modelName: string;
 };
 
@@ -37,6 +38,7 @@ const coachTransport = new DefaultChatTransport({ api: "/api/coach" });
 export function CoachChat({
   available,
   calendarEnabled,
+  cloud,
   modelName,
 }: CoachChatProps) {
   const suggestions = calendarEnabled
@@ -109,11 +111,11 @@ export function CoachChat({
             </span>
             <div>
               <h2 className="font-black text-white">Errday Coach</h2>
-              <p className="text-xs text-zinc-500">Local · private · free</p>
+              <p className="text-xs text-zinc-500">{cloud ? "Groq cloud · fast · free tier" : "Local · private · free"}</p>
             </div>
           </div>
           <span className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-black ${available ? "border-[var(--signal)]/25 bg-[color-mix(in_srgb,var(--signal)_9%,transparent)] text-[var(--signal)]" : "border-amber-400/25 bg-amber-400/10 text-amber-300"}`}>
-            {available ? "Local & ready" : "Ollama offline"}
+            {available ? (cloud ? "Cloud & ready" : "Local & ready") : "AI offline"}
           </span>
         </div>
 
@@ -201,8 +203,9 @@ export function CoachChat({
         <div className="border-t border-[var(--border)] bg-[var(--bg)]/70 p-3 sm:p-4">
           {!available ? (
             <p className="mb-3 rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm leading-6 text-amber-200">
-              Start Ollama on this PC, make sure {modelName} is installed
-              (ollama pull {modelName}), then reload this page.
+              {cloud
+                ? "The Groq API is not reachable right now. Try again in a moment."
+                : `Start Ollama on this PC, make sure ${modelName} is installed (ollama pull ${modelName}), then reload this page.`}
             </p>
           ) : null}
           {error ? (
@@ -267,7 +270,11 @@ export function CoachChat({
           <InfoCard icon="02" title="Calendar actions off">{`${modelName} cannot use tools. Set OLLAMA_MODEL to qwen3:4b to let the coach add calendar events.`}</InfoCard>
         )}
         <InfoCard icon="03" title="Snap a meal">Use the camera button. Food recognition returns an honest range with assumptions.</InfoCard>
-        <InfoCard icon="04" title="Stays local">Your chats and meal photos are processed on this PC, without a paid cloud API.</InfoCard>
+        {cloud ? (
+          <InfoCard icon="04" title="Always on">Runs on Groq&rsquo;s free API — works from your phone too, no PC needed.</InfoCard>
+        ) : (
+          <InfoCard icon="04" title="Stays local">Your chats and meal photos are processed on this PC, without a paid cloud API.</InfoCard>
+        )}
         <p className="px-2 pt-2 text-xs leading-5 text-zinc-600">AI estimates can be wrong and are not medical advice.</p>
       </aside>
     </div>
