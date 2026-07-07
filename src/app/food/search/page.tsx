@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { searchProducts } from "@/lib/food-search/client";
+import { searchGenericFoods, type GenericFood } from "@/lib/db/generic-foods";
 import type { NormalizedFoodProduct } from "@/lib/food-search/types";
 import {
   lookupBarcode,
@@ -9,7 +10,6 @@ import {
   type BarcodeLookupResult,
   type CanonicalProduct,
 } from "@/lib/products/lookup";
-import { searchOpenFoodFacts } from "@/lib/products/off-search";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import type { MealSlot } from "@/types/database";
 import { logFoodProduct } from "./actions";
@@ -63,8 +63,8 @@ export default async function FoodSearchPage({
   const selectedSlot = isMealSlot(params.slot) ? params.slot : "";
 
   // One relaxed search box: digits are treated as a barcode, everything
-  // else searches the Swiss food database by name — topped up with branded
-  // Swiss supermarket products from Open Food Facts.
+  // else searches the Swiss food database by name — topped up with generic
+  // foods from the USDA FoodData Central datasets (SR Legacy + Foundation).
   const barcode = normalizeBarcode(query);
   const searchResult =
     query && !barcode
@@ -72,15 +72,13 @@ export default async function FoodSearchPage({
       : { error: null, products: [] };
   const products = searchResult.products;
 
-  let offProducts: NormalizedFoodProduct[] = [];
+  let usdaProducts: NormalizedFoodProduct[] = [];
   if (query && !barcode && query.length >= 3) {
-    const offLimit = checkRateLimit(`off-search:${user.id}`, 60, 10 * 60);
-    if (offLimit.allowed) {
-      const offResults = await searchOpenFoodFacts(query);
-      const seen = new Set(products.map((product) => product.code));
-      offProducts = offResults
-        .filter((product) => !seen.has(product.code))
-        .slice(0, 8);
+    try {
+      const genericFoods = await searchGenericFoods(supabase, query);
+      usdaProducts = genericFoods.map(genericToNormalized).slice(0, 10);
+    } catch {
+      usdaProducts = [];
     }
   }
 
@@ -95,7 +93,7 @@ export default async function FoodSearchPage({
   return (
     <div>
       <PageHeader
-        subtitle="Search the official Swiss food database and log exact gram amounts into today."
+        subtitle="Search the Swiss and USDA food databases and log exact gram amounts into today."
         title="Log Meal"
       />
 
@@ -146,7 +144,7 @@ export default async function FoodSearchPage({
       {!query ? (
         <EmptyState />
       ) : barcode ? null : searchResult.error ? null : products.length === 0 &&
-        offProducts.length === 0 ? (
+        usdaProducts.length === 0 ? (
         <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
           <h2 className="font-bold text-white">No product found</h2>
           <p className="mt-2 text-sm leading-6 text-zinc-500">
@@ -164,13 +162,13 @@ export default async function FoodSearchPage({
               />
             ))}
           </section>
-          {offProducts.length > 0 ? (
+          {usdaProducts.length > 0 ? (
             <section className="mt-6">
               <p className="mb-3 px-1 text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
-                Swiss supermarket products · Open Food Facts
+                More foods · USDA database
               </p>
               <div className="space-y-3">
-                {offProducts.map((product) => (
+                {usdaProducts.map((product) => (
                   <ProductCard
                     key={product.code}
                     product={product}
@@ -240,10 +238,11 @@ function BarcodeResult({
 function EmptyState() {
   return (
     <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
-      <h2 className="font-bold text-white">Search Swiss foods</h2>
+      <h2 className="font-bold text-white">Search foods</h2>
       <p className="mt-2 text-sm leading-6 text-zinc-500">
-        Search by food name or synonym. Errday uses grams to calculate calories
-        and macros from the official values per 100 g.
+        Search the Swiss and USDA databases by food name or synonym. Errday
+        uses grams to calculate calories and macros from the official values
+        per 100 g.
       </p>
     </section>
   );
@@ -285,7 +284,7 @@ function ProductCard({
         <div className="min-w-0 flex-1">
           <h2 className="line-clamp-2 font-bold text-white">{product.name}</h2>
           <p className="mt-1 truncate text-sm text-zinc-500">
-            {product.category ?? "Schweizer Nährwertdatenbank"}
+            {product.category ?? (product.source === "usda_fdc" ? "USDA database" : "Schweizer Nährwertdatenbank")}
           </p>
           <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
             <Metric label="kcal/100g" value={formatMacro(product.caloriesPer100g)} />
@@ -352,22 +351,28 @@ function ProductCard({
   );
 }
 
-function ProductImage({ product }: { product: NormalizedFoodProduct }) {
-  if (!product.imageUrl) {
-    return (
-      <div className="grid size-20 shrink-0 place-items-center rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] text-lg font-bold text-[var(--accent)]">
-        {product.name.slice(0, 2).toUpperCase()}
-      </div>
-    );
-  }
+function genericToNormalized(food: GenericFood): NormalizedFoodProduct {
+  return {
+    brand: null,
+    caloriesPer100g: Number(food.kcal_100g),
+    carbsPer100g: Number(food.carbs_100g),
+    category: food.category,
+    code: `fdc-${food.fdc_id}`,
+    fatPer100g: Number(food.fat_100g),
+    imageUrl: null,
+    name: food.name,
+    proteinPer100g: Number(food.protein_100g),
+    servingSize: "100 g",
+    source: "usda_fdc",
+  };
+}
 
+// Deliberately image-free: a clean monogram tile instead of product photos.
+function ProductImage({ product }: { product: NormalizedFoodProduct }) {
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      alt=""
-      className="size-20 shrink-0 rounded-2xl border border-[var(--border)] object-cover"
-      src={product.imageUrl}
-    />
+    <div className="grid size-20 shrink-0 place-items-center rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] text-lg font-bold text-[var(--accent)]">
+      {product.name.slice(0, 2).toUpperCase()}
+    </div>
   );
 }
 
