@@ -9,7 +9,7 @@ import {
   insertCalendarEvent,
   listCalendarEvents,
 } from "@/lib/db/calendar";
-import { ollamaModelName } from "@/lib/ai/ollama";
+import { aiModelName } from "@/lib/ai/provider";
 
 const dateSchema = z
   .string()
@@ -21,7 +21,7 @@ const timeSchema = z
 // Local models that cannot do function calling through Ollama.
 const noToolSupport = [/gemma/i, /llava/i, /moondream/i, /^phi/i];
 
-export function modelSupportsTools(model = ollamaModelName()) {
+export function modelSupportsTools(model = aiModelName()) {
   return !noToolSupport.some((pattern) => pattern.test(model));
 }
 
