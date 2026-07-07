@@ -205,3 +205,37 @@ export async function disableHealthSync() {
   await deleteHealthSyncToken(supabase, user.id);
   revalidatePath("/settings");
 }
+
+export async function savePlanTimes(
+  _previousState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireUser();
+  const { cookies } = await import("next/headers");
+  const { isValidPlanTime, planTimeFields, PLAN_TIMES_COOKIE } = await import(
+    "@/lib/daily-flow/plan-times"
+  );
+
+  const times: Record<string, string> = {};
+  for (const { slot } of planTimeFields) {
+    const value = formString(formData, slot);
+    if (!value || !isValidPlanTime(value)) {
+      return {
+        status: "error",
+        message: "Every block needs a valid time (HH:MM).",
+      };
+    }
+    times[slot] = value;
+  }
+
+  const cookieStore = await cookies();
+  cookieStore.set(PLAN_TIMES_COOKIE, JSON.stringify(times), {
+    maxAge: 60 * 60 * 24 * 365,
+    path: "/",
+    sameSite: "lax",
+  });
+
+  revalidatePath("/today");
+  revalidatePath("/settings");
+  return { status: "success", message: "Day plan times saved." };
+}

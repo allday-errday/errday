@@ -1,7 +1,11 @@
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { PageHeader } from "@/components/page-header";
 import { SubmitButton } from "@/components/submit-button";
 import { requireUser } from "@/lib/auth";
+import {
+  parsePlanTimes,
+  PLAN_TIMES_COOKIE,
+} from "@/lib/daily-flow/plan-times";
 import { getCalendarFeedToken } from "@/lib/db/calendar";
 import { getHealthSyncToken } from "@/lib/db/health";
 import { getProfile } from "@/lib/db/profile";
@@ -9,18 +13,22 @@ import { safeRead } from "@/lib/db/safe-read";
 import { AppearanceToggle } from "./appearance-toggle";
 import { AppleCalendarCard } from "./apple-calendar-card";
 import { AppleHealthCard } from "./apple-health-card";
+import { PlanTimesForm } from "./plan-times-form";
 import { ReminderSettingsForm } from "./reminder-settings-form";
 import { logout } from "./actions";
 import { SettingsForm } from "./settings-form";
 
 export default async function SettingsPage() {
   const { supabase, user } = await requireUser();
-  const [profile, feedToken, healthToken, headerList] = await Promise.all([
-    getProfile(supabase, user.id),
-    safeRead(getCalendarFeedToken(supabase, user.id), null, "calendar feed"),
-    safeRead(getHealthSyncToken(supabase, user.id), null, "health sync"),
-    headers(),
-  ]);
+  const [profile, feedToken, healthToken, headerList, cookieStore] =
+    await Promise.all([
+      getProfile(supabase, user.id),
+      safeRead(getCalendarFeedToken(supabase, user.id), null, "calendar feed"),
+      safeRead(getHealthSyncToken(supabase, user.id), null, "health sync"),
+      headers(),
+      cookies(),
+    ]);
+  const planTimes = parsePlanTimes(cookieStore.get(PLAN_TIMES_COOKIE)?.value);
   const host =
     headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "localhost:3000";
   const protocol =
@@ -58,6 +66,17 @@ export default async function SettingsPage() {
         </p>
         <div className="mt-4">
           <ReminderSettingsForm profile={profile} />
+        </div>
+      </section>
+
+      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+        <h2 className="text-lg font-semibold text-white">Day plan times</h2>
+        <p className="mt-2 text-sm text-zinc-400">
+          Decide when each block of your day happens — meals, training and
+          bedtime.
+        </p>
+        <div className="mt-4">
+          <PlanTimesForm times={planTimes} />
         </div>
       </section>
 
