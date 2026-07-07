@@ -9,6 +9,7 @@ import {
   insertCalendarEvent,
   listCalendarEvents,
 } from "@/lib/db/calendar";
+import { createFoodItem, createFoodLog } from "@/lib/db/food";
 import { aiModelName } from "@/lib/ai/provider";
 
 const dateSchema = z
@@ -116,6 +117,67 @@ export function buildCoachTools(supabase: SupabaseClient, userId: string) {
             category: event.category,
             location: event.location,
           })),
+        };
+      },
+    }),
+
+    logMeal: tool({
+      description:
+        "Log a meal or food with its calories and macros into the user's Errday food diary for today. Use when the user tells you what they ate, or accepts your suggestion to log something. Estimate realistic values when the user does not provide exact numbers, and tell the user they are estimates.",
+      inputSchema: z.object({
+        name: z.string().min(1).max(120).describe("Short meal or food name"),
+        calories: z
+          .number()
+          .min(0)
+          .max(5000)
+          .describe("Total kcal for the eaten portion"),
+        proteinG: z.number().min(0).max(500).optional().describe("Protein in grams"),
+        carbsG: z.number().min(0).max(1000).optional().describe("Carbs in grams"),
+        fatG: z.number().min(0).max(500).optional().describe("Fat in grams"),
+        mealSlot: z
+          .enum(["breakfast", "lunch", "dinner", "snack", "pre_workout", "post_workout"])
+          .optional()
+          .describe("Which meal of the day this belongs to"),
+      }),
+      execute: async (input) => {
+        const item = await createFoodItem(supabase, {
+          user_id: userId,
+          name: input.name,
+          brand: null,
+          calories_per_serving: Math.round(input.calories),
+          protein_g: input.proteinG ?? 0,
+          carbs_g: input.carbsG ?? 0,
+          fat_g: input.fatG ?? 0,
+          serving_label: "1 portion",
+          image_url: null,
+          barcode: null,
+          external_source: "coach_ai",
+          external_id: null,
+          serving_size: null,
+        });
+
+        await createFoodLog(supabase, {
+          user_id: userId,
+          food_item_id: item.id,
+          logged_at: new Date().toISOString(),
+          servings: 1,
+          calories: Math.round(input.calories),
+          protein_g: input.proteinG ?? 0,
+          carbs_g: input.carbsG ?? 0,
+          fat_g: input.fatG ?? 0,
+          meal_slot: input.mealSlot ?? null,
+          source: "coach_ai",
+          external_food_id: null,
+          display_name: input.name,
+        });
+
+        return {
+          logged: true,
+          meal: {
+            name: input.name,
+            calories: Math.round(input.calories),
+            mealSlot: input.mealSlot ?? null,
+          },
         };
       },
     }),
