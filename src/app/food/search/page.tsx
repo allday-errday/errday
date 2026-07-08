@@ -3,6 +3,7 @@ import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { searchProducts } from "@/lib/food-search/client";
 import { searchGenericFoods, type GenericFood } from "@/lib/db/generic-foods";
+import { searchProductCatalog } from "@/lib/products/catalog-search";
 import { AiEstimateSection } from "./ai-estimate-section";
 import { FoodResultRow } from "./food-result-row";
 import type { NormalizedFoodProduct } from "@/lib/food-search/types";
@@ -72,6 +73,17 @@ export default async function FoodSearchPage({
       ? await searchProducts(query)
       : { error: null, products: [] };
   const products = searchResult.products;
+
+  // Errday's own imported Swiss supermarket catalog (branded products) —
+  // instant, trigram-indexed, no external call.
+  let catalogProducts: NormalizedFoodProduct[] = [];
+  if (query && !barcode && query.length >= 2) {
+    try {
+      catalogProducts = await searchProductCatalog(supabase, query);
+    } catch {
+      catalogProducts = [];
+    }
+  }
 
   let usdaProducts: NormalizedFoodProduct[] = [];
   if (query && !barcode && query.length >= 3) {
@@ -145,6 +157,7 @@ export default async function FoodSearchPage({
       {!query ? (
         <EmptyState />
       ) : barcode ? null : searchResult.error ? null : products.length === 0 &&
+        catalogProducts.length === 0 &&
         usdaProducts.length === 0 ? (
         <>
           <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
@@ -157,15 +170,33 @@ export default async function FoodSearchPage({
         </>
       ) : (
         <>
-          <section className="space-y-3">
-            {products.map((product) => (
-              <FoodResultRow
-                key={product.code}
-                product={product}
-                selectedSlot={selectedSlot}
-              />
-            ))}
-          </section>
+          {products.length > 0 ? (
+            <section className="space-y-3">
+              {products.map((product) => (
+                <FoodResultRow
+                  key={product.code}
+                  product={product}
+                  selectedSlot={selectedSlot}
+                />
+              ))}
+            </section>
+          ) : null}
+          {catalogProducts.length > 0 ? (
+            <section className={products.length > 0 ? "mt-6" : ""}>
+              <p className="mb-3 px-1 text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
+                Swiss supermarket products
+              </p>
+              <div className="space-y-3">
+                {catalogProducts.map((product) => (
+                  <FoodResultRow
+                    key={product.code}
+                    product={product}
+                    selectedSlot={selectedSlot}
+                  />
+                ))}
+              </div>
+            </section>
+          ) : null}
           {usdaProducts.length > 0 ? (
             <section className="mt-6">
               <p className="mb-3 px-1 text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
