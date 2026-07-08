@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { searchProducts } from "@/lib/food-search/client";
+import { expandQuery } from "@/lib/food-search/synonyms";
 import { searchGenericFoods, type GenericFood } from "@/lib/db/generic-foods";
 import { searchProductCatalog } from "@/lib/products/catalog-search";
 import { AiEstimateSection } from "./ai-estimate-section";
@@ -56,6 +57,32 @@ function isMealSlot(value?: string): value is MealSlot {
   return mealSlots.some((slot) => slot.value === value);
 }
 
+// Run a search across the original query and its cross-language variants,
+// merging unique products (by code) until the cap is reached.
+async function gatherAcrossLanguages(
+  queries: string[],
+  fetchOne: (q: string) => Promise<NormalizedFoodProduct[]>,
+  cap: number,
+): Promise<NormalizedFoodProduct[]> {
+  const seen = new Set<string>();
+  const out: NormalizedFoodProduct[] = [];
+  for (const q of queries) {
+    let rows: NormalizedFoodProduct[] = [];
+    try {
+      rows = await fetchOne(q);
+    } catch {
+      rows = [];
+    }
+    for (const row of rows) {
+      if (seen.has(row.code)) continue;
+      seen.add(row.code);
+      out.push(row);
+      if (out.length >= cap) return out;
+    }
+  }
+  return out;
+}
+
 export default async function FoodSearchPage({
   searchParams,
 }: FoodSearchPageProps) {
@@ -68,31 +95,41 @@ export default async function FoodSearchPage({
   // else searches the Swiss food database by name — topped up with generic
   // foods from the USDA FoodData Central datasets (SR Legacy + Foundation).
   const barcode = normalizeBarcode(query);
+  // The original query plus cross-language variants ("oats" also searches
+  // "haferflocken"), so English/French searches find German-named products.
+  const queries = query && !barcode ? [query, ...expandQuery(query)] : [query];
+
   const searchResult =
     query && !barcode
       ? await searchProducts(query)
       : { error: null, products: [] };
-  const products = searchResult.products;
+  const products =
+    query && !barcode
+      ? await gatherAcrossLanguages(
+          queries,
+          (q) => searchProducts(q).then((result) => result.products),
+          20,
+        )
+      : searchResult.products;
 
   // Errday's own imported Swiss supermarket catalog (branded products) —
   // instant, trigram-indexed, no external call.
   let catalogProducts: NormalizedFoodProduct[] = [];
   if (query && !barcode && query.length >= 2) {
-    try {
-      catalogProducts = await searchProductCatalog(supabase, query);
-    } catch {
-      catalogProducts = [];
-    }
+    catalogProducts = await gatherAcrossLanguages(
+      queries,
+      (q) => searchProductCatalog(supabase, q),
+      12,
+    );
   }
 
   let usdaProducts: NormalizedFoodProduct[] = [];
   if (query && !barcode && query.length >= 3) {
-    try {
-      const genericFoods = await searchGenericFoods(supabase, query);
-      usdaProducts = genericFoods.map(genericToNormalized).slice(0, 10);
-    } catch {
-      usdaProducts = [];
-    }
+    usdaProducts = await gatherAcrossLanguages(
+      queries,
+      (q) => searchGenericFoods(supabase, q).then((list) => list.map(genericToNormalized)),
+      10,
+    );
   }
 
   let barcodeResult: BarcodeLookupResult | null = null;
