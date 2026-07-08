@@ -126,6 +126,8 @@ export default async function TodayPage({
     suggestedBedtime: dailyProfile?.suggested_bedtime,
     workoutLogs: dashboard.workoutLogs,
     workouts: dashboard.workouts,
+    calorieTarget: dashboard.targetCalories,
+    burnedCalories,
   });
   const stats: DailyStat[] = [
     {

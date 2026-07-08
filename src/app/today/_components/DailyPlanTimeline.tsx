@@ -73,8 +73,15 @@ export function DailyPlanTimeline({ dayType, items }: DailyPlanTimelineProps) {
               <PlanIcon slot={item.slot} />
             </span>
             <span className="min-w-0">
-              <span className="block truncate text-base font-extrabold text-white sm:text-lg">
-                {item.label}
+              <span className="flex items-center gap-2">
+                <span className="truncate text-base font-extrabold text-white sm:text-lg">
+                  {item.label}
+                </span>
+                {item.targetKcal ? (
+                  <span className="shrink-0 rounded-full bg-[var(--accent-soft)] px-2 py-0.5 text-[0.68rem] font-bold text-[var(--accent)]">
+                    ~{item.targetKcal.toLocaleString("en-US")} kcal
+                  </span>
+                ) : null}
               </span>
               <span className="mt-1 block truncate text-xs font-semibold text-zinc-500 sm:text-sm">
                 {item.detail}

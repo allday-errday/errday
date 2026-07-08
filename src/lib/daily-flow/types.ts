@@ -27,6 +27,7 @@ export type DailyPlanItem = {
   slot: DailyPlanSlot;
   status: PlanItemStatus;
   targetTime: string;
+  targetKcal?: number | null;
 };
 
 export type DailyFlowFoodLog = Pick<

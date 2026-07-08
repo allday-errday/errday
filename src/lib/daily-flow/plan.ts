@@ -44,7 +44,51 @@ export type GenerateDailyPlanInput = {
   sleepLog?: DailyFlowSleepLog | null;
   workoutLogs: DailyFlowWorkoutLog[];
   workouts: DailyFlowWorkout[];
+  calorieTarget?: number | null;
+  burnedCalories?: number;
 };
+
+// How the day's calories split across the eating slots. Weights are
+// normalised over the slots actually present, so they always add up to the
+// full day — a real distribution, not a naive divide-by-four.
+const slotCalorieWeights: Partial<Record<DailyPlanSlot, number>> = {
+  breakfast: 25,
+  lunch: 35,
+  dinner: 30,
+  snack: 10,
+  pre_workout: 15,
+  post_workout: 25,
+};
+
+function computeMealTargets(
+  slots: DailyPlanSlot[],
+  calorieTarget: number | null | undefined,
+  burnedCalories: number,
+): Partial<Record<DailyPlanSlot, number>> {
+  if (!calorieTarget || calorieTarget <= 0) {
+    return {};
+  }
+
+  // Eating back what you burn keeps the planned deficit/surplus, so the
+  // per-meal aims rise on days you train.
+  const effectiveTarget = calorieTarget + Math.max(0, burnedCalories);
+  const eatingSlots = slots.filter((slot) => slotCalorieWeights[slot] != null);
+  const totalWeight = eatingSlots.reduce(
+    (sum, slot) => sum + (slotCalorieWeights[slot] ?? 0),
+    0,
+  );
+
+  if (totalWeight === 0) {
+    return {};
+  }
+
+  const targets: Partial<Record<DailyPlanSlot, number>> = {};
+  for (const slot of eatingSlots) {
+    const raw = (effectiveTarget * (slotCalorieWeights[slot] ?? 0)) / totalWeight;
+    targets[slot] = Math.round(raw / 5) * 5; // round to a tidy 5 kcal
+  }
+  return targets;
+}
 
 function dateAtTime(base: Date, time: string) {
   const [hours, minutes] = time.split(":").map(Number);
@@ -86,6 +130,7 @@ function createPlanItem(
   status: PlanItemStatus,
   detail: string,
   times: Record<DailyPlanSlot, string> = targetTimes,
+  targetKcal: number | null = null,
 ): DailyPlanItem {
   return {
     detail,
@@ -95,6 +140,7 @@ function createPlanItem(
     slot,
     status,
     targetTime: times[slot],
+    targetKcal,
   };
 }
 
@@ -117,6 +163,11 @@ export function generateDailyPlan(input: GenerateDailyPlanInput) {
 
   if (dayType === "rest") {
     const slots: DailyPlanSlot[] = ["breakfast", "lunch", "dinner", "snack", "sleep"];
+    const mealTargets = computeMealTargets(
+      slots,
+      input.calorieTarget,
+      input.burnedCalories ?? 0,
+    );
 
     return {
       dayType,
@@ -136,6 +187,7 @@ export function generateDailyPlan(input: GenerateDailyPlanInput) {
           statusForSlot(now, times[slot], Boolean(meal)),
           getFoodDetail(meal),
           times,
+          mealTargets[slot] ?? null,
         );
       }),
     };
@@ -167,6 +219,11 @@ export function generateDailyPlan(input: GenerateDailyPlanInput) {
     "dinner",
     "sleep",
   ];
+  const mealTargets = computeMealTargets(
+    slots,
+    input.calorieTarget,
+    input.burnedCalories ?? 0,
+  );
 
   return {
     dayType,
@@ -195,6 +252,7 @@ export function generateDailyPlan(input: GenerateDailyPlanInput) {
         statusForSlot(now, times[slot], Boolean(meal)),
         getFoodDetail(meal),
         times,
+        mealTargets[slot] ?? null,
       );
     }),
   };
