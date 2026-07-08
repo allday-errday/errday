@@ -1,9 +1,9 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
-import { CalendarCheck, Camera, ImagePlus, LoaderCircle, Send, Sparkles, X } from "lucide-react";
-import { FormEvent, useRef, useState } from "react";
+import { DefaultChatTransport, type UIMessage } from "ai";
+import { CalendarCheck, Camera, Check, ImagePlus, LoaderCircle, Send, Sparkles, X } from "lucide-react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import {
   Conversation,
   ConversationContent,
@@ -14,6 +14,7 @@ import {
   MessageContent,
   MessageResponse,
 } from "@/components/ai-elements/message";
+import type { MealAnalysis } from "@/lib/ai/meal-analysis";
 
 type CoachChatProps = {
   available: boolean;
@@ -35,6 +36,75 @@ const calendarSuggestions = [
 
 const coachTransport = new DefaultChatTransport({ api: "/api/coach" });
 
+type MealAnalysisPartData = {
+  status: "analyzing" | "ready" | "logging" | "logged" | "dismissed" | "error";
+  analysis?: MealAnalysis;
+  error?: string;
+  imageName?: string | null;
+  loggedMeal?: {
+    calories: number;
+    mealSlot: string | null;
+    name: string;
+  };
+  sourceText?: string;
+};
+
+type MealAnalysisUIPart = {
+  data: MealAnalysisPartData;
+  id: string;
+  type: "data-meal-analysis";
+};
+
+const foodTextPattern =
+  /\b(ate|eaten|eating|breakfast|lunch|dinner|snack|calorie|calories|kcal|protein|carbs|fat|grams?|portion|serving|plate|bowl|shake|pizza|pasta|rice|chicken|beef|egg|eggs|toast|salad|yogurt|oats|banana|apple|gegessen|esse|essen|hatte|mahlzeit|fruehstueck|fruhstuck|mittagessen|abendessen|znacht|zmittag|kalorien|eiweiss|proteinshake|gramm|teller|schuessel|joghurt|hafer|banane|apfel|eier|salat)\b/i;
+const planningTextPattern =
+  /^(what|why|how|help|plan|schedule|give|show|explain|was|wie|warum|hilf|plane|zeig|zeige|erklaer|soll|kannst)\b/i;
+
+function createLocalId(prefix: string) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function shouldAnalyzeTextAsMeal(text: string, hasImage: boolean) {
+  const trimmed = text.trim();
+
+  if (hasImage) return true;
+  if (trimmed.length < 3 || trimmed.endsWith("?")) return false;
+  if (planningTextPattern.test(trimmed)) return false;
+
+  return foodTextPattern.test(trimmed);
+}
+
+function mealConfirmation(text: string) {
+  const normalized = text.trim().toLowerCase();
+
+  if (/^(ja|yes|y|j|log|log it|eintragen|speichern)$/i.test(normalized)) {
+    return "yes" as const;
+  }
+
+  if (/^(nein|no|n|skip|nicht|abbrechen)$/i.test(normalized)) {
+    return "no" as const;
+  }
+
+  return null;
+}
+
+function formatMacro(value: number) {
+  return Math.round(value * 10) / 10;
+}
+
+function mealSlotLabel(value?: string | null) {
+  const labels: Record<string, string> = {
+    breakfast: "Breakfast",
+    dinner: "Dinner",
+    lunch: "Lunch",
+    post_workout: "Post-Workout",
+    pre_workout: "Pre-Workout",
+    snack: "Snack",
+  };
+
+  return value ? (labels[value] ?? value) : "Auto";
+}
+
 export function CoachChat({
   available,
   calendarEnabled,
@@ -48,11 +118,27 @@ export function CoachChat({
   const [files, setFiles] = useState<FileList>();
   const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { messages, sendMessage, status, stop, error } = useChat({
+  const objectUrlsRef = useRef<string[]>([]);
+  const { messages, sendMessage, setMessages, status, stop, error } = useChat({
     transport: coachTransport,
   });
-  const isBusy = status === "submitted" || status === "streaming";
+  const isCoachBusy = status === "submitted" || status === "streaming";
+  const isMealBusy = messages.some((message) =>
+    message.parts.some((part) => {
+      if (part.type !== "data-meal-analysis") return false;
+      const data = (part as MealAnalysisUIPart).data;
+      return data.status === "analyzing" || data.status === "logging";
+    }),
+  );
+  const isBusy = isCoachBusy || isMealBusy;
   const selectedFile = files?.[0];
+
+  useEffect(() => {
+    return () => {
+      objectUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+      objectUrlsRef.current = [];
+    };
+  }, []);
 
   function chooseFiles(nextFiles: FileList | null) {
     const file = nextFiles?.[0];
@@ -82,14 +168,209 @@ export function CoachChat({
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
+  function updateMealPart(
+    partId: string,
+    updater: (data: MealAnalysisPartData) => MealAnalysisPartData,
+  ) {
+    setMessages((currentMessages) =>
+      currentMessages.map((message) => ({
+        ...message,
+        parts: message.parts.map((part) => {
+          if (part.type !== "data-meal-analysis") return part;
+          const mealPart = part as MealAnalysisUIPart;
+          if (mealPart.id !== partId) return part;
+
+          return {
+            ...mealPart,
+            data: updater(mealPart.data),
+          } as unknown as UIMessage["parts"][number];
+        }),
+      })),
+    );
+  }
+
+  function latestReadyMealPart() {
+    for (let messageIndex = messages.length - 1; messageIndex >= 0; messageIndex -= 1) {
+      const message = messages[messageIndex];
+      for (let partIndex = message.parts.length - 1; partIndex >= 0; partIndex -= 1) {
+        const part = message.parts[partIndex];
+        if (part.type !== "data-meal-analysis") continue;
+        const mealPart = part as MealAnalysisUIPart;
+        if (mealPart.data.status === "ready" && mealPart.data.analysis) {
+          return mealPart;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  function appendMealAnalysisMessages(text: string, file?: File) {
+    const partId = createLocalId("meal-analysis");
+    const userParts: UIMessage["parts"] = [];
+
+    if (text.trim()) {
+      userParts.push({ type: "text", text: text.trim() });
+    }
+
+    if (file) {
+      const url = URL.createObjectURL(file);
+      objectUrlsRef.current.push(url);
+      userParts.push({
+        filename: file.name,
+        mediaType: file.type,
+        type: "file",
+        url,
+      });
+    }
+
+    if (userParts.length === 0) {
+      userParts.push({ type: "text", text: "Meal capture" });
+    }
+
+    const userMessage: UIMessage = {
+      id: createLocalId("meal-user"),
+      parts: userParts,
+      role: "user",
+    };
+    const assistantMessage: UIMessage = {
+      id: createLocalId("meal-assistant"),
+      parts: [
+        {
+          data: {
+            imageName: file?.name ?? null,
+            sourceText: text.trim(),
+            status: "analyzing",
+          },
+          id: partId,
+          type: "data-meal-analysis",
+        } as unknown as UIMessage["parts"][number],
+      ],
+      role: "assistant",
+    };
+
+    setMessages((currentMessages) => [
+      ...currentMessages,
+      userMessage,
+      assistantMessage,
+    ]);
+
+    return partId;
+  }
+
+  async function analyzeMealInChat(text: string, file?: File) {
+    const partId = appendMealAnalysisMessages(text, file);
+    const formData = new FormData();
+
+    if (text.trim()) formData.set("text", text.trim());
+    if (file) formData.set("image", file);
+
+    setInput("");
+    clearFile();
+
+    try {
+      const response = await fetch("/api/food/analyze-meal", {
+        body: formData,
+        method: "POST",
+      });
+      const data = (await response.json()) as {
+        analysis?: MealAnalysis;
+        error?: string;
+      };
+
+      if (!response.ok || !data.analysis) {
+        updateMealPart(partId, (current) => ({
+          ...current,
+          error: data.error ?? "I could not analyze this meal.",
+          status: "error",
+        }));
+        return;
+      }
+
+      updateMealPart(partId, (current) => ({
+        ...current,
+        analysis: data.analysis,
+        error: undefined,
+        status: "ready",
+      }));
+    } catch {
+      updateMealPart(partId, (current) => ({
+        ...current,
+        error: "The meal analysis could not be reached. Try again.",
+        status: "error",
+      }));
+    }
+  }
+
+  async function confirmMealLog(partId: string, analysis: MealAnalysis) {
+    updateMealPart(partId, (current) => ({ ...current, status: "logging" }));
+
+    try {
+      const response = await fetch("/api/food/log-analyzed-meal", {
+        body: JSON.stringify({ analysis }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+      const data = (await response.json()) as {
+        error?: string;
+        meal?: { calories: number; mealSlot: string | null; name: string };
+      };
+
+      if (!response.ok || !data.meal) {
+        updateMealPart(partId, (current) => ({
+          ...current,
+          error: data.error ?? "Could not log this meal.",
+          status: "ready",
+        }));
+        return;
+      }
+
+      updateMealPart(partId, (current) => ({
+        ...current,
+        error: undefined,
+        loggedMeal: data.meal,
+        status: "logged",
+      }));
+    } catch {
+      updateMealPart(partId, (current) => ({
+        ...current,
+        error: "Could not log this meal. Try again.",
+        status: "ready",
+      }));
+    }
+  }
+
+  function dismissMealLog(partId: string) {
+    updateMealPart(partId, (current) => ({ ...current, status: "dismissed" }));
+  }
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!available || isBusy || (!input.trim() && !selectedFile)) return;
 
+    const trimmedInput = input.trim();
+    const confirmation = mealConfirmation(trimmedInput);
+    const readyMeal = latestReadyMealPart();
+
+    if (!selectedFile && confirmation && readyMeal?.data.analysis) {
+      setInput("");
+      if (confirmation === "yes") {
+        void confirmMealLog(readyMeal.id, readyMeal.data.analysis);
+      } else {
+        dismissMealLog(readyMeal.id);
+      }
+      return;
+    }
+
+    if (shouldAnalyzeTextAsMeal(trimmedInput, Boolean(selectedFile))) {
+      void analyzeMealInChat(trimmedInput, selectedFile);
+      return;
+    }
+
     sendMessage({
       files,
       text:
-        input.trim() ||
+        trimmedInput ||
         "Analyze this meal photo. Identify the likely foods, estimate a realistic calorie and macro range, and tell me what detail would make the estimate more accurate.",
     });
     setInput("");
@@ -174,6 +455,22 @@ export function CoachChat({
                         );
                       }
 
+                      if (part.type === "data-meal-analysis") {
+                        const mealPart = part as MealAnalysisUIPart;
+                        return (
+                          <MealAnalysisCard
+                            data={mealPart.data}
+                            key={`${message.id}-meal-${mealPart.id}`}
+                            onConfirm={() => {
+                              if (mealPart.data.analysis) {
+                                void confirmMealLog(mealPart.id, mealPart.data.analysis);
+                              }
+                            }}
+                            onDismiss={() => dismissMealLog(mealPart.id)}
+                          />
+                        );
+                      }
+
                       if (part.type.startsWith("tool-")) {
                         return (
                           <ToolActivity
@@ -253,7 +550,7 @@ export function CoachChat({
               rows={1}
               value={input}
             />
-            {isBusy ? (
+            {isCoachBusy ? (
               <button aria-label="Stop response" className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white text-[var(--on-accent)]" onClick={stop} type="button"><span className="size-3 rounded-sm bg-[#0b0c10]" /></button>
             ) : (
               <button aria-label="Send message" className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[var(--accent)] text-[var(--on-accent)] shadow-lg shadow-[var(--accent)]/20 disabled:cursor-not-allowed disabled:opacity-40" disabled={!available || (!input.trim() && !selectedFile)} type="submit"><Send className="size-5" /></button>
@@ -350,6 +647,136 @@ function ToolActivity({ part }: { part: ToolPart }) {
       )}
       {isDone ? `${labels.done}${detail}` : labels.pending}
     </p>
+  );
+}
+
+function MealAnalysisCard({
+  data,
+  onConfirm,
+  onDismiss,
+}: {
+  data: MealAnalysisPartData;
+  onConfirm: () => void;
+  onDismiss: () => void;
+}) {
+  if (data.status === "analyzing") {
+    return (
+      <div className="w-fit rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-zinc-300">
+        <span className="flex items-center gap-2 font-bold">
+          <LoaderCircle className="size-4 animate-spin text-[var(--accent)]" />
+          Analyzing meal...
+        </span>
+        <p className="mt-1 text-xs text-zinc-500">
+          I will estimate the actual portion, not just 100 g.
+        </p>
+      </div>
+    );
+  }
+
+  if (data.status === "error") {
+    return (
+      <div className="w-fit max-w-md rounded-2xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+        {data.error ?? "I could not analyze this meal."}
+      </div>
+    );
+  }
+
+  const analysis = data.analysis;
+  if (!analysis) return null;
+
+  const logged = data.status === "logged";
+  const dismissed = data.status === "dismissed";
+  const logging = data.status === "logging";
+
+  return (
+    <article className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-[var(--accent)]">
+            Meal preview
+          </p>
+          <h3 className="mt-2 font-black text-white">{analysis.name}</h3>
+          <p className="mt-1 text-sm font-semibold text-zinc-400">
+            {analysis.amount}
+            {analysis.servingGrams ? ` · ${analysis.servingGrams} g` : ""}
+          </p>
+        </div>
+        <p className="rounded-full bg-[var(--accent-soft)] px-3 py-1.5 text-sm font-black text-[var(--accent)]">
+          {Math.round(analysis.calories)} kcal
+        </p>
+      </div>
+
+      <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+        <MealMetric label="Protein" value={`${formatMacro(analysis.proteinG)} g`} />
+        <MealMetric label="Carbs" value={`${formatMacro(analysis.carbsG)} g`} />
+        <MealMetric label="Fat" value={`${formatMacro(analysis.fatG)} g`} />
+      </div>
+
+      {analysis.assumptions.length > 0 ? (
+        <p className="mt-3 text-xs leading-5 text-zinc-500">
+          Assumptions: {analysis.assumptions.join("; ")}
+        </p>
+      ) : null}
+
+      {analysis.note ? (
+        <p className="mt-2 text-xs leading-5 text-zinc-500">{analysis.note}</p>
+      ) : null}
+
+      {data.error ? (
+        <p className="mt-3 rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-300">
+          {data.error}
+        </p>
+      ) : null}
+
+      {logged ? (
+        <p className="mt-4 flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accent-soft)] px-3 py-2 text-xs font-bold text-[var(--accent)]">
+          <Check className="size-4" />
+          Logged as {data.loggedMeal?.name ?? analysis.name} ·{" "}
+          {mealSlotLabel(data.loggedMeal?.mealSlot)}
+        </p>
+      ) : dismissed ? (
+        <p className="mt-4 rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2 text-xs font-bold text-zinc-400">
+          Not logged.
+        </p>
+      ) : (
+        <div className="mt-4 grid grid-cols-2 gap-2">
+          <button
+            className="min-h-11 rounded-full bg-[var(--accent)] px-4 text-sm font-black text-[var(--on-accent)] disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={logging}
+            onClick={onConfirm}
+            type="button"
+          >
+            {logging ? (
+              <span className="inline-flex items-center gap-2">
+                <LoaderCircle className="size-4 animate-spin" />
+                Logging...
+              </span>
+            ) : (
+              "Ja, eintragen"
+            )}
+          </button>
+          <button
+            className="min-h-11 rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-black text-zinc-300 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={logging}
+            onClick={onDismiss}
+            type="button"
+          >
+            Nein
+          </button>
+        </div>
+      )}
+    </article>
+  );
+}
+
+function MealMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/5 p-2">
+      <p className="text-[0.65rem] font-bold uppercase tracking-wide text-zinc-500">
+        {label}
+      </p>
+      <p className="mt-1 font-black text-white">{value}</p>
+    </div>
   );
 }
 

@@ -12,6 +12,15 @@ import { createClient } from "@/lib/supabase/server";
 
 export const maxDuration = 180;
 
+function stripClientOnlyDataParts(messages: UIMessage[]) {
+  return messages
+    .map((message) => ({
+      ...message,
+      parts: message.parts.filter((part) => !part.type.startsWith("data-")),
+    }))
+    .filter((message) => message.parts.length > 0);
+}
+
 function coachInstructions(withTools: boolean) {
   const base = `You are Errday Coach, a concise and warm fitness, nutrition, sleep, and recovery assistant.
 Today's date is ${todayDateString()} (Europe/Zurich).
@@ -27,7 +36,7 @@ Never say that you saved or changed data.`;
 
   return `${base}
 You can manage the user's Errday calendar and food diary with your tools. When the user asks to schedule, plan, or be reminded of something, add it with addCalendarEvent — resolve relative dates like "tomorrow" from today's date, and only claim an event was saved after the tool confirms it. Before adding to a day you have not seen, check it with listCalendarEvents to avoid duplicates. Calendar events sync to the user's Apple Calendar automatically.
-When the user tells you what they ate or asks you to track a meal, log it with logMeal (estimate calories and macros realistically when unknown, and say they are estimates). When you give food tips and the user wants one, offer to log it right away. Only claim a meal was logged after the tool confirms it.`;
+When the user tells you what they ate, first estimate a realistic eaten portion with total calories and macros, then ask if they want it logged. Only call logMeal after the user clearly confirms that specific estimate, or when the user explicitly asks you to log provided values. Never claim a meal was logged before the tool confirms it.`;
 }
 
 export async function POST(request: Request) {
@@ -74,7 +83,7 @@ export async function POST(request: Request) {
   }
 
   const withTools = modelSupportsTools();
-  const recentMessages = messages.slice(-12);
+  const recentMessages = stripClientOnlyDataParts(messages).slice(-12);
   const result = streamText({
     messages: await convertToModelMessages(recentMessages),
     model: getCoachModel(),

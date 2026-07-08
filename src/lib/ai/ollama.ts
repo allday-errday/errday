@@ -18,6 +18,10 @@ export function ollamaModelName() {
   return process.env.OLLAMA_MODEL?.trim() || defaultModel;
 }
 
+export function ollamaVisionModelName() {
+  return process.env.OLLAMA_VISION_MODEL?.trim() || ollamaModelName();
+}
+
 function getProvider() {
   if (!provider) {
     provider = createOpenAICompatible({
@@ -34,7 +38,11 @@ export function getOllamaModel() {
   return getProvider()(ollamaModelName());
 }
 
-export async function isOllamaAvailable() {
+export function getOllamaVisionModel() {
+  return getProvider()(ollamaVisionModelName());
+}
+
+async function isOllamaModelAvailable(modelName: string) {
   try {
     const response = await fetch(`${baseUrl()}/api/tags`, {
       cache: "no-store",
@@ -45,12 +53,18 @@ export async function isOllamaAvailable() {
     const data = (await response.json()) as {
       models?: Array<{ model?: string; name?: string }>;
     };
-    const target = ollamaModelName();
-
     return (data.models ?? []).some(
-      (model) => model.model === target || model.name === target,
+      (model) => model.model === modelName || model.name === modelName,
     );
   } catch {
     return false;
   }
+}
+
+export async function isOllamaAvailable() {
+  return isOllamaModelAvailable(ollamaModelName());
+}
+
+export async function isOllamaVisionAvailable() {
+  return isOllamaModelAvailable(ollamaVisionModelName());
 }

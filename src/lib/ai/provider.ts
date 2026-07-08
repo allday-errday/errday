@@ -3,8 +3,11 @@ import "server-only";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import {
   getOllamaModel,
+  getOllamaVisionModel,
   isOllamaAvailable,
+  isOllamaVisionAvailable,
   ollamaModelName,
+  ollamaVisionModelName,
 } from "@/lib/ai/ollama";
 
 // When GROQ_API_KEY is set the coach runs on Groq's free OpenAI-compatible
@@ -25,6 +28,18 @@ export function aiModelName() {
   return ollamaModelName();
 }
 
+export function aiVisionModelName() {
+  if (isGroqConfigured()) {
+    return (
+      process.env.GROQ_VISION_MODEL?.trim() ||
+      process.env.GROQ_MODEL?.trim() ||
+      defaultGroqModel
+    );
+  }
+
+  return ollamaVisionModelName();
+}
+
 export function getCoachModel() {
   if (isGroqConfigured()) {
     if (!groqProvider) {
@@ -40,9 +55,31 @@ export function getCoachModel() {
   return getOllamaModel();
 }
 
+export function getVisionModel() {
+  if (isGroqConfigured()) {
+    if (!groqProvider) {
+      groqProvider = createOpenAICompatible({
+        apiKey: process.env.GROQ_API_KEY?.trim(),
+        baseURL: groqBaseUrl,
+        name: "groq",
+      });
+    }
+    return groqProvider(aiVisionModelName());
+  }
+
+  return getOllamaVisionModel();
+}
+
 export async function isCoachAvailable() {
   if (isGroqConfigured()) {
     return true;
   }
   return isOllamaAvailable();
+}
+
+export async function isVisionModelAvailable() {
+  if (isGroqConfigured()) {
+    return true;
+  }
+  return isOllamaVisionAvailable();
 }
