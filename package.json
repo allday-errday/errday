@@ -16,6 +16,7 @@
     "@ai-sdk/react": "^3.0.210",
     "@capacitor/core": "^8.4.1",
     "@capacitor/ios": "^8.4.1",
+    "@capacitor/local-notifications": "^8.2.0",
     "@streamdown/cjk": "^1.0.3",
     "@streamdown/code": "^1.1.1",
     "@streamdown/math": "^1.0.2",
