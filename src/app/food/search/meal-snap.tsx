@@ -1,8 +1,20 @@
 "use client";
 
 import { Camera, Check, LoaderCircle, Sparkles, X } from "lucide-react";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import type { MealAnalysis } from "@/lib/ai/meal-analysis";
+import type { ScanMode } from "./camera-scanner";
+
+// Lazy-loaded so the camera + barcode library only ships when opened.
+const CameraScanner = dynamic(
+  () => import("./camera-scanner").then((module) => module.CameraScanner),
+  { ssr: false },
+);
+
+const labelHint =
+  "This photo shows a product's nutrition label (Nährwerttabelle). Read the values and estimate one typical serving as eaten.";
 
 type Status = "idle" | "analyzing" | "ready" | "logging" | "logged" | "error";
 
@@ -42,15 +54,29 @@ function formatMacro(value: number) {
 }
 
 export function MealSnap({ onLogged }: { onLogged?: () => void }) {
+  const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
   const [analysis, setAnalysis] = useState<MealAnalysis | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [text, setText] = useState("");
-  const cameraRef = useRef<HTMLInputElement>(null);
+  const [scannerOpen, setScannerOpen] = useState(false);
   const previewUrlRef = useRef<string | null>(null);
 
   const busy = status === "analyzing" || status === "logging";
+
+  function handleScannedPhoto(blob: Blob, mode: ScanMode) {
+    setScannerOpen(false);
+    const file = new File([blob], "meal.jpg", {
+      type: blob.type || "image/jpeg",
+    });
+    void analyze(file, mode === "label" ? labelHint : text);
+  }
+
+  function handleScannedBarcode(code: string) {
+    setScannerOpen(false);
+    router.push(`/food/search?barcode=${encodeURIComponent(code)}`);
+  }
 
   function setPreview(url: string | null) {
     if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
@@ -147,22 +173,17 @@ export function MealSnap({ onLogged }: { onLogged?: () => void }) {
     setError(null);
     setText("");
     setPreview(null);
-    if (cameraRef.current) cameraRef.current.value = "";
   }
 
   return (
     <section className="mb-5 overflow-hidden rounded-2xl border border-[var(--accent)]/25 bg-[var(--accent-soft)] p-4 sm:p-5">
-      <input
-        accept="image/*"
-        capture="environment"
-        className="sr-only"
-        onChange={(event) => {
-          const file = event.target.files?.[0];
-          if (file) void analyze(file, text);
-        }}
-        ref={cameraRef}
-        type="file"
-      />
+      {scannerOpen ? (
+        <CameraScanner
+          onBarcode={handleScannedBarcode}
+          onClose={() => setScannerOpen(false)}
+          onPhoto={handleScannedPhoto}
+        />
+      ) : null}
 
       {status === "idle" || status === "error" ? (
         <div>
@@ -177,11 +198,11 @@ export function MealSnap({ onLogged }: { onLogged?: () => void }) {
           <div className="mt-3 grid gap-2 sm:flex">
             <button
               className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 text-sm font-extrabold text-[var(--on-accent)] shadow-sm shadow-[var(--accent)]/25 transition hover:brightness-110"
-              onClick={() => cameraRef.current?.click()}
+              onClick={() => setScannerOpen(true)}
               type="button"
             >
               <Camera className="size-5" />
-              Take a photo
+              Scan food
             </button>
             <div className="flex min-w-0 flex-1 gap-2">
               <input
