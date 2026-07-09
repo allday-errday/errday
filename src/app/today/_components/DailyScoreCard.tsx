@@ -25,9 +25,6 @@ export function DailyScoreCard({ result }: DailyScoreCardProps) {
               {result.status} momentum
             </p>
           </div>
-          <span className="rounded-full border border-white/10 bg-black/15 px-3 py-2 text-xs font-bold uppercase tracking-[0.15em] text-white/55">
-            Live
-          </span>
         </div>
 
         <CircularScoreProgress score={result.score} />

@@ -1,6 +1,11 @@
 import { requireUser } from "@/lib/auth";
 import { modelSupportsTools } from "@/lib/ai/coach-tools";
-import { aiModelName, isCoachAvailable, isGroqConfigured } from "@/lib/ai/provider";
+import {
+  aiModelName,
+  aiProviderLabel,
+  isCloudAiConfigured,
+  isCoachAvailable,
+} from "@/lib/ai/provider";
 import { CoachChat } from "./coach-chat";
 
 export const metadata = {
@@ -11,7 +16,8 @@ export default async function CoachPage() {
   await requireUser();
   const available = await isCoachAvailable();
   const modelName = aiModelName();
-  const cloud = isGroqConfigured();
+  const cloud = isCloudAiConfigured();
+  const providerName = aiProviderLabel();
   const calendarEnabled = modelSupportsTools(modelName);
 
   return (
@@ -32,6 +38,7 @@ export default async function CoachPage() {
         calendarEnabled={calendarEnabled}
         cloud={cloud}
         modelName={modelName}
+        providerName={providerName}
       />
     </div>
   );

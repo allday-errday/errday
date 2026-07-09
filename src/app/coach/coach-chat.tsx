@@ -21,7 +21,26 @@ type CoachChatProps = {
   calendarEnabled: boolean;
   cloud: boolean;
   modelName: string;
+  providerName: string;
 };
+
+const CHAT_STORAGE_KEY = "errday.coach-chat.v1";
+const CHAT_RETENTION_MS = 48 * 60 * 60 * 1000;
+
+type StoredCoachChat = {
+  messages: UIMessage[];
+  savedAt: number;
+};
+
+function messagesForStorage(messages: UIMessage[]) {
+  return messages.map((message) => {
+    const parts = message.parts.filter((part) => part.type !== "file");
+    return {
+      ...message,
+      parts: parts.length > 0 ? parts : [{ type: "text", text: "Meal photo" }],
+    } as UIMessage;
+  });
+}
 
 const baseSuggestions = [
   "Plan a simple push workout for today",
@@ -110,6 +129,7 @@ export function CoachChat({
   calendarEnabled,
   cloud,
   modelName,
+  providerName,
 }: CoachChatProps) {
   const suggestions = calendarEnabled
     ? [...calendarSuggestions, ...baseSuggestions.slice(0, 2)]
@@ -122,6 +142,7 @@ export function CoachChat({
   const { messages, sendMessage, setMessages, status, stop, error } = useChat({
     transport: coachTransport,
   });
+  const [storageReady, setStorageReady] = useState(false);
   const isCoachBusy = status === "submitted" || status === "streaming";
   const isMealBusy = messages.some((message) =>
     message.parts.some((part) => {
@@ -132,6 +153,49 @@ export function CoachChat({
   );
   const isBusy = isCoachBusy || isMealBusy;
   const selectedFile = files?.[0];
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+      if (raw) {
+        const stored = JSON.parse(raw) as StoredCoachChat;
+        if (
+          Array.isArray(stored.messages) &&
+          typeof stored.savedAt === "number" &&
+          Date.now() - stored.savedAt < CHAT_RETENTION_MS
+        ) {
+          setMessages(stored.messages);
+        } else {
+          localStorage.removeItem(CHAT_STORAGE_KEY);
+        }
+      }
+    } catch {
+      localStorage.removeItem(CHAT_STORAGE_KEY);
+    } finally {
+      setStorageReady(true);
+    }
+  }, [setMessages]);
+
+  useEffect(() => {
+    if (!storageReady) return;
+
+    if (messages.length === 0) {
+      localStorage.removeItem(CHAT_STORAGE_KEY);
+      return;
+    }
+
+    const stored: StoredCoachChat = {
+      messages: messagesForStorage(messages),
+      savedAt: Date.now(),
+    };
+    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(stored));
+    const clearTimer = window.setTimeout(() => {
+      localStorage.removeItem(CHAT_STORAGE_KEY);
+      setMessages([]);
+    }, CHAT_RETENTION_MS);
+
+    return () => window.clearTimeout(clearTimer);
+  }, [messages, setMessages, storageReady]);
 
   useEffect(() => {
     return () => {
@@ -383,7 +447,7 @@ export function CoachChat({
   }
 
   return (
-    <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_270px]">
+    <div className="mx-auto max-w-4xl">
       <section className="flex h-[min(720px,calc(100dvh-12rem))] min-h-[30rem] flex-col overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_80%,transparent)] shadow-[0_30px_90px_-55px_black] backdrop-blur-xl sm:min-h-[560px] sm:rounded-[2rem]">
         <div className="flex items-start justify-between gap-3 border-b border-[var(--border)] px-4 py-4 sm:items-center sm:px-6">
           <div className="flex items-center gap-3">
@@ -392,7 +456,7 @@ export function CoachChat({
             </span>
             <div>
               <h2 className="font-black text-white">Errday Coach</h2>
-              <p className="text-xs text-zinc-500">{cloud ? "Groq cloud · fast · free tier" : "Local · private · free"}</p>
+              <p className="text-xs text-zinc-500">{cloud ? `${providerName} cloud` : "Local · private"}</p>
             </div>
           </div>
           <span className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-black ${available ? "border-[var(--signal)]/25 bg-[color-mix(in_srgb,var(--signal)_9%,transparent)] text-[var(--signal)]" : "border-amber-400/25 bg-amber-400/10 text-amber-300"}`}>
@@ -501,7 +565,7 @@ export function CoachChat({
           {!available ? (
             <p className="mb-3 rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm leading-6 text-amber-200">
               {cloud
-                ? "The Groq API is not reachable right now. Try again in a moment."
+                ? `${providerName} is not reachable right now. Try again in a moment.`
                 : `Start Ollama on this PC, make sure ${modelName} is installed (ollama pull ${modelName}), then reload this page.`}
             </p>
           ) : null}
@@ -556,10 +620,13 @@ export function CoachChat({
               <button aria-label="Send message" className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[var(--accent)] text-[var(--on-accent)] shadow-lg shadow-[var(--accent)]/20 disabled:cursor-not-allowed disabled:opacity-40" disabled={!available || (!input.trim() && !selectedFile)} type="submit"><Send className="size-5" /></button>
             )}
           </form>
+          <p className="mt-3 px-1 text-xs leading-5 text-zinc-600">
+            Chats stay on this device and are automatically removed after 48 hours.
+          </p>
         </div>
       </section>
 
-      <aside className="space-y-3">
+      <aside aria-hidden="true" className="hidden">
         <InfoCard icon="01" title="Talk naturally">No commands. Tell it what happened, what you ate, or what feels off.</InfoCard>
         {calendarEnabled ? (
           <InfoCard icon="02" title="Plans for you">Say &ldquo;schedule leg day tomorrow at 18:00&rdquo; — the coach adds it to your calendar and iPhone.</InfoCard>

@@ -129,7 +129,6 @@ Never use "100 g" as the amount unless the user explicitly says the eaten portio
 Prefer the same language as the user's text for name, amount, assumptions, and note.
 Use conservative, plausible portion estimates from the image/text. Calories and macros must be totals for the stated amount.`,
       messages: [{ role: "user", content: userContent }],
-      temperature: 0.1,
     });
 
     const analysis = result.object;

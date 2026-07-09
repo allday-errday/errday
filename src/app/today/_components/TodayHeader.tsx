@@ -16,10 +16,6 @@ export function TodayHeader({
   return (
     <header className="mb-6 flex items-end justify-between gap-5 pt-1 sm:mb-8">
       <div className="max-w-4xl">
-        <p className="eyebrow mb-2 flex items-center gap-3">
-          <span className="inline-block h-px w-6 bg-[var(--accent)]" />
-          Your daily system
-        </p>
         <h1 className="text-3xl font-extrabold leading-none text-white sm:text-4xl">
           {isToday ? (
             <>

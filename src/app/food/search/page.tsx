@@ -144,7 +144,7 @@ export default async function FoodSearchPage({
   return (
     <div>
       <PageHeader
-        subtitle="Snap a photo, or search the Swiss and USDA food databases and log exact amounts into today."
+        subtitle="Take a photo to log a meal, or search by name."
         title="Log Meal"
       />
 
@@ -194,9 +194,7 @@ export default async function FoodSearchPage({
       {params.error ? <ErrorMessage error={params.error} /> : null}
       {searchResult.error ? <ErrorMessage message={searchResult.error} /> : null}
 
-      {!query ? (
-        <EmptyState />
-      ) : barcode ? null : searchResult.error ? null : products.length === 0 &&
+      {!query ? null : barcode ? null : searchResult.error ? null : products.length === 0 &&
         catalogProducts.length === 0 &&
         usdaProducts.length === 0 ? (
         <>
@@ -308,19 +306,6 @@ function BarcodeResult({
     <p className="mb-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
       {result.status === "error" ? result.message : messages[result.status]}
     </p>
-  );
-}
-
-function EmptyState() {
-  return (
-    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
-      <h2 className="font-bold text-white">Search foods</h2>
-      <p className="mt-2 text-sm leading-6 text-zinc-500">
-        Search the Swiss and USDA databases by food name or synonym. Errday
-        uses grams to calculate calories and macros from the official values
-        per 100 g.
-      </p>
-    </section>
   );
 }
 

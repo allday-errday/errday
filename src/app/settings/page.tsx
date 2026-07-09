@@ -1,11 +1,10 @@
+import { ChevronDown } from "lucide-react";
 import { cookies, headers } from "next/headers";
+import type { ReactNode } from "react";
 import { PageHeader } from "@/components/page-header";
 import { SubmitButton } from "@/components/submit-button";
 import { requireUser } from "@/lib/auth";
-import {
-  parsePlanTimes,
-  PLAN_TIMES_COOKIE,
-} from "@/lib/daily-flow/plan-times";
+import { parsePlanTimes, PLAN_TIMES_COOKIE } from "@/lib/daily-flow/plan-times";
 import { getCalendarFeedToken } from "@/lib/db/calendar";
 import { getHealthSyncToken } from "@/lib/db/health";
 import { getProfile } from "@/lib/db/profile";
@@ -20,105 +19,102 @@ import { SettingsForm } from "./settings-form";
 
 export default async function SettingsPage() {
   const { supabase, user } = await requireUser();
-  const [profile, feedToken, healthToken, headerList, cookieStore] =
-    await Promise.all([
-      getProfile(supabase, user.id),
-      safeRead(getCalendarFeedToken(supabase, user.id), null, "calendar feed"),
-      safeRead(getHealthSyncToken(supabase, user.id), null, "health sync"),
-      headers(),
-      cookies(),
-    ]);
+  const [profile, feedToken, healthToken, headerList, cookieStore] = await Promise.all([
+    getProfile(supabase, user.id),
+    safeRead(getCalendarFeedToken(supabase, user.id), null, "calendar feed"),
+    safeRead(getHealthSyncToken(supabase, user.id), null, "health sync"),
+    headers(),
+    cookies(),
+  ]);
   const planTimes = parsePlanTimes(cookieStore.get(PLAN_TIMES_COOKIE)?.value);
-  const host =
-    headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "localhost:3000";
-  const protocol =
-    headerList.get("x-forwarded-proto") ??
-    (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
+  const host = headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "localhost:3000";
+  const protocol = headerList.get("x-forwarded-proto") ?? (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
   const origin = `${protocol}://${host}`;
 
   return (
     <div>
-      <PageHeader
-        subtitle="Your profile, goals, reminders and appearance."
-        title="Settings"
-      />
+      <PageHeader subtitle="Open only what you want to change." title="Settings" />
 
-      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
-        <h2 className="text-lg font-semibold text-white">Appearance</h2>
-        <p className="mt-2 text-sm text-zinc-400">
-          Same design, two moods. Your choice is saved on this device.
-        </p>
+      <SettingsSection description="Theme and display preference on this device." title="Appearance">
         <AppearanceToggle />
-      </section>
+      </SettingsSection>
 
-      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
-        <h2 className="mb-4 text-lg font-semibold text-white">Body Profile</h2>
+      <SettingsSection description="Body data, goal and activity level used for your targets." title="Body profile">
         <SettingsForm profile={profile} />
-      </section>
+      </SettingsSection>
 
-      <section
-        className="mb-5 rounded-2xl border border-[var(--accent)]/50 bg-[var(--accent-soft)] p-5 shadow-lg shadow-[var(--accent)]/10"
-        id="reminder-settings"
-      >
-        <h2 className="text-lg font-semibold text-white">Reminders</h2>
-        <p className="mt-2 text-sm text-zinc-400">
-          Choose when to get nudges for food, supplements, gym, sleep and journal.
-        </p>
-        <div className="mt-4">
-          <ReminderSettingsForm profile={profile} />
-        </div>
-      </section>
+      <SettingsSection description="Food, supplements, gym, sleep and journal nudges." id="reminder-settings" tone="accent" title="Reminders">
+        <ReminderSettingsForm profile={profile} />
+      </SettingsSection>
 
-      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
-        <h2 className="text-lg font-semibold text-white">Day plan times</h2>
-        <p className="mt-2 text-sm text-zinc-400">
-          Decide when each block of your day happens — meals, training and
-          bedtime.
-        </p>
-        <div className="mt-4">
-          <PlanTimesForm times={planTimes} />
-        </div>
-      </section>
+      <SettingsSection description="When meals, training and bedtime appear in your daily rhythm." title="Day plan times">
+        <PlanTimesForm times={planTimes} />
+      </SettingsSection>
 
-      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
-        <h2 className="text-lg font-semibold text-white">Calculated Targets</h2>
+      <SettingsSection description="Calories and macros calculated from your body profile." title="Targets">
         {profile?.calorie_target ? (
-          <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             <Metric label="Calories" value={`${profile.calorie_target} kcal`} />
             <Metric label="Protein" value={`${profile.protein_target_g ?? 0} g`} />
             <Metric label="Carbs" value={`${profile.carbs_target_g ?? 0} g`} />
             <Metric label="Fat" value={`${profile.fat_target_g ?? 0} g`} />
           </div>
         ) : (
-          <p className="mt-2 text-sm leading-6 text-zinc-400">
-            Save your profile to calculate calorie and macro targets.
-          </p>
+          <p className="text-sm leading-6 text-zinc-400">Save your profile to calculate calorie and macro targets.</p>
         )}
-      </section>
+      </SettingsSection>
 
-      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
-        <h2 className="text-lg font-semibold text-white">Apple Calendar</h2>
-        <AppleCalendarCard
-          feedPath={feedToken ? `/api/calendar/feed/${feedToken.token}` : null}
-          origin={origin}
-        />
-      </section>
+      <SettingsSection description="Subscribe your iPhone Calendar to Errday events." title="Apple Calendar">
+        <AppleCalendarCard feedPath={feedToken ? `/api/calendar/feed/${feedToken.token}` : null} origin={origin} />
+      </SettingsSection>
 
-      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
-        <h2 className="text-lg font-semibold text-white">Apple Health</h2>
+      <SettingsSection description="Bring Apple Watch steps, energy and sleep into Today through Apple Health." title="Apple Watch & Health">
         <AppleHealthCard origin={origin} token={healthToken?.token ?? null} />
-      </section>
+      </SettingsSection>
 
-      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
-        <h2 className="text-lg font-semibold text-white">Account</h2>
-        <p className="mt-2 text-sm text-zinc-400">{user.email}</p>
+      <SettingsSection description="Sign out of this Errday account." title="Account">
+        <p className="break-all text-sm text-zinc-400">{user.email}</p>
         <form action={logout} className="mt-4">
-          <SubmitButton pendingLabel="Logging out..." variant="danger">
-            Log out
-          </SubmitButton>
+          <SubmitButton pendingLabel="Logging out..." variant="danger">Log out</SubmitButton>
         </form>
-      </section>
+      </SettingsSection>
     </div>
+  );
+}
+
+function SettingsSection({
+  children,
+  description,
+  id,
+  title,
+  tone = "default",
+}: {
+  children: ReactNode;
+  description: string;
+  id?: string;
+  title: string;
+  tone?: "accent" | "default";
+}) {
+  return (
+    <details
+      className={`group mb-3 overflow-hidden rounded-2xl border shadow-sm shadow-black/20 ${
+        tone === "accent"
+          ? "border-[var(--accent)]/45 bg-[var(--accent-soft)]"
+          : "border-[var(--border)] bg-[var(--surface)]"
+      }`}
+      id={id}
+    >
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4 sm:p-5">
+        <span className="min-w-0">
+          <span className="block text-lg font-semibold text-white">{title}</span>
+          <span className="mt-1 block text-sm leading-5 text-zinc-400">{description}</span>
+        </span>
+        <span className="grid size-10 shrink-0 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-[var(--accent)] transition group-open:rotate-180">
+          <ChevronDown className="size-5" />
+        </span>
+      </summary>
+      <div className="border-t border-[var(--border)] p-4 sm:p-5">{children}</div>
+    </details>
   );
 }
 
