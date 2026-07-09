@@ -6,6 +6,11 @@ const config: CapacitorConfig = {
   appId: "com.errday.app",
   appName: "Errday",
   webDir: "native-shell",
+  plugins: {
+    LocalNotifications: {
+      presentationOptions: ["badge", "sound", "banner", "list"],
+    },
+  },
   ...(serverUrl
     ? {
         server: {

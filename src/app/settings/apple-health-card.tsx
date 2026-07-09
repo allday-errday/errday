@@ -1,8 +1,12 @@
 "use client";
 
 import { Check, Copy, RefreshCw } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { toast } from "@/components/toaster";
+import {
+  supportsNativeHealthKit,
+  syncNativeHealthKitMetrics,
+} from "@/lib/native/health-kit";
 import { disableHealthSync, enableHealthSync } from "./actions";
 
 type AppleHealthCardProps = {
@@ -13,8 +17,23 @@ type AppleHealthCardProps = {
 export function AppleHealthCard({ origin, token }: AppleHealthCardProps) {
   const [isPending, startTransition] = useTransition();
   const [copied, setCopied] = useState<"url" | "token" | null>(null);
+  const [nativeHealthSupported, setNativeHealthSupported] = useState(false);
+  const [nativeMessage, setNativeMessage] = useState("");
 
   const ingestUrl = `${origin}/api/health/ingest`;
+
+  useEffect(() => {
+    let active = true;
+    queueMicrotask(() => {
+      if (active) {
+        setNativeHealthSupported(supportsNativeHealthKit());
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   function copy(value: string, which: "url" | "token") {
     navigator.clipboard.writeText(value).then(() => {
@@ -29,7 +48,8 @@ export function AppleHealthCard({ origin, token }: AppleHealthCardProps) {
       <div>
         <p className="mt-2 text-sm leading-6 text-zinc-400">
           Send steps, active calories and sleep from your iPhone or Apple Watch
-          to Errday once a day — via a free iOS Shortcut, no extra app needed.
+          to Errday once a day. The Xcode app can read Apple Health directly;
+          Safari can use a free iOS Shortcut.
         </p>
         <button
           className="mt-4 min-h-12 rounded-xl bg-white px-5 text-sm font-extrabold text-[var(--bg)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-50"
@@ -54,6 +74,48 @@ export function AppleHealthCard({ origin, token }: AppleHealthCardProps) {
         Your private sync key. Anyone with this key can write health data to
         your account, so keep it to yourself — you can rotate it anytime.
       </p>
+
+      {nativeHealthSupported ? (
+        <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/70 p-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-black text-white">Native Apple Health</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+                iPhone app
+              </p>
+            </div>
+            <button
+              className="min-h-10 rounded-full bg-[var(--accent)] px-4 text-sm font-black text-[var(--on-accent)]"
+              onClick={async () => {
+                setNativeMessage("Reading Apple Health...");
+                try {
+                  const result = await syncNativeHealthKitMetrics({
+                    endpoint: ingestUrl,
+                    token,
+                  });
+
+                  if (result.ok) {
+                    setNativeMessage("Apple Health synced for today.");
+                    toast("✓ Apple Health synced");
+                  } else {
+                    setNativeMessage("Apple Health is not available on this device.");
+                  }
+                } catch (error) {
+                  setNativeMessage(
+                    error instanceof Error ? error.message : "Apple Health sync failed.",
+                  );
+                }
+              }}
+              type="button"
+            >
+              Sync today
+            </button>
+          </div>
+          {nativeMessage ? (
+            <p className="mt-3 text-sm leading-6 text-zinc-400">{nativeMessage}</p>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="mt-4 grid gap-2">
         <Row
