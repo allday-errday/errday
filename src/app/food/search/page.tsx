@@ -7,6 +7,7 @@ import { searchGenericFoods, type GenericFood } from "@/lib/db/generic-foods";
 import { searchProductCatalog } from "@/lib/products/catalog-search";
 import { AiEstimateSection } from "./ai-estimate-section";
 import { FoodResultRow } from "./food-result-row";
+import { MealSnap } from "./meal-snap";
 import type { NormalizedFoodProduct } from "@/lib/food-search/types";
 import {
   lookupBarcode,
@@ -143,9 +144,11 @@ export default async function FoodSearchPage({
   return (
     <div>
       <PageHeader
-        subtitle="Search the Swiss and USDA food databases and log exact gram amounts into today."
+        subtitle="Snap a photo, or search the Swiss and USDA food databases and log exact amounts into today."
         title="Log Meal"
       />
+
+      <MealSnap />
 
       <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
         <form className="grid gap-3">
