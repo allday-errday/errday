@@ -2,8 +2,8 @@ import { generateText } from "ai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCoachModel, isCoachAvailable } from "@/lib/ai/provider";
-import { requireUser } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/security/rate-limit";
+import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -25,7 +25,14 @@ const estimateSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const { user } = await requireUser();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
 
   const limit = checkRateLimit(`ai-food:${user.id}`, 20, 10 * 60);
   if (!limit.allowed) {

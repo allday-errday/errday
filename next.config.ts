@@ -12,8 +12,10 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   {
+    // Allow the app's own origin to use the camera (meal scanner / barcode);
+    // everything else stays disabled.
     key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+    value: "camera=(self), microphone=(), geolocation=(), payment=(), usb=()",
   },
 ];
 
