@@ -113,6 +113,9 @@
 html {
   min-height: 100%;
   background: var(--bg);
+  /* Safety net: nothing can force a sideways scroll on small screens.
+     `clip` (not `hidden`) keeps position: sticky/fixed working. */
+  overflow-x: clip;
 }
 
 body {

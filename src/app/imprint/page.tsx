@@ -20,7 +20,6 @@ export default function ImprintPage() {
           <p className="mt-2">
             Anis Tabakovic
             <br />
-            {/* TODO: add street and number before public launch */}
             Switzerland
           </p>
         </section>
@@ -28,8 +27,13 @@ export default function ImprintPage() {
         <section>
           <h2 className="font-bold text-white">Contact</h2>
           <p className="mt-2">
-            Email:{" "}
-            <a className="font-semibold text-[var(--accent)]" href="mailto:hello@errday.ch">
+            Errday is a free, privately operated service. The fastest way to
+            reach the operator is by email:
+            <br />
+            <a
+              className="font-semibold text-[var(--accent)]"
+              href="mailto:hello@errday.ch"
+            >
               hello@errday.ch
             </a>
           </p>
