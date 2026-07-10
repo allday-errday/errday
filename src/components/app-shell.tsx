@@ -17,6 +17,7 @@ const authRoutes = new Set([
   "/onboarding",
   "/imprint",
   "/privacy",
+  "/terms",
 ]);
 
 export function AppShell({ children }: AppShellProps) {

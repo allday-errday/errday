@@ -71,6 +71,10 @@ export default function ImprintPage() {
           Privacy policy
         </Link>
         <span className="mx-2 text-zinc-600">·</span>
+        <Link className="font-semibold text-[var(--accent)]" href="/terms">
+          Terms of Use
+        </Link>
+        <span className="mx-2 text-zinc-600">·</span>
         <Link className="font-semibold text-[var(--accent)]" href="/login">
           Back to Errday
         </Link>

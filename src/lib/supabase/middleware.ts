@@ -9,6 +9,7 @@ const publicRoutes = [
   "/auth/confirm",
   "/imprint",
   "/privacy",
+  "/terms",
 ];
 
 function isPublicRoute(pathname: string) {

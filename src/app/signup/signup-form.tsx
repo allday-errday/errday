@@ -51,14 +51,14 @@ export function SignupForm() {
       </p>
       <p className="text-center text-xs leading-5 text-zinc-600">
         By creating an account you accept the{" "}
+        <Link className="font-semibold hover:text-zinc-400" href="/terms">
+          terms
+        </Link>{" "}
+        and{" "}
         <Link className="font-semibold hover:text-zinc-400" href="/privacy">
           privacy policy
-        </Link>{" "}
-        and understand Errday is not medical advice (see the{" "}
-        <Link className="font-semibold hover:text-zinc-400" href="/imprint">
-          legal notice
         </Link>
-        ).
+        , and understand Errday is not medical advice.
       </p>
     </form>
   );
