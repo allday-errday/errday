@@ -13,7 +13,7 @@ export function DailyScoreCard({ result }: DailyScoreCardProps) {
   ];
 
   return (
-    <section className="relative min-h-[24rem] py-3 sm:min-h-[28rem] sm:py-5 lg:py-7">
+    <section className="flow-hero relative min-h-[24rem] overflow-hidden rounded-[1.5rem] border border-white/10 p-5 sm:min-h-[28rem] sm:rounded-[2rem] sm:p-8 lg:p-10">
       <div className="flex h-full flex-col justify-between gap-10">
         <div className="flex items-start justify-between gap-5">
           <div>

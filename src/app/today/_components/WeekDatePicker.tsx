@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 import { shiftDateString } from "@/lib/dates";
 
 type WeekDatePickerProps = {
@@ -9,14 +13,83 @@ type WeekDatePickerProps = {
 const weekdayFormatter = new Intl.DateTimeFormat("en", { weekday: "short" });
 
 export function WeekDatePicker({ date, today }: WeekDatePickerProps) {
+  const router = useRouter();
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const [dragX, setDragX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const weekStart = mondayFor(date);
   const days = Array.from({ length: 7 }, (_, index) =>
     shiftDateString(weekStart, index),
   );
 
+  function goToWeek(delta: number) {
+    const target = shiftDateString(date, delta);
+    if (target > today) return;
+    router.push(`/today?date=${target}`);
+  }
+
+  function finishSwipe(delta: number) {
+    const target = shiftDateString(date, delta);
+    if (target > today) {
+      setDragX(0);
+      setIsDragging(false);
+      return;
+    }
+
+    setDragX(delta < 0 ? 120 : -120);
+    setIsDragging(false);
+    window.setTimeout(() => goToWeek(delta), 140);
+  }
+
   return (
-    <nav aria-label="Choose day" className="no-scrollbar mb-6 overflow-x-auto sm:mb-8">
-      <div className="grid min-w-[22rem] grid-cols-7 gap-1.5 sm:min-w-0 sm:gap-3">
+    <nav
+      aria-label="Choose day"
+      className="mb-6 overflow-hidden sm:mb-8"
+      onTouchCancel={() => {
+        touchStart.current = null;
+        setDragX(0);
+        setIsDragging(false);
+      }}
+      onTouchEnd={(event) => {
+        const start = touchStart.current;
+        touchStart.current = null;
+        if (!start) return;
+
+        const touch = event.changedTouches[0];
+        const deltaX = touch.clientX - start.x;
+        const deltaY = touch.clientY - start.y;
+        if (Math.abs(deltaX) < 56 || Math.abs(deltaX) < Math.abs(deltaY) * 1.5) {
+          setDragX(0);
+          setIsDragging(false);
+          return;
+        }
+
+        finishSwipe(deltaX > 0 ? -7 : 7);
+      }}
+      onTouchMove={(event) => {
+        const start = touchStart.current;
+        if (!start) return;
+
+        const touch = event.touches[0];
+        const deltaX = touch.clientX - start.x;
+        const deltaY = touch.clientY - start.y;
+        if (Math.abs(deltaX) < Math.abs(deltaY) * 1.2) return;
+
+        setIsDragging(true);
+        setDragX(Math.max(-72, Math.min(72, deltaX)));
+      }}
+      onTouchStart={(event) => {
+        const touch = event.touches[0];
+        touchStart.current = { x: touch.clientX, y: touch.clientY };
+      }}
+    >
+      <div
+        className="grid w-full grid-cols-7 gap-1.5 sm:gap-3"
+        style={{
+          transform: `translateX(${dragX}px)`,
+          transition: isDragging ? "none" : "transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+        }}
+      >
         {days.map((day) => {
           const isActive = day === date;
           const isFuture = day > today;

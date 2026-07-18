@@ -6,9 +6,8 @@ import { getHealthMetricsForDay } from "@/lib/db/health";
 import { safeRead } from "@/lib/db/safe-read";
 import { getTodayDashboard } from "@/lib/db/today";
 import { DailyScoreCard } from "./_components/DailyScoreCard";
-import { DaySwipeNavigator } from "./_components/DaySwipeNavigator";
+import { MealPlan } from "./_components/MealPlan";
 import { TodayHeader } from "./_components/TodayHeader";
-import { TodayReminderForm } from "./_components/TodayReminderForm";
 import { WaterLogButtons } from "./_components/WaterLogButtons";
 import { WeekDatePicker } from "./_components/WeekDatePicker";
 
@@ -57,20 +56,22 @@ export default async function TodayPage({
     waterTargetMl,
   });
   return (
-    <DaySwipeNavigator date={today} today={actualToday}>
-      <div className="text-white">
-        <TodayHeader isToday={isToday} />
-        <WeekDatePicker date={today} today={actualToday} />
-        <div className="max-w-4xl">
-          <DailyScoreCard result={scoreResult} />
-        </div>
-        <div className="mt-5 grid items-start gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(20rem,0.65fr)]">
-          <div className="min-w-0">
-            <TodayReminderForm date={today} />
-          </div>
-          <aside>{isToday ? <WaterLogButtons /> : null}</aside>
-        </div>
+    <div className="text-white">
+      <TodayHeader isToday={isToday} />
+      <WeekDatePicker date={today} today={actualToday} />
+      <div className="max-w-4xl">
+        <DailyScoreCard result={scoreResult} />
       </div>
-    </DaySwipeNavigator>
+      <div className="mt-5 grid items-start gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(20rem,0.65fr)]">
+        <div className="min-w-0">
+          <MealPlan
+            loggedSlots={dashboard.foodLogs.flatMap((log) =>
+              log.meal_slot ? [log.meal_slot] : [],
+            )}
+          />
+        </div>
+        <aside>{isToday ? <WaterLogButtons /> : null}</aside>
+      </div>
+    </div>
   );
 }

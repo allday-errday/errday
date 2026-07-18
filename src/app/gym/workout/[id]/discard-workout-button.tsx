@@ -41,7 +41,7 @@ export function DiscardWorkoutButton({
         <div
           aria-labelledby="discard-workout-title"
           aria-modal="true"
-          className="fixed inset-0 z-[9999] grid place-items-center px-4 py-6"
+          className="fixed inset-0 z-[9999] grid items-end sm:place-items-center sm:px-4 sm:py-6"
           role="dialog"
         >
           <button
@@ -50,7 +50,7 @@ export function DiscardWorkoutButton({
             onClick={keepWorkout}
             type="button"
           />
-          <div className="relative z-10 w-full max-w-md overflow-hidden rounded-[1.5rem] border border-red-500/25 bg-[var(--bg)] shadow-2xl shadow-black/60">
+          <div className="relative z-10 w-full max-w-md overflow-hidden rounded-t-[1.5rem] border border-red-500/25 bg-[var(--bg)] shadow-2xl shadow-black/60 sm:rounded-[1.5rem]">
             <div className="flex items-start gap-3 border-b border-white/10 p-5">
               <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-red-500/15 text-red-300">
                 <AlertTriangle className="size-5" />
