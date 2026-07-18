@@ -20,6 +20,7 @@ import type { MealSlot } from "@/types/database";
 type FoodSearchPageProps = {
   searchParams: Promise<{
     barcode?: string;
+    ai?: string;
     error?: string;
     q?: string;
     slot?: string;
@@ -89,6 +90,7 @@ export default async function FoodSearchPage({
   const { supabase, user } = await requireUser();
   const params = await searchParams;
   const query = params.q?.trim() ?? params.barcode?.trim() ?? "";
+  const aiMode = params.ai === "1";
   const selectedSlot = isMealSlot(params.slot) ? params.slot : "";
 
   // One relaxed search box: digits are treated as a barcode, everything
@@ -193,7 +195,9 @@ export default async function FoodSearchPage({
       {params.error ? <ErrorMessage error={params.error} /> : null}
       {searchResult.error ? <ErrorMessage message={searchResult.error} /> : null}
 
-      {!query ? null : barcode ? null : searchResult.error ? null : products.length === 0 &&
+      {aiMode ? <AiEstimateSection allowInput query={query} selectedSlot={selectedSlot} /> : null}
+
+      {!query || aiMode ? null : barcode ? null : searchResult.error ? null : products.length === 0 &&
         catalogProducts.length === 0 &&
         usdaProducts.length === 0 ? (
         <>

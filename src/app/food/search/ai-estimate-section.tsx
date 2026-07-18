@@ -16,22 +16,33 @@ type AiFood = {
 };
 
 type AiEstimateSectionProps = {
+  allowInput?: boolean;
   query: string;
   selectedSlot: MealSlot | "";
 };
 
-export function AiEstimateSection({ query, selectedSlot }: AiEstimateSectionProps) {
+export function AiEstimateSection({
+  allowInput = false,
+  query,
+  selectedSlot,
+}: AiEstimateSectionProps) {
   const [error, setError] = useState<string | null>(null);
   const [foods, setFoods] = useState<AiFood[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [foodDescription, setFoodDescription] = useState(query);
 
-  async function generate() {
+  async function generate(input = foodDescription) {
+    if (input.trim().length < 2) {
+      setError("Describe the meal first.");
+      return;
+    }
+
     setError(null);
     setLoading(true);
 
     try {
       const response = await fetch("/api/food/ai-estimate", {
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query: input }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
       });
@@ -73,12 +84,48 @@ export function AiEstimateSection({ query, selectedSlot }: AiEstimateSectionProp
     );
   }
 
+  if (allowInput) {
+    return (
+      <section className="mb-5 border-t border-[var(--border)] pt-5">
+        <div className="mb-3 flex items-center gap-2">
+          <Sparkles className="size-4 text-[var(--accent)]" />
+          <h2 className="font-extrabold text-white">AI estimate</h2>
+        </div>
+        <form
+          className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]"
+          onSubmit={(event) => {
+            event.preventDefault();
+            void generate();
+          }}
+        >
+          <input
+            aria-label="Describe your food"
+            className="min-h-12 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-base text-white outline-none placeholder:text-zinc-600 focus:border-[var(--accent)]"
+            onChange={(event) => setFoodDescription(event.target.value)}
+            placeholder="Describe your meal"
+            type="text"
+            value={foodDescription}
+          />
+          <button
+            className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 text-sm font-extrabold text-[var(--on-accent)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={loading}
+            type="submit"
+          >
+            {loading ? <LoaderCircle className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+            Estimate
+          </button>
+        </form>
+        {error ? <p className="mt-2 text-sm text-amber-300">{error}</p> : null}
+      </section>
+    );
+  }
+
   return (
     <div className="mt-6">
       <button
         className="flex min-h-13 w-full items-center justify-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-3.5 text-sm font-extrabold text-zinc-200 shadow-sm shadow-black/10 transition hover:border-[var(--accent)]/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
         disabled={loading}
-        onClick={generate}
+        onClick={() => void generate(query)}
         type="button"
       >
         {loading ? (
