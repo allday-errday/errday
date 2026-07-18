@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { shiftDateString } from "@/lib/dates";
 
 type WeekDatePickerProps = {
@@ -17,6 +17,8 @@ export function WeekDatePicker({ date, today }: WeekDatePickerProps) {
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const [dragX, setDragX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const swipeTimer = useRef<number | null>(null);
   const weekStart = mondayFor(date);
   const days = Array.from({ length: 7 }, (_, index) =>
     shiftDateString(weekStart, index),
@@ -29,6 +31,8 @@ export function WeekDatePicker({ date, today }: WeekDatePickerProps) {
   }
 
   function finishSwipe(delta: number) {
+    if (isNavigating) return;
+
     const target = shiftDateString(date, delta);
     if (target > today) {
       setDragX(0);
@@ -36,10 +40,20 @@ export function WeekDatePicker({ date, today }: WeekDatePickerProps) {
       return;
     }
 
+    setIsNavigating(true);
     setDragX(delta < 0 ? 120 : -120);
     setIsDragging(false);
-    window.setTimeout(() => goToWeek(delta), 140);
+    swipeTimer.current = window.setTimeout(() => goToWeek(delta), 140);
   }
+
+  useEffect(
+    () => () => {
+      if (swipeTimer.current !== null) {
+        window.clearTimeout(swipeTimer.current);
+      }
+    },
+    [],
+  );
 
   return (
     <nav
@@ -67,6 +81,7 @@ export function WeekDatePicker({ date, today }: WeekDatePickerProps) {
         finishSwipe(deltaX > 0 ? -7 : 7);
       }}
       onTouchMove={(event) => {
+        if (isNavigating) return;
         const start = touchStart.current;
         if (!start) return;
 
@@ -79,6 +94,7 @@ export function WeekDatePicker({ date, today }: WeekDatePickerProps) {
         setDragX(Math.max(-72, Math.min(72, deltaX)));
       }}
       onTouchStart={(event) => {
+        if (isNavigating) return;
         const touch = event.touches[0];
         touchStart.current = { x: touch.clientX, y: touch.clientY };
       }}

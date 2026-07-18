@@ -58,7 +58,7 @@ export default async function TodayPage({
   return (
     <div className="text-white">
       <TodayHeader isToday={isToday} />
-      <WeekDatePicker date={today} today={actualToday} />
+      <WeekDatePicker date={today} key={today} today={actualToday} />
       <div className="max-w-4xl">
         <DailyScoreCard result={scoreResult} />
       </div>
