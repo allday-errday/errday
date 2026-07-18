@@ -12,6 +12,7 @@ import { AppearanceToggle } from "./appearance-toggle";
 import { AppleCalendarCard } from "./apple-calendar-card";
 import { AppleHealthCard } from "./apple-health-card";
 import { ReminderSettingsForm } from "./reminder-settings-form";
+import { ScreenTimeCard } from "./screen-time-card";
 import { logout } from "./actions";
 import { SettingsForm } from "./settings-form";
 
@@ -41,6 +42,10 @@ export default async function SettingsPage() {
 
       <SettingsSection description="Food, supplements, gym, sleep and journal nudges." id="reminder-settings" tone="accent" title="Reminders">
         <ReminderSettingsForm profile={profile} />
+      </SettingsSection>
+
+      <SettingsSection description="Set daily limits for distracting apps on your iPhone." title="Focus limits">
+        <ScreenTimeCard />
       </SettingsSection>
 
       <SettingsSection description="Calories and macros calculated from your body profile." title="Targets">
