@@ -7,7 +7,7 @@ import { searchGenericFoods, type GenericFood } from "@/lib/db/generic-foods";
 import { searchProductCatalog } from "@/lib/products/catalog-search";
 import { AiEstimateSection } from "./ai-estimate-section";
 import { FoodResultRow } from "./food-result-row";
-import { MealSnap } from "./meal-snap";
+import { BarcodeScanCard } from "./barcode-scan-card";
 import type { NormalizedFoodProduct } from "@/lib/food-search/types";
 import {
   lookupBarcode,
@@ -144,11 +144,11 @@ export default async function FoodSearchPage({
   return (
     <div>
       <PageHeader
-        subtitle="Take a photo to log a meal, or search by name."
+        subtitle="Scan a barcode or search by name."
         title="Log Meal"
       />
 
-      <MealSnap />
+      <BarcodeScanCard />
 
       <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
         <form className="grid gap-3">
