@@ -20,9 +20,6 @@
 		EDD200000000000000000006 /* ErrdayWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = EDD200000000000000000005 /* ErrdayWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EDD300000000000000000001 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD300000000000000000002 /* SceneDelegate.swift */; };
 		EDD400000000000000000001 /* ErrdayBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD400000000000000000002 /* ErrdayBridgeViewController.swift */; };
-		EDD500000000000000000001 /* ErrdayScreenTimePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD500000000000000000002 /* ErrdayScreenTimePlugin.swift */; };
-		EDD600000000000000000001 /* ErrdayScreenTimeMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD600000000000000000002 /* ErrdayScreenTimeMonitor.swift */; };
-		EDD600000000000000000006 /* ErrdayScreenTimeMonitor.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = EDD600000000000000000005 /* ErrdayScreenTimeMonitor.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,13 +29,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = EDD200000000000000000020;
 			remoteInfo = ErrdayWidgetExtension;
-		};
-		EDD600000000000000000041 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 504EC2FC1FED79650016851F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = EDD600000000000000000020;
-			remoteInfo = ErrdayScreenTimeMonitor;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -50,7 +40,6 @@
 			dstSubfolderSpec = 13;
 			files = (
 				EDD200000000000000000006 /* ErrdayWidgetExtension.appex in Embed App Extensions */,
-				EDD600000000000000000006 /* ErrdayScreenTimeMonitor.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -76,11 +65,6 @@
 		EDD200000000000000000005 /* ErrdayWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ErrdayWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDD300000000000000000002 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		EDD400000000000000000002 /* ErrdayBridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrdayBridgeViewController.swift; sourceTree = "<group>"; };
-		EDD500000000000000000002 /* ErrdayScreenTimePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrdayScreenTimePlugin.swift; sourceTree = "<group>"; };
-		EDD600000000000000000002 /* ErrdayScreenTimeMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrdayScreenTimeMonitor.swift; sourceTree = "<group>"; };
-		EDD600000000000000000003 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EDD600000000000000000004 /* ErrdayScreenTimeMonitor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ErrdayScreenTimeMonitor.entitlements; sourceTree = "<group>"; };
-		EDD600000000000000000005 /* ErrdayScreenTimeMonitor.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ErrdayScreenTimeMonitor.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,13 +83,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EDD600000000000000000011 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -115,7 +92,6 @@
 				958DCC722DB07C7200EA8C5F /* debug.xcconfig */,
 				504EC3061FED79650016851F /* App */,
 				EDD200000000000000000050 /* ErrdayWidget */,
-				EDD600000000000000000050 /* ErrdayScreenTimeMonitor */,
 				504EC3051FED79650016851F /* Products */,
 			);
 			sourceTree = "<group>";
@@ -125,7 +101,6 @@
 			children = (
 				504EC3041FED79650016851F /* App.app */,
 				EDD200000000000000000005 /* ErrdayWidgetExtension.appex */,
-				EDD600000000000000000005 /* ErrdayScreenTimeMonitor.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -139,7 +114,6 @@
 				EDD300000000000000000002 /* SceneDelegate.swift */,
 				EDD400000000000000000002 /* ErrdayBridgeViewController.swift */,
 				EDD100000000000000000002 /* ErrdayHealthKitPlugin.swift */,
-				EDD500000000000000000002 /* ErrdayScreenTimePlugin.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
@@ -160,16 +134,6 @@
 			path = ErrdayWidget;
 			sourceTree = "<group>";
 		};
-		EDD600000000000000000050 /* ErrdayScreenTimeMonitor */ = {
-			isa = PBXGroup;
-			children = (
-				EDD600000000000000000002 /* ErrdayScreenTimeMonitor.swift */,
-				EDD600000000000000000003 /* Info.plist */,
-				EDD600000000000000000004 /* ErrdayScreenTimeMonitor.entitlements */,
-			);
-			path = ErrdayScreenTimeMonitor;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -186,7 +150,6 @@
 			);
 			dependencies = (
 				EDD200000000000000000040 /* PBXTargetDependency */,
-				EDD600000000000000000040 /* PBXTargetDependency */,
 			);
 			name = App;
 			packageProductDependencies = (
@@ -213,23 +176,6 @@
 			productReference = EDD200000000000000000005 /* ErrdayWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		EDD600000000000000000020 /* ErrdayScreenTimeMonitor */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = EDD600000000000000000030 /* Build configuration list for PBXNativeTarget "ErrdayScreenTimeMonitor" */;
-			buildPhases = (
-				EDD600000000000000000010 /* Sources */,
-				EDD600000000000000000011 /* Frameworks */,
-				EDD600000000000000000012 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ErrdayScreenTimeMonitor;
-			productName = ErrdayScreenTimeMonitor;
-			productReference = EDD600000000000000000005 /* ErrdayScreenTimeMonitor.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -247,15 +193,12 @@
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
 							};
-						com.apple.HealthKit = {
-							enabled = 1;
-						};
-						com.apple.FamilyControls = {
-							enabled = 1;
-						};
+							com.apple.HealthKit = {
+								enabled = 1;
+							};
 						};
 					};
-				EDD200000000000000000020 = {
+					EDD200000000000000000020 = {
 						CreatedOnToolsVersion = 16.0;
 						LastSwiftMigration = 1600;
 						ProvisioningStyle = Automatic;
@@ -263,19 +206,6 @@
 							com.apple.ApplicationGroups.iOS = {
 								enabled = 1;
 							};
-						};
-					};
-				};
-				EDD600000000000000000020 = {
-					CreatedOnToolsVersion = 16.0;
-					LastSwiftMigration = 1600;
-					ProvisioningStyle = Automatic;
-					SystemCapabilities = {
-						com.apple.ApplicationGroups.iOS = {
-							enabled = 1;
-						};
-						com.apple.FamilyControls = {
-							enabled = 1;
 						};
 					};
 				};
@@ -298,7 +228,6 @@
 			targets = (
 				504EC3031FED79650016851F /* App */,
 				EDD200000000000000000020 /* ErrdayWidgetExtension */,
-				EDD600000000000000000020 /* ErrdayScreenTimeMonitor */,
 			);
 		};
 /* End PBXProject section */
@@ -324,13 +253,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EDD600000000000000000012 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -342,7 +264,6 @@
 				EDD300000000000000000001 /* SceneDelegate.swift in Sources */,
 				EDD400000000000000000001 /* ErrdayBridgeViewController.swift in Sources */,
 				EDD100000000000000000001 /* ErrdayHealthKitPlugin.swift in Sources */,
-				EDD500000000000000000001 /* ErrdayScreenTimePlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -354,14 +275,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EDD600000000000000000010 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				EDD600000000000000000001 /* ErrdayScreenTimeMonitor.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -369,11 +282,6 @@
 			isa = PBXTargetDependency;
 			target = EDD200000000000000000020 /* ErrdayWidgetExtension */;
 			targetProxy = EDD200000000000000000041 /* PBXContainerItemProxy */;
-		};
-		EDD600000000000000000040 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = EDD600000000000000000020 /* ErrdayScreenTimeMonitor */;
-			targetProxy = EDD600000000000000000041 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -606,58 +514,6 @@
 			};
 			name = Release;
 		};
-		EDD600000000000000000031 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = ErrdayScreenTimeMonitor/ErrdayScreenTimeMonitor.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 39G2SQT5RS;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = ErrdayScreenTimeMonitor/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.errday.app.screentime-monitor;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		EDD600000000000000000032 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = ErrdayScreenTimeMonitor/ErrdayScreenTimeMonitor.entitlements;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 39G2SQT5RS;
-				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = ErrdayScreenTimeMonitor/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@executable_path/../../Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.errday.app.screentime-monitor;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -684,15 +540,6 @@
 			buildConfigurations = (
 				EDD200000000000000000031 /* Debug */,
 				EDD200000000000000000032 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		EDD600000000000000000030 /* Build configuration list for PBXNativeTarget "ErrdayScreenTimeMonitor" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				EDD600000000000000000031 /* Debug */,
-				EDD600000000000000000032 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
