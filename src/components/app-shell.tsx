@@ -27,7 +27,11 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="errday-app-shell min-h-dvh w-full text-[var(--text)]" data-errday-shell>
       {!isAuthRoute ? <SideNav /> : null}
-      <div className="errday-app-content flex w-full flex-col">
+      <div
+        className={`errday-app-content flex w-full flex-col ${
+          isAuthRoute ? "" : "errday-app-content-with-nav"
+        }`}
+      >
         <main
           className={`relative mx-auto w-full flex-1 px-4 sm:px-8 lg:px-12 ${
             isAuthRoute

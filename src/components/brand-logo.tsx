@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 type ErrdayMarkProps = {
@@ -17,47 +18,16 @@ type BrandLogoProps = {
 
 export function ErrdayMark({
   className = "size-10",
-  dot = "accent",
   title = "Errday flow mark",
 }: ErrdayMarkProps) {
   return (
-    <svg
-      aria-label={title}
+    <Image
+      alt={title}
       className={className}
-      fill="none"
-      role="img"
-      viewBox="0 0 100 100"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M26.09 20.47 A38 38 0 0 1 73.91 20.47"
-        stroke="#6f64e0"
-        strokeLinecap="round"
-        strokeWidth="8.5"
-      />
-      <path
-        d="M79.53 26.09 A38 38 0 0 1 79.53 73.91"
-        stroke="#8b82f6"
-        strokeLinecap="round"
-        strokeWidth="8.5"
-      />
-      <path
-        d="M73.91 79.53 A38 38 0 0 1 26.09 79.53"
-        stroke="#a99fff"
-        strokeLinecap="round"
-        strokeWidth="8.5"
-      />
-      <path
-        d="M20.47 73.91 A38 38 0 0 1 20.47 26.09"
-        stroke="#c4bcff"
-        strokeLinecap="round"
-        strokeWidth="8.5"
-      />
-      <g className="errday-orbit">
-        <circle cx="50" cy="12" fill={dot === "light" ? "#ffffff" : "#a99fff"} r="8" />
-        {dot === "light" ? <circle cx="50" cy="12" fill="#a99fff" opacity="0.35" r="8" /> : null}
-      </g>
-    </svg>
+      height={128}
+      src="/brand/errday-mark-violet.png"
+      width={128}
+    />
   );
 }
 

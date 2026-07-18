@@ -151,6 +151,22 @@ body {
   min-height: calc(100dvh - max(env(safe-area-inset-top), var(--errday-native-safe-top, 0px)));
 }
 
+.errday-top-nav {
+  position: fixed;
+  inset-inline: 0;
+  top: max(env(safe-area-inset-top), var(--errday-native-safe-top, 0px));
+}
+
+.errday-app-content-with-nav {
+  padding-top: 4rem;
+}
+
+@media (min-width: 40rem) {
+  .errday-app-content-with-nav {
+    padding-top: 5rem;
+  }
+}
+
 body::before {
   position: fixed;
   z-index: -1;

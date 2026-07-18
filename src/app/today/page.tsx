@@ -11,7 +11,6 @@ import { getTodayDashboard } from "@/lib/db/today";
 import { DailyPlanTimeline } from "./_components/DailyPlanTimeline";
 import { DailyScoreCard } from "./_components/DailyScoreCard";
 import { DaySwipeNavigator } from "./_components/DaySwipeNavigator";
-import { QuickActionsGrid } from "./_components/QuickActionsGrid";
 import { TodayHeader } from "./_components/TodayHeader";
 import { WaterLogButtons } from "./_components/WaterLogButtons";
 
@@ -89,17 +88,8 @@ export default async function TodayPage({
           nextHref={isToday ? null : `/today?date=${shiftDateString(today, 1)}`}
           prevHref={`/today?date=${shiftDateString(today, -1)}`}
         />
-        <div className="grid items-stretch gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(22rem,0.7fr)]">
+        <div className="max-w-4xl">
           <DailyScoreCard result={scoreResult} />
-          {isToday ? (
-            <QuickActionsGrid />
-          ) : (
-            <section className="surface-panel flex flex-col justify-center p-6">
-              <p className="eyebrow">Time travel</p>
-              <p className="mt-3 text-xl font-extrabold text-white">You&rsquo;re viewing a past day.</p>
-              <p className="mt-2 text-sm leading-6 text-zinc-400">Swipe or use the arrows to move between days. Logging is only available on today.</p>
-            </section>
-          )}
         </div>
         <div className="mt-5 grid items-start gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(20rem,0.65fr)]">
           <div className="min-w-0">
