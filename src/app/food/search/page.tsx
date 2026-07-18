@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { searchProducts } from "@/lib/food-search/client";
 import { expandQuery } from "@/lib/food-search/synonyms";
@@ -7,7 +6,7 @@ import { searchGenericFoods, type GenericFood } from "@/lib/db/generic-foods";
 import { searchProductCatalog } from "@/lib/products/catalog-search";
 import { AiEstimateSection } from "./ai-estimate-section";
 import { FoodResultRow } from "./food-result-row";
-import { BarcodeScanCard } from "./barcode-scan-card";
+import { BarcodeScanButton } from "./barcode-scan-card";
 import type { NormalizedFoodProduct } from "@/lib/food-search/types";
 import {
   lookupBarcode,
@@ -143,12 +142,12 @@ export default async function FoodSearchPage({
 
   return (
     <div>
-      <PageHeader
-        subtitle="Scan a barcode or search by name."
-        title="Log Meal"
-      />
-
-      <BarcodeScanCard />
+      <header className="mb-5 flex items-center justify-between gap-3 sm:mb-10 lg:mb-14">
+        <h1 className="text-[1.9rem] font-extrabold leading-[1.05] text-white sm:text-5xl lg:text-6xl">
+          Food
+        </h1>
+        <BarcodeScanButton />
+      </header>
 
       <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
         <form className="grid gap-3">
@@ -259,7 +258,7 @@ export default async function FoodSearchPage({
         className="mt-5 block text-center text-sm font-bold text-zinc-500"
         href="/food"
       >
-        Back to manual food log
+        Back to Food
       </Link>
     </div>
   );
