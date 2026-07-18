@@ -34,10 +34,7 @@ export function CameraScanner({ onBarcode, onClose }: CameraScannerProps) {
       }
 
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: false,
-          video: { facingMode: { ideal: "environment" } },
-        });
+        const stream = await requestBackCamera();
         if (cancelled) {
           stream.getTracks().forEach((track) => track.stop());
           return;
@@ -51,8 +48,20 @@ export function CameraScanner({ onBarcode, onClose }: CameraScannerProps) {
 
         const track = stream.getVideoTracks()[0];
         const capabilities = track?.getCapabilities?.() as
-          | (MediaTrackCapabilities & { torch?: boolean })
+          | (MediaTrackCapabilities & {
+              focusMode?: string[];
+              torch?: boolean;
+            })
           | undefined;
+        if (capabilities?.focusMode?.includes("continuous")) {
+          try {
+            await track.applyConstraints({
+              advanced: [{ focusMode: "continuous" }] as unknown as MediaTrackConstraintSet[],
+            });
+          } catch {
+            // Some WebKit camera implementations expose this capability but reject the constraint.
+          }
+        }
         setTorchSupported(Boolean(capabilities?.torch));
         setReady(true);
       } catch {
@@ -193,4 +202,28 @@ export function CameraScanner({ onBarcode, onClose }: CameraScannerProps) {
     </div>,
     document.body,
   );
+}
+
+async function requestBackCamera() {
+  const highQuality: MediaStreamConstraints = {
+    audio: false,
+    video: {
+      facingMode: { exact: "environment" },
+      height: { ideal: 1080 },
+      width: { ideal: 1920 },
+    },
+  };
+
+  try {
+    return await navigator.mediaDevices.getUserMedia(highQuality);
+  } catch {
+    return navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: { ideal: "environment" },
+        height: { ideal: 720 },
+        width: { ideal: 1280 },
+      },
+    });
+  }
 }

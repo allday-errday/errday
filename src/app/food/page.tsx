@@ -13,6 +13,7 @@ import { safeRead } from "@/lib/db/safe-read";
 import { FoodForm } from "./food-form";
 import { MacroLogForm } from "./macro-log-form";
 import { removeFoodLog } from "./actions";
+import { BarcodeScanButton } from "./search/barcode-scan-card";
 
 export default async function FoodPage() {
   const { supabase, user } = await requireUser();
@@ -29,20 +30,21 @@ export default async function FoodPage() {
 
   return (
     <div>
-      <PageHeader subtitle="Track calories, macros and meals." title="Food." />
+      <PageHeader title="Food" />
 
-      <section className="mb-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
-        <h2 className="font-bold text-white">Search products</h2>
-        <p className="mt-1 text-xs text-zinc-500 sm:text-sm">
-          Search 1&apos;220 foods from the official Swiss database.
-        </p>
-        <Link
-          className="mt-4 flex min-h-12 items-center gap-3 rounded-[0.8rem] border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-semibold text-zinc-200 transition hover:border-[var(--accent)]/50"
-          href="/food/search"
-        >
-          <Search className="size-5 text-zinc-500" />
-          <span>Search food by name</span>
-        </Link>
+      <section className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-sm shadow-black/20">
+        <h2 className="px-1 font-bold text-white">Products</h2>
+        <div className="flex items-center gap-2">
+          <BarcodeScanButton />
+          <Link
+            aria-label="Search products"
+            className="grid size-12 place-items-center rounded-xl border border-[var(--border)] bg-[var(--surface-2)] text-zinc-300 transition hover:border-[var(--accent)]/50 hover:text-white"
+            href="/food/search"
+            title="Search products"
+          >
+            <Search className="size-5" />
+          </Link>
+        </div>
       </section>
 
       <details className="group mb-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm shadow-black/20">
