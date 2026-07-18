@@ -1,22 +1,43 @@
 "use client";
 
+import { BrowserMultiFormatReader, type IScannerControls } from "@zxing/browser";
 import { Images, X, Zap, ZapOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+export type ScanMode = "food" | "barcode" | "label";
+
 type CameraScannerProps = {
+  onBarcode: (code: string) => void;
   onClose: () => void;
-  onPhoto: (blob: Blob) => void;
+  onPhoto: (blob: Blob, mode: ScanMode) => void;
 };
 
-export function CameraScanner({ onClose, onPhoto }: CameraScannerProps) {
+const modes: Array<{ hint: string; label: string; value: ScanMode }> = [
+  { hint: "Point at your meal", label: "Meal", value: "food" },
+  { hint: "Point at the barcode", label: "Barcode", value: "barcode" },
+  { hint: "Point at the nutrition label", label: "Label", value: "label" },
+];
+
+export function CameraScanner({
+  onBarcode,
+  onClose,
+  onPhoto,
+}: CameraScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const readerControlsRef = useRef<IScannerControls | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const barcodeCallbackRef = useRef(onBarcode);
+  const [mode, setMode] = useState<ScanMode>("food");
   const [error, setError] = useState<string | null>(null);
   const [torchOn, setTorchOn] = useState(false);
   const [torchSupported, setTorchSupported] = useState(false);
   const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    barcodeCallbackRef.current = onBarcode;
+  }, [onBarcode]);
 
   useEffect(() => {
     let cancelled = false;
@@ -60,10 +81,48 @@ export function CameraScanner({ onClose, onPhoto }: CameraScannerProps) {
 
     return () => {
       cancelled = true;
+      readerControlsRef.current?.stop();
       streamRef.current?.getTracks().forEach((track) => track.stop());
       document.body.style.overflow = previousOverflow;
     };
   }, []);
+
+  useEffect(() => {
+    if (mode !== "barcode" || !ready || !videoRef.current) return;
+
+    const reader = new BrowserMultiFormatReader();
+    let stopped = false;
+
+    reader
+      .decodeFromVideoElement(videoRef.current, (result) => {
+        if (stopped || !result) return;
+
+        const barcode = result.getText().replace(/\D/g, "");
+        if (!/^\d{8,14}$/.test(barcode)) return;
+
+        stopped = true;
+        readerControlsRef.current?.stop();
+        barcodeCallbackRef.current(barcode);
+      })
+      .then((controls) => {
+        if (stopped) {
+          controls.stop();
+          return;
+        }
+        readerControlsRef.current = controls;
+      })
+      .catch(() => {
+        if (!stopped) {
+          setError("Barcode scanning is not available. Try a meal photo instead.");
+        }
+      });
+
+    return () => {
+      stopped = true;
+      readerControlsRef.current?.stop();
+      readerControlsRef.current = null;
+    };
+  }, [mode, ready]);
 
   async function toggleTorch() {
     const track = streamRef.current?.getVideoTracks()[0];
@@ -93,12 +152,14 @@ export function CameraScanner({ onClose, onPhoto }: CameraScannerProps) {
     context.drawImage(video, 0, 0);
     canvas.toBlob(
       (blob) => {
-        if (blob) onPhoto(blob);
+        if (blob) onPhoto(blob, mode);
       },
       "image/jpeg",
       0.85,
     );
   }
+
+  const activeHint = modes.find((entry) => entry.value === mode)?.hint ?? "";
 
   return createPortal(
     <div className="fixed inset-0 z-[9999] flex flex-col bg-black text-white">
@@ -108,7 +169,7 @@ export function CameraScanner({ onClose, onPhoto }: CameraScannerProps) {
         className="sr-only"
         onChange={(event) => {
           const file = event.target.files?.[0];
-          if (file) onPhoto(file);
+          if (file) onPhoto(file, mode === "barcode" ? "food" : mode);
         }}
         ref={fileRef}
         type="file"
@@ -125,7 +186,7 @@ export function CameraScanner({ onClose, onPhoto }: CameraScannerProps) {
 
       <div className="relative flex items-center justify-between p-4">
         <button
-          aria-label="Close camera"
+          aria-label="Close scanner"
           className="grid size-11 place-items-center rounded-full bg-black/45 backdrop-blur"
           onClick={onClose}
           type="button"
@@ -133,7 +194,7 @@ export function CameraScanner({ onClose, onPhoto }: CameraScannerProps) {
           <X className="size-5" />
         </button>
         <span className="rounded-full bg-black/45 px-3 py-1.5 text-xs font-bold backdrop-blur">
-          Take a photo of your meal
+          {activeHint}
         </span>
         <span className="size-11" aria-hidden="true" />
       </div>
@@ -167,6 +228,27 @@ export function CameraScanner({ onClose, onPhoto }: CameraScannerProps) {
         </div>
       ) : null}
 
+      <div className="relative mx-4 mb-3 grid grid-cols-3 gap-2">
+        {modes.map((entry) => (
+          <button
+            aria-pressed={mode === entry.value}
+            className={`min-h-12 rounded-xl px-2 text-sm font-bold transition ${
+              mode === entry.value
+                ? "bg-white text-black"
+                : "bg-white/12 text-zinc-200 backdrop-blur"
+            }`}
+            key={entry.value}
+            onClick={() => {
+              setError(null);
+              setMode(entry.value);
+            }}
+            type="button"
+          >
+            {entry.label}
+          </button>
+        ))}
+      </div>
+
       <div className="relative flex items-center justify-between px-8 pb-8">
         <button
           aria-label="Toggle flash"
@@ -179,15 +261,21 @@ export function CameraScanner({ onClose, onPhoto }: CameraScannerProps) {
           {torchOn ? <Zap className="size-5" /> : <ZapOff className="size-5" />}
         </button>
 
-        <button
-          aria-label="Capture photo"
-          className="grid size-20 place-items-center rounded-full border-4 border-white/40 active:scale-95 disabled:opacity-50"
-          disabled={!ready}
-          onClick={capture}
-          type="button"
-        >
-          <span className="size-16 rounded-full bg-white" />
-        </button>
+        {mode === "barcode" ? (
+          <div className="grid size-20 place-items-center text-center text-xs font-semibold text-zinc-200">
+            {ready ? "Scanning..." : "Starting..."}
+          </div>
+        ) : (
+          <button
+            aria-label="Capture photo"
+            className="grid size-20 place-items-center rounded-full border-4 border-white/40 active:scale-95 disabled:opacity-50"
+            disabled={!ready}
+            onClick={capture}
+            type="button"
+          >
+            <span className="size-16 rounded-full bg-white" />
+          </button>
+        )}
 
         <button
           aria-label="Choose from library"

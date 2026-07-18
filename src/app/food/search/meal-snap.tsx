@@ -2,8 +2,10 @@
 
 import { Camera, Check, LoaderCircle, SlidersHorizontal, Sparkles, X } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import type { MealAnalysis } from "@/lib/ai/meal-analysis";
+import type { ScanMode } from "./camera-scanner";
 
 const CameraScanner = dynamic(
   () => import("./camera-scanner").then((module) => module.CameraScanner),
@@ -12,6 +14,9 @@ const CameraScanner = dynamic(
 
 type Status = "idle" | "analyzing" | "ready" | "logging" | "logged" | "error";
 type EditableNumber = "calories" | "carbsG" | "fatG" | "proteinG";
+
+const labelHint =
+  "This image shows a nutrition label. Read the values and estimate one typical serving as eaten.";
 
 async function downscaleImage(file: File, maxDim = 1024): Promise<Blob> {
   const dataUrl = await new Promise<string>((resolve, reject) => {
@@ -48,6 +53,7 @@ function formatMacro(value: number) {
 }
 
 export function MealSnap({ onLogged }: { onLogged?: () => void }) {
+  const router = useRouter();
   const [status, setStatus] = useState<Status>("idle");
   const [analysis, setAnalysis] = useState<MealAnalysis | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -63,16 +69,22 @@ export function MealSnap({ onLogged }: { onLogged?: () => void }) {
     setPreviewUrl(url);
   }
 
-  function handleScannedPhoto(blob: Blob) {
+  function handleScannedPhoto(blob: Blob, mode: ScanMode) {
     setScannerOpen(false);
     void analyze(
       new File([blob], "meal.jpg", {
         type: blob.type || "image/jpeg",
       }),
+      mode === "label" ? labelHint : undefined,
     );
   }
 
-  async function analyze(file: File) {
+  function handleScannedBarcode(barcode: string) {
+    setScannerOpen(false);
+    router.push(`/food/search?barcode=${encodeURIComponent(barcode)}`);
+  }
+
+  async function analyze(file: File, text?: string) {
     setStatus("analyzing");
     setError(null);
     setAnalysis(null);
@@ -86,6 +98,7 @@ export function MealSnap({ onLogged }: { onLogged?: () => void }) {
     } catch {
       formData.set("image", file);
     }
+    if (text) formData.set("text", text);
 
     try {
       const response = await fetch("/api/food/analyze-meal", {
@@ -183,7 +196,11 @@ export function MealSnap({ onLogged }: { onLogged?: () => void }) {
   return (
     <section className="mb-5 overflow-hidden rounded-2xl border border-[var(--accent)]/25 bg-[var(--accent-soft)] p-4 sm:p-5">
       {scannerOpen ? (
-        <CameraScanner onClose={() => setScannerOpen(false)} onPhoto={handleScannedPhoto} />
+        <CameraScanner
+          onBarcode={handleScannedBarcode}
+          onClose={() => setScannerOpen(false)}
+          onPhoto={handleScannedPhoto}
+        />
       ) : null}
 
       {status === "idle" || status === "error" ? (
