@@ -25,9 +25,9 @@ export function AppShell({ children }: AppShellProps) {
   const isAuthRoute = authRoutes.has(pathname);
 
   return (
-    <div className="min-h-dvh w-full text-[var(--text)]">
+    <div className="errday-app-shell min-h-dvh w-full text-[var(--text)]" data-errday-shell>
       {!isAuthRoute ? <SideNav /> : null}
-      <div className="flex min-h-dvh w-full flex-col">
+      <div className="errday-app-content flex w-full flex-col">
         <main
           className={`relative mx-auto w-full flex-1 px-4 sm:px-8 lg:px-12 ${
             isAuthRoute

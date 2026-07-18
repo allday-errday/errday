@@ -25,8 +25,7 @@ export default async function JournalPage() {
     <div>
       <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="eyebrow">Errday Journal</p>
-          <h1 className="mt-2 text-2xl font-extrabold text-white sm:text-3xl">
+          <h1 className="text-2xl font-extrabold text-white sm:text-3xl">
             {greeting()}
           </h1>
         </div>

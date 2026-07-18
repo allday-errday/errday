@@ -47,6 +47,32 @@ export function JournalCheckin({
   const [promptIndex, setPromptIndex] = useState(
     () => new Date().getDate() % prompts.length,
   );
+  const [isComposing, setIsComposing] = useState(false);
+
+  if (!isComposing) {
+    return (
+      <section className="relative overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
+        <div className="absolute -right-24 -top-28 size-80 rounded-full bg-[var(--accent)]/14 blur-3xl" />
+        <div className="relative max-w-xl">
+          <p className="text-2xl font-extrabold leading-snug text-white sm:text-3xl">
+            {hasToday ? "Today is captured." : "A moment for yourself."}
+          </p>
+          <p className="mt-3 text-sm leading-6 text-zinc-400 sm:text-base">
+            {hasToday
+              ? "Return to your reflection whenever you want to add a thought."
+              : "Pause for a thought, your energy and what is still on your mind."}
+          </p>
+          <button
+            className="mt-6 min-h-12 rounded-full bg-[var(--accent)] px-5 text-sm font-extrabold text-[var(--on-accent)] shadow-lg shadow-[var(--accent)]/20 transition hover:bg-[var(--accent-strong)] active:scale-[0.98]"
+            onClick={() => setIsComposing(true)}
+            type="button"
+          >
+            {hasToday ? "View reflection" : "Start reflection"}
+          </button>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <form action={formAction}>
@@ -66,14 +92,14 @@ export function JournalCheckin({
           </p>
           <button
             aria-label="New prompt"
-            className="flex min-h-9 items-center gap-2 rounded-full px-3 text-xs font-bold text-zinc-500 transition hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
+            className="grid size-10 shrink-0 place-items-center rounded-full border border-transparent bg-white/[0.03] text-zinc-500 transition hover:border-white/10 hover:bg-[var(--accent-soft)] hover:text-[var(--accent)]"
             onClick={() =>
               setPromptIndex((current) => (current + 1) % prompts.length)
             }
+            title="New prompt"
             type="button"
           >
             <Shuffle className="size-3.5" />
-            New prompt
           </button>
         </div>
         <p

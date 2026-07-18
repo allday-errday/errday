@@ -52,10 +52,7 @@ export default async function GymPage() {
     <div className="mx-auto max-w-[1120px]">
       <header className="mb-6 flex items-start justify-between gap-4 sm:mb-7 sm:items-center">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--accent)]">
-            Errday Gym
-          </p>
-          <h1 className="mt-2 text-3xl font-bold leading-tight text-[var(--text)] sm:text-5xl">
+          <h1 className="text-3xl font-bold leading-tight text-[var(--text)] sm:text-5xl">
             Train without friction.
           </h1>
         </div>

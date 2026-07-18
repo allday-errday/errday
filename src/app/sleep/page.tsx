@@ -18,10 +18,7 @@ export default async function SleepPage() {
   return (
     <div>
       <header className="mb-6">
-        <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--accent)]">
-          Errday Sleep
-        </p>
-        <h1 className="mt-2 text-3xl font-bold text-white sm:text-4xl">
+        <h1 className="text-3xl font-bold text-white sm:text-4xl">
           Wind down
         </h1>
       </header>
