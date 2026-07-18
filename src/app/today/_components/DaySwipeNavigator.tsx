@@ -7,19 +7,21 @@ import { shiftDateString } from "@/lib/dates";
 type DaySwipeNavigatorProps = {
   children: ReactNode;
   date: string;
-  isToday: boolean;
+  today: string;
 };
 
 export function DaySwipeNavigator({
   children,
   date,
-  isToday,
+  today,
 }: DaySwipeNavigatorProps) {
   const router = useRouter();
   const touchStart = useRef<{ x: number; y: number } | null>(null);
 
-  function goTo(delta: number) {
+  function goToWeek(delta: number) {
     const target = shiftDateString(date, delta);
+    if (target > today) return;
+    window.scrollTo(0, 0);
     router.push(`/today?date=${target}`);
   }
 
@@ -37,19 +39,20 @@ export function DaySwipeNavigator({
       }
 
       if (event.key === "ArrowLeft") {
-        goTo(-1);
-      } else if (event.key === "ArrowRight" && !isToday) {
-        goTo(1);
+        goToWeek(-7);
+      } else if (event.key === "ArrowRight") {
+        goToWeek(7);
       }
     }
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date, isToday]);
+  }, [date, today]);
 
   return (
     <div
+      className="touch-pan-y"
       onTouchEnd={(event) => {
         const start = touchStart.current;
         touchStart.current = null;
@@ -64,11 +67,11 @@ export function DaySwipeNavigator({
         }
 
         if (deltaX > 0) {
-          // Swipe right → previous day
-          goTo(-1);
-        } else if (!isToday) {
-          // Swipe left → next day (never beyond today)
-          goTo(1);
+          // Swipe right → previous week
+          goToWeek(-7);
+        } else {
+          // Swipe left → next week (never beyond today)
+          goToWeek(7);
         }
       }}
       onTouchStart={(event) => {

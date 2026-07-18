@@ -3,7 +3,7 @@ import { requireUser } from "@/lib/auth";
 import { detectDayType, generateDailyPlan } from "@/lib/daily-flow/plan";
 import { parsePlanTimes, PLAN_TIMES_COOKIE } from "@/lib/daily-flow/plan-times";
 import { calculateDailyFlowScore } from "@/lib/daily-flow/score";
-import { shiftDateString, todayDateString } from "@/lib/dates";
+import { todayDateString } from "@/lib/dates";
 import { getDailyProfile, getDaySetting, getTodayWaterTotal } from "@/lib/db/daily-flow";
 import { getHealthMetricsForDay } from "@/lib/db/health";
 import { safeRead } from "@/lib/db/safe-read";
@@ -13,6 +13,7 @@ import { DailyScoreCard } from "./_components/DailyScoreCard";
 import { DaySwipeNavigator } from "./_components/DaySwipeNavigator";
 import { TodayHeader } from "./_components/TodayHeader";
 import { WaterLogButtons } from "./_components/WaterLogButtons";
+import { WeekDatePicker } from "./_components/WeekDatePicker";
 
 const burnedCaloriesGoal = 300;
 
@@ -80,14 +81,10 @@ export default async function TodayPage({
   });
 
   return (
-    <DaySwipeNavigator date={today} isToday={isToday}>
+    <DaySwipeNavigator date={today} today={actualToday}>
       <div className="text-white">
-        <TodayHeader
-          dateLabel={formatLocalDate(new Date(`${today}T12:00:00`))}
-          isToday={isToday}
-          nextHref={isToday ? null : `/today?date=${shiftDateString(today, 1)}`}
-          prevHref={`/today?date=${shiftDateString(today, -1)}`}
-        />
+        <TodayHeader isToday={isToday} />
+        <WeekDatePicker date={today} today={actualToday} />
         <div className="max-w-4xl">
           <DailyScoreCard result={scoreResult} />
         </div>
@@ -100,12 +97,4 @@ export default async function TodayPage({
       </div>
     </DaySwipeNavigator>
   );
-}
-
-function formatLocalDate(date: Date) {
-  return new Intl.DateTimeFormat("en", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  }).format(date);
 }
