@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { NavIcon, navItems } from "@/components/nav-items";
+import { resetPageScroll } from "@/components/navigation-scroll";
 
 export function BottomNav() {
   const pathname = usePathname();
@@ -29,6 +30,8 @@ export function BottomNav() {
                 }`}
                 href={item.href}
                 key={item.href}
+                onClick={resetPageScroll}
+                scroll
               >
                 <span className="grid size-6 place-items-center">
                   <NavIcon className="size-5" name={item.icon} />

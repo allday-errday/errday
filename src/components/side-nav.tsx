@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/brand-logo";
 import { NavIcon, navItems } from "@/components/nav-items";
+import { resetPageScroll } from "@/components/navigation-scroll";
 
 export function SideNav() {
   const pathname = usePathname();
@@ -32,6 +33,8 @@ export function SideNav() {
                 }`}
                 href={item.href}
                 key={item.href}
+                onClick={resetPageScroll}
+                scroll
               >
                 <NavIcon className="size-[1.05rem]" name={item.icon} />
                 <span>{item.label}</span>
