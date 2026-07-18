@@ -38,10 +38,7 @@ export default async function CalendarPage({
 
   return (
     <div>
-      <PageHeader
-        subtitle="Plan workouts, meals and reminders — and see them on your iPhone via the Apple Calendar feed."
-        title="Calendar"
-      />
+      <PageHeader title="Calendar" />
       <CalendarView events={events} month={month} today={todayDateString()} />
     </div>
   );

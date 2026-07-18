@@ -255,8 +255,7 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
         <div className="mt-4 space-y-2">
           {selectedEvents.length === 0 && !formOpen ? (
             <p className="rounded-xl border border-dashed border-white/12 px-4 py-6 text-center text-sm leading-6 text-zinc-500">
-              Nothing planned yet. Add a workout, meal or reminder — it lands
-              on your iPhone automatically.
+              Nothing planned yet.
             </p>
           ) : (
             selectedEvents.map((event) => {

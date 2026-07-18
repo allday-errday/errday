@@ -30,7 +30,7 @@ export function WeekDatePicker({ date, today }: WeekDatePickerProps) {
               <span
                 className={`mt-1 grid size-10 place-items-center rounded-full border text-sm font-extrabold transition sm:size-12 sm:text-base ${
                   isActive
-                    ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--on-accent)] shadow-[0_10px_28px_rgba(139,130,246,0.34)]"
+                    ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--on-accent)]"
                     : isFuture
                       ? "border-white/[0.06] text-zinc-700"
                       : "border-dashed border-white/20 bg-white/[0.025] text-zinc-300 hover:border-[var(--accent)]/65 hover:bg-[var(--accent-soft)] hover:text-white"
@@ -57,7 +57,7 @@ export function WeekDatePicker({ date, today }: WeekDatePickerProps) {
             <Link
               aria-current={isActive ? "date" : undefined}
               aria-label={`${label}, ${dayNumber}`}
-              className="flex min-h-[4.4rem] flex-col items-center justify-center rounded-xl outline-offset-[-2px]"
+              className="flex min-h-[4.4rem] flex-col items-center justify-center outline-offset-[-2px]"
               href={`/today?date=${day}`}
               key={day}
             >

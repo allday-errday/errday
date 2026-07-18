@@ -122,10 +122,7 @@ html {
 body {
   min-height: 100dvh;
   margin: 0;
-  background:
-    radial-gradient(70rem 42rem at 88% -12%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 60%),
-    radial-gradient(55rem 40rem at -8% 30%, rgba(111, 100, 224, 0.1), transparent 64%),
-    var(--bg);
+  background: var(--bg);
   color: var(--text);
   font-family:
     var(--font-manrope),
@@ -161,6 +158,10 @@ body {
   padding-top: 4rem;
 }
 
+.scanner-top-controls {
+  padding: calc(max(env(safe-area-inset-top), var(--errday-native-safe-top, 0px)) + 1rem) 1rem 1rem;
+}
+
 @media (min-width: 40rem) {
   .errday-app-content-with-nav {
     padding-top: 5rem;
@@ -168,36 +169,12 @@ body {
 }
 
 body::before {
-  position: fixed;
-  z-index: -1;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: linear-gradient(to bottom, black, transparent 82%);
-  content: "";
-  pointer-events: none;
-}
-
-:root[data-mode="light"] body::before {
-  background-image:
-    linear-gradient(rgba(18, 21, 30, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(18, 21, 30, 0.03) 1px, transparent 1px);
+  content: none;
 }
 
 .flow-hero,
 .brand-hero {
-  background:
-    radial-gradient(circle at 86% 4%, color-mix(in srgb, var(--accent) 44%, transparent), transparent 48%),
-    linear-gradient(145deg, color-mix(in srgb, var(--accent) 16%, #20232c), #15171c 72%);
-}
-
-:root[data-mode="light"] .flow-hero,
-:root[data-mode="light"] .brand-hero {
-  background:
-    radial-gradient(circle at 86% 4%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 48%),
-    linear-gradient(145deg, color-mix(in srgb, var(--accent) 14%, #ffffff), #eef0f6 72%);
+  background: var(--surface);
 }
 
 a {
@@ -240,18 +217,13 @@ select optgroup {
 }
 
 .errday-mark-glow {
-  isolation: isolate;
+  isolation: auto;
 }
 
-.errday-mark-glow::before {
-  position: absolute;
-  z-index: -1;
-  inset: 8%;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(139, 130, 246, 0.36), transparent 68%);
-  content: "";
-  opacity: 0.9;
-  pointer-events: none;
+/* Keep the interface flat: accent color may signal state, never cast a glow. */
+[class*="shadow-"][class*="accent"],
+[class*="shadow-"][class*="signal"] {
+  box-shadow: none;
 }
 
 .errday-orbit {
@@ -369,16 +341,6 @@ select optgroup {
 }
 
 @media (max-width: 767px) {
-  body::before {
-    background-size: 42px 42px;
-  }
-
-  body {
-    background:
-      radial-gradient(36rem 24rem at 90% -10%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 62%),
-      var(--bg);
-  }
-
   .card,
   .card-soft,
   .surface-panel {

@@ -144,7 +144,7 @@ export function CameraScanner({ onBarcode, onClose }: CameraScannerProps) {
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/55 via-transparent to-black/75" />
 
-      <div className="relative flex items-center justify-between p-4">
+      <div className="scanner-top-controls relative flex items-center justify-between">
         <button
           aria-label="Close scanner"
           className="grid size-11 place-items-center rounded-full bg-black/45 backdrop-blur"

@@ -44,12 +44,11 @@ export default async function JournalPage() {
         hasToday={Boolean(todayEntry)}
       />
 
-      {past.length > 0 ? (
-        <section className="mt-8">
-          <p className="eyebrow mb-1">Look back</p>
-          <h2 className="mb-4 text-lg font-extrabold text-white sm:text-xl">
-            Past reflections.
-          </h2>
+      <section className="mt-8">
+        <h2 className="mb-4 text-lg font-extrabold text-white sm:text-xl">
+          Past reflections
+        </h2>
+        {past.length > 0 ? (
           <div className="space-y-2.5">
             {past.map((entry) => (
               <article
@@ -82,8 +81,10 @@ export default async function JournalPage() {
               </article>
             ))}
           </div>
-        </section>
-      ) : null}
+        ) : (
+          <p className="text-sm text-zinc-500">Nothing here yet.</p>
+        )}
+      </section>
     </div>
   );
 }

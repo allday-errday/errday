@@ -51,9 +51,8 @@ export function JournalCheckin({
 
   if (!isComposing) {
     return (
-      <section className="relative overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
-        <div className="absolute -right-24 -top-28 size-80 rounded-full bg-[var(--accent)]/14 blur-3xl" />
-        <div className="relative max-w-xl">
+      <section className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
+        <div className="max-w-xl">
           <p className="text-2xl font-extrabold leading-snug text-white sm:text-3xl">
             {hasToday ? "Today is captured." : "A moment for yourself."}
           </p>
@@ -81,10 +80,7 @@ export function JournalCheckin({
       <input name="energy" type="hidden" value={energy ?? ""} />
       <input name="stress" type="hidden" value={stress ?? ""} />
 
-      <div className="relative isolate overflow-hidden rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
-        {/* Soft brand glow instead of hard section dividers. */}
-        <div className="absolute -right-24 -top-28 -z-10 size-80 rounded-full bg-[var(--accent)]/14 blur-3xl" />
-        <div className="absolute -bottom-32 -left-20 -z-10 size-72 rounded-full bg-[var(--signal)]/10 blur-3xl" />
+      <div className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
 
         <div className="flex items-start justify-between gap-3">
           <p className="eyebrow">

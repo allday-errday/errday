@@ -1,10 +1,9 @@
 import { ChevronDown } from "lucide-react";
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 import type { ReactNode } from "react";
 import { PageHeader } from "@/components/page-header";
 import { SubmitButton } from "@/components/submit-button";
 import { requireUser } from "@/lib/auth";
-import { parsePlanTimes, PLAN_TIMES_COOKIE } from "@/lib/daily-flow/plan-times";
 import { getCalendarFeedToken } from "@/lib/db/calendar";
 import { getHealthSyncToken } from "@/lib/db/health";
 import { getProfile } from "@/lib/db/profile";
@@ -12,21 +11,18 @@ import { safeRead } from "@/lib/db/safe-read";
 import { AppearanceToggle } from "./appearance-toggle";
 import { AppleCalendarCard } from "./apple-calendar-card";
 import { AppleHealthCard } from "./apple-health-card";
-import { PlanTimesForm } from "./plan-times-form";
 import { ReminderSettingsForm } from "./reminder-settings-form";
 import { logout } from "./actions";
 import { SettingsForm } from "./settings-form";
 
 export default async function SettingsPage() {
   const { supabase, user } = await requireUser();
-  const [profile, feedToken, healthToken, headerList, cookieStore] = await Promise.all([
+  const [profile, feedToken, healthToken, headerList] = await Promise.all([
     getProfile(supabase, user.id),
     safeRead(getCalendarFeedToken(supabase, user.id), null, "calendar feed"),
     safeRead(getHealthSyncToken(supabase, user.id), null, "health sync"),
     headers(),
-    cookies(),
   ]);
-  const planTimes = parsePlanTimes(cookieStore.get(PLAN_TIMES_COOKIE)?.value);
   const host = headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "localhost:3000";
   const protocol = headerList.get("x-forwarded-proto") ?? (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
   const origin = `${protocol}://${host}`;
@@ -45,10 +41,6 @@ export default async function SettingsPage() {
 
       <SettingsSection description="Food, supplements, gym, sleep and journal nudges." id="reminder-settings" tone="accent" title="Reminders">
         <ReminderSettingsForm profile={profile} />
-      </SettingsSection>
-
-      <SettingsSection description="When meals, training and bedtime appear in your daily rhythm." title="Day plan times">
-        <PlanTimesForm times={planTimes} />
       </SettingsSection>
 
       <SettingsSection description="Calories and macros calculated from your body profile." title="Targets">

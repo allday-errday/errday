@@ -2,9 +2,8 @@ import { logWater } from "../actions";
 
 export function WaterLogButtons() {
   return (
-    <section className="surface-panel relative overflow-hidden p-6">
-      <div className="absolute -right-10 -top-12 size-40 rounded-full bg-cyan-400/10 blur-3xl" />
-      <div className="relative">
+    <section className="surface-panel p-6">
+      <div>
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="eyebrow">Hydration</p>
