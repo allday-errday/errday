@@ -1,4 +1,3 @@
-import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { todayDateString } from "@/lib/dates";
 import { listCalendarEvents } from "@/lib/db/calendar";
@@ -38,7 +37,7 @@ export default async function CalendarPage({
 
   return (
     <div>
-      <PageHeader title="Calendar" />
+      <h1 className="mb-6 text-3xl font-extrabold text-white sm:text-4xl">Calendar</h1>
       <CalendarView events={events} month={month} today={todayDateString()} />
     </div>
   );

@@ -19,13 +19,13 @@ export default async function SleepPage() {
     <div>
       <header className="mb-6">
         <h1 className="text-3xl font-bold text-white sm:text-4xl">
-          Wind down
+          Sleep
         </h1>
       </header>
 
       <SleepSession goalHours={goalHours} suggestedBedtime={suggestedBedtime} />
 
-      <details className="group mt-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
+      <details className="group mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
         <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-white">
           Log a night manually
           <span className="text-zinc-500 transition group-open:rotate-180">
@@ -39,11 +39,11 @@ export default async function SleepPage() {
         </div>
       </details>
 
-      <section className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5">
+      <section className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
         <h2 className="text-lg font-semibold text-white">Last 7 nights</h2>
         {logs.length === 0 ? (
           <p className="mt-3 text-sm leading-6 text-zinc-400">
-            No sleep tracked yet. Start a wind-down above tonight.
+            No sleep tracked yet.
           </p>
         ) : (
           <div className="mt-4 space-y-2">

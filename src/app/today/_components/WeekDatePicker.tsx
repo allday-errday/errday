@@ -103,7 +103,7 @@ export function WeekDatePicker({ date, today }: WeekDatePickerProps) {
         className="grid w-full grid-cols-7 gap-1.5 sm:gap-3"
         style={{
           transform: `translateX(${dragX}px)`,
-          transition: isDragging ? "none" : "transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+          transition: isDragging ? "none" : "transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1)",
         }}
       >
         {days.map((day) => {

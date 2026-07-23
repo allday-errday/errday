@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronDown, Search, Sparkles } from "lucide-react";
+import { ChevronDown, Plus, Sparkles } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { todayDateString } from "@/lib/dates";
@@ -29,30 +29,33 @@ export default async function FoodPage() {
     <div>
       <PageHeader title="Food" />
 
-      <section className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-sm shadow-black/20">
-        <h2 className="px-1 font-bold text-white">Products</h2>
-        <div className="flex items-center gap-2">
+      <section className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="font-bold text-white">Add food</h2>
+            <p className="mt-1 text-sm text-zinc-500">Search or scan a product</p>
+          </div>
           <Link
-            aria-label="Estimate food with AI"
-            className="grid size-12 place-items-center rounded-xl border border-[var(--accent)]/40 bg-[var(--accent-soft)] text-[var(--accent)] transition hover:border-[var(--accent)] hover:text-white"
-            href="/food/search?ai=1"
-            title="Estimate food with AI"
+            className="flex min-h-11 items-center gap-2 rounded-lg bg-[var(--accent)] px-4 text-sm font-extrabold text-[var(--on-accent)]"
+            href="/food/search"
           >
-            <Sparkles className="size-5" />
+            <Plus className="size-4" />
+            Add
           </Link>
+        </div>
+        <div className="mt-3 flex items-center gap-3">
           <BarcodeScanButton />
           <Link
-            aria-label="Search products"
-            className="grid size-12 place-items-center rounded-xl border border-[var(--border)] bg-[var(--surface-2)] text-zinc-300 transition hover:border-[var(--accent)]/50 hover:text-white"
-            href="/food/search"
-            title="Search products"
+            className="flex min-h-10 items-center gap-2 text-sm font-bold text-zinc-400 transition hover:text-white"
+            href="/food/search?ai=1"
           >
-            <Search className="size-5" />
+            <Sparkles className="size-4 text-[var(--accent)]" />
+            Estimate with AI
           </Link>
         </div>
       </section>
 
-      <section className="mb-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
+      <section className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
         <h2 className="font-bold text-white">Today&apos;s totals</h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
           <Metric label="Calories" value={`${totals.calories} kcal`} />
@@ -62,19 +65,16 @@ export default async function FoodPage() {
         </div>
       </section>
 
-      <details className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm shadow-black/20">
+      <details className="rounded-xl border border-[var(--border)] bg-[var(--surface)]">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4">
           <span>
             <span className="block font-bold text-white">Saved foods</span>
-            <span className="mt-1 block text-xs text-zinc-500">Log from your database</span>
           </span>
           <ChevronDown className="size-5 text-[var(--accent)]" />
         </summary>
         <div className="border-t border-[var(--border)] p-4">
           {items.length === 0 ? (
-            <p className="text-sm leading-6 text-zinc-400">
-              No food items found. Run migration 0004 in Supabase to seed foods.
-            </p>
+            <p className="text-sm leading-6 text-zinc-400">No saved foods yet.</p>
           ) : (
             <FoodForm items={items} />
           )}

@@ -24,11 +24,7 @@ export default async function JournalPage() {
   return (
     <div>
       <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-extrabold text-white sm:text-3xl">
-            {greeting()}
-          </h1>
-        </div>
+        <h1 className="text-2xl font-extrabold text-white sm:text-3xl">Journal</h1>
         {streak > 0 ? (
           <span className="flex min-h-10 items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent-soft)] px-4 text-sm font-bold text-[var(--accent-strong)]">
             🔥 {streak}-day streak
@@ -52,7 +48,7 @@ export default async function JournalPage() {
           <div className="space-y-2.5">
             {past.map((entry) => (
               <article
-                className="group flex gap-4 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--accent)]/30"
+              className="group flex gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition duration-200 hover:border-[var(--accent)]/30"
                 key={entry.id}
               >
                 <span
@@ -104,20 +100,6 @@ function MetaDots({
       {stress ? <span>〰 {stress}/5</span> : null}
     </span>
   );
-}
-
-function greeting() {
-  const h = new Date().getHours();
-  if (h < 5) {
-    return "Still up?";
-  }
-  if (h < 12) {
-    return "Good morning";
-  }
-  if (h < 18) {
-    return "Good afternoon";
-  }
-  return "Good evening";
 }
 
 /** Consecutive days journaled, counting back from today (or yesterday if

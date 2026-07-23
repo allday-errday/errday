@@ -140,7 +140,7 @@ export function SleepSession({ goalHours, suggestedBedtime }: SleepSessionProps)
     return (
       <Shell
         icon="moon"
-        title="Ready to wind down?"
+        title="Ready for bed?"
         subtitle={
           suggestedBedtime
             ? `Suggested bedtime ${suggestedBedtime.slice(0, 5)} · ${goalHours}h goal`
@@ -167,7 +167,7 @@ export function SleepSession({ goalHours, suggestedBedtime }: SleepSessionProps)
       <Shell
         icon="moon"
         title="Winding down"
-        subtitle="Dim the lights. Slow your breath. Put the phone down."
+        subtitle="Your 15-minute wind-down has started."
       >
         <Ring
           progress={elapsed / WINDDOWN_SECONDS}
@@ -238,7 +238,7 @@ function Shell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center rounded-[1.75rem] border border-[var(--border)] bg-gradient-to-b from-[var(--surface-2)] to-[var(--surface)] px-6 py-10 text-center">
+    <div className="flex flex-col items-center rounded-xl border border-[var(--border)] bg-[var(--surface)] px-6 py-10 text-center">
       <span className="grid size-12 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
         {icon === "moon" ? (
           <svg aria-hidden="true" className="size-6" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">

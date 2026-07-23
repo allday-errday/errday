@@ -9,8 +9,9 @@ const meals: Array<{ label: string; slot: MealSlot }> = [
 
 export function MealPlan({ loggedSlots }: { loggedSlots: MealSlot[] }) {
   return (
-    <section className="border-y border-[var(--border)]">
-      <div className="divide-y divide-[var(--border)]">
+    <section>
+      <h2 className="mb-2 text-lg font-extrabold text-white">Meals</h2>
+      <div className="divide-y divide-[var(--border)] border-y border-[var(--border)]">
         {meals.map((meal) => {
           const logged = loggedSlots.includes(meal.slot);
 

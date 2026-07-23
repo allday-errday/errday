@@ -51,22 +51,17 @@ export function JournalCheckin({
 
   if (!isComposing) {
     return (
-      <section className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
+      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
         <div className="max-w-xl">
           <p className="text-2xl font-extrabold leading-snug text-white sm:text-3xl">
-            {hasToday ? "Today is captured." : "A moment for yourself."}
-          </p>
-          <p className="mt-3 text-sm leading-6 text-zinc-400 sm:text-base">
-            {hasToday
-              ? "Return to your reflection whenever you want to add a thought."
-              : "Pause for a thought, your energy and what is still on your mind."}
+            {hasToday ? "Today is captured." : "Write a reflection."}
           </p>
           <button
-            className="mt-6 min-h-12 rounded-full bg-[var(--accent)] px-5 text-sm font-extrabold text-[var(--on-accent)] shadow-lg shadow-[var(--accent)]/20 transition hover:bg-[var(--accent-strong)] active:scale-[0.98]"
+            className="mt-5 min-h-12 rounded-lg bg-[var(--accent)] px-5 text-sm font-extrabold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)] active:scale-[0.98]"
             onClick={() => setIsComposing(true)}
             type="button"
           >
-            {hasToday ? "View reflection" : "Start reflection"}
+            {hasToday ? "Open reflection" : "Write now"}
           </button>
         </div>
       </section>
@@ -80,11 +75,11 @@ export function JournalCheckin({
       <input name="energy" type="hidden" value={energy ?? ""} />
       <input name="stress" type="hidden" value={stress ?? ""} />
 
-      <div className="rounded-[2rem] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
 
         <div className="flex items-start justify-between gap-3">
           <p className="eyebrow">
-            {hasToday ? "Today, revisited" : "Tonight's reflection"}
+            {hasToday ? "Today" : "Reflection"}
           </p>
           <button
             aria-label="New prompt"

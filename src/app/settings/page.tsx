@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 import { headers } from "next/headers";
 import type { ReactNode } from "react";
 import { PageHeader } from "@/components/page-header";
@@ -29,7 +30,7 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <PageHeader subtitle="Open only what you want to change." title="Settings" />
+      <PageHeader title="Settings" />
 
       <SettingsSection description="Theme and display preference on this device." title="Appearance">
         <AppearanceToggle />
@@ -64,6 +65,17 @@ export default async function SettingsPage() {
         <AppleHealthCard origin={origin} token={healthToken?.token ?? null} />
       </SettingsSection>
 
+      <SettingsSection description="Calendar and help when you need it." title="More">
+        <div className="grid gap-2 sm:grid-cols-2">
+          <Link className="flex min-h-11 items-center rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/calendar">
+            Calendar
+          </Link>
+          <Link className="flex min-h-11 items-center rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/coach">
+            Ask Errday
+          </Link>
+        </div>
+      </SettingsSection>
+
       <SettingsSection description="Sign out of this Errday account." title="Account">
         <p className="break-all text-sm text-zinc-400">{user.email}</p>
         <form action={logout} className="mt-4">
@@ -89,7 +101,7 @@ function SettingsSection({
 }) {
   return (
     <details
-      className={`group mb-3 overflow-hidden rounded-2xl border shadow-sm shadow-black/20 ${
+      className={`group mb-3 overflow-hidden rounded-xl border ${
         tone === "accent"
           ? "border-[var(--accent)]/45 bg-[var(--accent-soft)]"
           : "border-[var(--border)] bg-[var(--surface)]"

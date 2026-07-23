@@ -42,9 +42,7 @@ export default async function GymPage() {
     <div className="mx-auto max-w-[1120px]">
       <header className="mb-6 flex items-start justify-between gap-4 sm:mb-7 sm:items-center">
         <div>
-          <h1 className="text-3xl font-bold leading-tight text-[var(--text)] sm:text-5xl">
-            Train without friction.
-          </h1>
+          <h1 className="text-3xl font-bold leading-tight text-[var(--text)] sm:text-5xl">Gym</h1>
         </div>
         <Link
           className="grid size-11 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-zinc-300 shadow-sm shadow-black/20 transition hover:bg-[var(--surface-2)]"
@@ -58,16 +56,13 @@ export default async function GymPage() {
       </header>
 
       {activeSession ? (
-        <section className="flow-hero mb-7 overflow-hidden rounded-[1.5rem] border border-[var(--accent)]/35 p-5 sm:rounded-[2rem] sm:p-8">
+        <section className="flow-hero mb-7 overflow-hidden rounded-xl border border-[var(--accent)]/35 p-5 sm:p-8">
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <div className="max-w-xl">
-              <p className="eyebrow">Workout in progress</p>
-              <h2 className="mt-3 text-2xl font-black leading-tight text-white sm:text-4xl">
+              <p className="text-sm font-bold text-zinc-400">Workout in progress</p>
+              <h2 className="mt-2 text-2xl font-black leading-tight text-white sm:text-4xl">
                 {activeWorkout?.name ?? "Your workout"}
               </h2>
-              <p className="mt-3 text-sm leading-6 text-zinc-400">
-                Pick up exactly where you stopped. Your sets and timer are waiting.
-              </p>
             </div>
             <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
               <WorkoutTimer startedAt={activeSession.started_at} />
@@ -81,16 +76,11 @@ export default async function GymPage() {
           </div>
         </section>
       ) : (
-        <section className="flow-hero mb-7 overflow-hidden rounded-[1.5rem] border border-[var(--border-strong)] p-5 sm:rounded-[2rem] sm:p-8">
+        <section className="flow-hero mb-7 overflow-hidden rounded-xl border border-[var(--border-strong)] p-5 sm:p-8">
           <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
             <div className="max-w-xl">
-              <p className="eyebrow">Ready when you are</p>
-              <h2 className="mt-3 text-2xl font-black leading-tight text-white sm:text-4xl">
-                One tap. Then lift.
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-zinc-400 sm:text-base">
-                Start empty and build the session as you lift. No setup maze.
-              </p>
+              <h2 className="text-2xl font-black leading-tight text-white sm:text-4xl">Ready to train?</h2>
+              <p className="mt-2 text-sm leading-6 text-zinc-400 sm:text-base">Start a workout and add exercises as you go.</p>
             </div>
             <form action={startEmptyWorkout}>
               <button
@@ -102,7 +92,7 @@ export default async function GymPage() {
               </button>
             </form>
           </div>
-          <div className="mt-7 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 sm:mt-8 sm:gap-3">
+          <div className="mt-6 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 sm:gap-3">
             <SnapshotMetric label="Workouts" value={`${weeklyWorkouts}`} />
             <SnapshotMetric label="Sets" value={`${weeklySets}`} />
             <SnapshotMetric label="Volume" value={`${Math.round(weeklyVolume).toLocaleString("de-CH")} kg`} />
@@ -110,7 +100,7 @@ export default async function GymPage() {
         </section>
       )}
 
-      <section className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
+      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-black text-white">Recent workouts</h2>
           <Link className="text-sm font-semibold text-[var(--accent)]" href="/gym/history">View all</Link>

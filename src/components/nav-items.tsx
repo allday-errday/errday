@@ -18,7 +18,6 @@ export const navItems: NavItem[] = [
   { href: "/food", icon: "food", label: "Food" },
   { href: "/sleep", icon: "sleep", label: "Sleep" },
   { href: "/journal", icon: "journal", label: "Journal" },
-  { href: "/calendar", icon: "calendar", label: "Calendar" },
 ];
 
 export function NavIcon({

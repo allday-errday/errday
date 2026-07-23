@@ -144,14 +144,12 @@ export default async function FoodSearchPage({
 
   return (
     <div>
-      <header className="mb-5 flex items-center justify-between gap-3 sm:mb-10 lg:mb-14">
-        <h1 className="text-[1.9rem] font-extrabold leading-[1.05] text-white sm:text-5xl lg:text-6xl">
-          Food
-        </h1>
+      <header className="mb-5 flex items-center justify-between gap-3 sm:mb-8">
+        <h1 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">Food</h1>
         <BarcodeScanButton />
       </header>
 
-      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
+      <section className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
         <form className="grid gap-3">
           {selectedSlot ? (
             <input name="slot" type="hidden" value={selectedSlot} />
@@ -175,17 +173,6 @@ export default async function FoodSearchPage({
             </div>
           </label>
         </form>
-        <p className="mt-3 text-xs leading-5 text-zinc-500">
-          1&apos;220 foods · Version 7.0 · Values per 100 g · Source:{" "}
-          <a
-            className="font-semibold text-[var(--accent)] hover:underline"
-            href="https://naehrwertdaten.ch/de/"
-            rel="noreferrer"
-            target="_blank"
-          >
-            Schweizer Nährwertdatenbank (BLV)
-          </a>
-        </p>
       </section>
 
       {barcodeResult ? (
@@ -201,13 +188,12 @@ export default async function FoodSearchPage({
         catalogProducts.length === 0 &&
         usdaProducts.length === 0 ? (
         <>
-          <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+          <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
             <h2 className="font-bold text-white">No product found</h2>
             <p className="mt-2 text-sm leading-6 text-zinc-500">
-              Try another name, a synonym — or let the AI estimate it below.
+              Try another name or estimate it with AI.
             </p>
           </section>
-          <AiEstimateSection query={query} selectedSlot={selectedSlot} />
         </>
       ) : (
         <>

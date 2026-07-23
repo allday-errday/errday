@@ -28,13 +28,12 @@ export function BarcodeScanButton() {
         />
       ) : null}
       <button
-        aria-label="Scan barcode"
-        className="grid size-12 place-items-center rounded-xl bg-[var(--accent)] text-[var(--on-accent)] shadow-sm shadow-[var(--accent)]/25 transition hover:brightness-110 active:scale-95"
+        className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-sm font-bold text-zinc-300 transition hover:border-[var(--accent)]/50 hover:text-white active:scale-95"
         onClick={() => setScannerOpen(true)}
-        title="Scan barcode"
         type="button"
       >
-        <Barcode className="size-5" />
+        <Barcode className="size-4" />
+        Scan barcode
       </button>
     </>
   );
