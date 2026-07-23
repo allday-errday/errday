@@ -45,7 +45,7 @@ export default async function GymPage() {
           <h1 className="text-3xl font-bold leading-tight text-[var(--text)] sm:text-5xl">Gym</h1>
         </div>
         <Link
-          className="grid size-11 place-items-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-zinc-300 shadow-sm shadow-black/20 transition hover:bg-[var(--surface-2)]"
+          className="grid size-11 place-items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-zinc-300 transition hover:bg-[var(--surface-2)]"
           href="/gym/history"
           aria-label="Workout history"
         >
@@ -56,7 +56,7 @@ export default async function GymPage() {
       </header>
 
       {activeSession ? (
-        <section className="flow-hero mb-7 overflow-hidden rounded-xl border border-[var(--accent)]/35 p-5 sm:p-8">
+        <section className="mb-7 border-y border-[var(--border)] py-5 sm:py-7">
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <div className="max-w-xl">
               <p className="text-sm font-bold text-zinc-400">Workout in progress</p>
@@ -67,7 +67,7 @@ export default async function GymPage() {
             <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
               <WorkoutTimer startedAt={activeSession.started_at} />
               <Link
-                className="flex min-h-12 flex-1 items-center justify-center rounded-full bg-white px-6 text-sm font-black text-[#0b0c10] shadow-lg shadow-black/20 sm:flex-none"
+                className="flex min-h-12 flex-1 items-center justify-center rounded-lg bg-[var(--accent)] px-6 text-sm font-black text-[var(--on-accent)] sm:flex-none"
                 href={`/gym/workout/${activeSession.workout_id}`}
               >
                 Continue
@@ -76,15 +76,15 @@ export default async function GymPage() {
           </div>
         </section>
       ) : (
-        <section className="flow-hero mb-7 overflow-hidden rounded-xl border border-[var(--border-strong)] p-5 sm:p-8">
-          <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
+        <section className="mb-7 border-y border-[var(--border)] py-5 sm:py-7">
+          <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
             <div className="max-w-xl">
-              <h2 className="text-2xl font-black leading-tight text-white sm:text-4xl">Ready to train?</h2>
-              <p className="mt-2 text-sm leading-6 text-zinc-400 sm:text-base">Start a workout and add exercises as you go.</p>
+              <h2 className="text-2xl font-black leading-tight text-white sm:text-3xl">Workout</h2>
+              <p className="mt-1 text-sm leading-6 text-zinc-500">Start when you are ready.</p>
             </div>
             <form action={startEmptyWorkout}>
               <button
-                className="flex min-h-14 w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-7 text-base font-black text-[var(--on-accent)] transition hover:-translate-y-0.5 sm:w-auto"
+                className="flex min-h-12 w-full items-center justify-center gap-3 rounded-lg bg-[var(--accent)] px-6 text-sm font-black text-[var(--on-accent)] transition sm:w-auto"
                 type="submit"
               >
                 <span className="text-xl">+</span>
@@ -92,7 +92,7 @@ export default async function GymPage() {
               </button>
             </form>
           </div>
-          <div className="mt-6 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 sm:gap-3">
+          <div className="mt-5 grid grid-cols-3 divide-x divide-[var(--border)] border-t border-[var(--border)] pt-4">
             <SnapshotMetric label="Workouts" value={`${weeklyWorkouts}`} />
             <SnapshotMetric label="Sets" value={`${weeklySets}`} />
             <SnapshotMetric label="Volume" value={`${Math.round(weeklyVolume).toLocaleString("de-CH")} kg`} />
@@ -100,7 +100,7 @@ export default async function GymPage() {
         </section>
       )}
 
-      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
+      <section className="border-t border-[var(--border)] pt-5 sm:pt-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-black text-white">Recent workouts</h2>
           <Link className="text-sm font-semibold text-[var(--accent)]" href="/gym/history">View all</Link>
@@ -128,7 +128,7 @@ export default async function GymPage() {
 
 function SnapshotMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-0 rounded-2xl border border-white/10 bg-black/10 p-3 sm:p-4">
+    <div className="min-w-0 px-3 first:pl-0 last:pr-0">
       <p className="truncate text-xl font-black text-[var(--text)] sm:text-2xl">{value}</p>
       <p className="mt-1 text-xs text-zinc-500 sm:text-sm">{label}</p>
     </div>

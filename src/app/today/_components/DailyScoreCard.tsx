@@ -17,14 +17,17 @@ export function DailyScoreCard({ result }: DailyScoreCardProps) {
       <div className="flex h-full flex-col gap-6">
         <div>
           <p className="text-sm font-extrabold text-white">Daily flow</p>
-          <p className="mt-1 text-sm text-zinc-400">{result.status} momentum</p>
+          <p className="mt-1 text-sm text-zinc-500">Today so far</p>
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:gap-8">
-          <p className="max-w-xs text-base font-semibold leading-7 text-white/80 sm:text-lg sm:leading-8">
-            {result.message}
-          </p>
-          <CircularScoreProgress score={result.score} />
+          <div>
+            <p className="text-6xl font-extrabold leading-none text-white sm:text-7xl">
+              {result.score}<span className="ml-2 text-2xl font-bold text-zinc-500">/100</span>
+            </p>
+            <p className="mt-3 text-sm font-semibold text-zinc-400">Flow score</p>
+          </div>
+          <CircularScoreProgress score={result.score} showValue={false} />
         </div>
 
         <div className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10 pt-5">

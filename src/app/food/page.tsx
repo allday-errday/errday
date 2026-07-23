@@ -29,7 +29,7 @@ export default async function FoodPage() {
     <div>
       <PageHeader title="Food" />
 
-      <section className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+      <section className="mb-5 border-y border-[var(--border)] py-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <h2 className="font-bold text-white">Add food</h2>
@@ -43,7 +43,7 @@ export default async function FoodPage() {
             Add
           </Link>
         </div>
-        <div className="mt-3 flex items-center gap-3">
+        <div className="mt-3 flex items-center gap-4">
           <BarcodeScanButton />
           <Link
             className="flex min-h-10 items-center gap-2 text-sm font-bold text-zinc-400 transition hover:text-white"
@@ -55,13 +55,12 @@ export default async function FoodPage() {
         </div>
       </section>
 
-      <section className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+      <section className="mb-5 rounded-lg border border-[var(--border)] bg-[var(--bg-soft)] p-4">
         <div className="flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-bold text-zinc-400">Today</p>
             <p className="mt-1 text-4xl font-extrabold text-white">{totals.calories}<span className="ml-1 text-lg font-bold text-zinc-500">kcal</span></p>
           </div>
-          <p className="text-sm font-bold text-zinc-500">Logged</p>
         </div>
         <div className="mt-5 grid grid-cols-3 divide-x divide-[var(--border)] border-t border-[var(--border)] pt-4">
           <Metric label="Protein" value={`${Math.round(totals.proteinG)} g`} />
@@ -70,7 +69,7 @@ export default async function FoodPage() {
         </div>
       </section>
 
-      <details className="rounded-xl border border-[var(--border)] bg-[var(--surface)]">
+      <details className="border-y border-[var(--border)]">
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4">
           <span>
             <span className="block font-bold text-white">Saved foods</span>

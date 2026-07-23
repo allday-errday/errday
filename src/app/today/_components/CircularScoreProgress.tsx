@@ -2,9 +2,13 @@ import { DAILY_FLOW_ACCENT } from "@/lib/daily-flow/types";
 
 type CircularScoreProgressProps = {
   score: number;
+  showValue?: boolean;
 };
 
-export function CircularScoreProgress({ score }: CircularScoreProgressProps) {
+export function CircularScoreProgress({
+  score,
+  showValue = true,
+}: CircularScoreProgressProps) {
   const radius = 52;
   const stroke = 10;
   const circumference = 2 * Math.PI * radius;
@@ -38,14 +42,16 @@ export function CircularScoreProgress({ score }: CircularScoreProgressProps) {
           strokeDashoffset={offset}
         />
       </svg>
-      <span className="absolute grid place-items-center text-white">
-        <span className="text-4xl font-extrabold leading-none sm:text-5xl">
-          {score}
+      {showValue ? (
+        <span className="absolute grid place-items-center text-white">
+          <span className="text-4xl font-extrabold leading-none sm:text-5xl">
+            {score}
+          </span>
+          <span className="mt-1 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/45">
+            of 100
+          </span>
         </span>
-        <span className="mt-1 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/45">
-          of 100
-        </span>
-      </span>
+      ) : null}
     </div>
   );
 }

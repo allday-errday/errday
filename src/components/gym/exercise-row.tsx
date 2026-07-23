@@ -26,16 +26,16 @@ export function ExerciseRow({
           {progressText ?? [primaryMuscle, equipment].filter(Boolean).join(" / ")}
         </p>
       </div>
-      <div className="grid size-9 shrink-0 place-items-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
+      <div className="grid size-9 shrink-0 place-items-center text-[var(--accent)]">
         <svg aria-hidden="true" className="size-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" viewBox="0 0 24 24">
-          <path d="M12 5v14" /><path d="M5 12h14" />
+          {href ? <path d="m9 18 6-6-6-6" /> : <><path d="M12 5v14" /><path d="M5 12h14" /></>}
         </svg>
       </div>
     </>
   );
 
   const className =
-    "flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-[var(--surface)] p-3 text-left shadow-lg shadow-black/20 transition hover:border-white/20 hover:bg-[var(--surface)]";
+    "flex w-full items-center gap-3 border-b border-[var(--border)] py-3 text-left transition hover:text-white";
 
   if (href) {
     return (
