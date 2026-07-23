@@ -12,10 +12,10 @@ export function CircularScoreProgress({ score }: CircularScoreProgressProps) {
   const offset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="relative mx-auto grid size-48 place-items-center sm:size-56">
+    <div className="relative grid size-36 place-items-center sm:size-44">
       <svg
         aria-hidden="true"
-        className="size-full -rotate-90 drop-shadow-[0_0_22px_rgba(148,136,255,0.35)]"
+        className="size-full -rotate-90"
         viewBox="0 0 136 136"
       >
         <circle
@@ -39,10 +39,10 @@ export function CircularScoreProgress({ score }: CircularScoreProgressProps) {
         />
       </svg>
       <span className="absolute grid place-items-center text-white">
-        <span className="text-5xl font-extrabold leading-none sm:text-6xl">
+        <span className="text-4xl font-extrabold leading-none sm:text-5xl">
           {score}
         </span>
-        <span className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-white/45">
+        <span className="mt-1 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/45">
           of 100
         </span>
       </span>

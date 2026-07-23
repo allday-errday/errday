@@ -13,31 +13,29 @@ export function DailyScoreCard({ result }: DailyScoreCardProps) {
   ];
 
   return (
-    <section className="flow-hero relative min-h-[23rem] overflow-hidden rounded-xl border border-white/10 p-5 sm:min-h-[27rem] sm:p-8 lg:p-10">
-      <div className="flex h-full flex-col justify-between gap-8">
+    <section className="flow-hero relative overflow-hidden rounded-xl border border-white/10 p-5 sm:p-8">
+      <div className="flex h-full flex-col gap-6">
         <div>
           <p className="text-sm font-extrabold text-white">Daily flow</p>
           <p className="mt-1 text-sm text-zinc-400">{result.status} momentum</p>
         </div>
 
-        <CircularScoreProgress score={result.score} />
-
-        <div>
-          <p className="max-w-xl text-base font-semibold leading-7 text-white/80 sm:text-lg sm:leading-8">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:gap-8">
+          <p className="max-w-xs text-base font-semibold leading-7 text-white/80 sm:text-lg sm:leading-8">
             {result.message}
           </p>
-          <div className="mt-5 grid grid-cols-3 gap-2 border-t border-white/10 pt-5 sm:mt-7 sm:gap-3 sm:pt-6">
-            {signals.map((signal) => (
-              <div key={signal.label}>
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/45">
-                  {signal.label}
-                </p>
-                <p className="mt-2 text-lg font-extrabold text-white sm:text-xl">
-                  {Math.round(signal.value)}%
-                </p>
-              </div>
-            ))}
-          </div>
+          <CircularScoreProgress score={result.score} />
+        </div>
+
+        <div className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10 pt-5">
+          {signals.map((signal) => (
+            <div className="px-3 first:pl-0 last:pr-0" key={signal.label}>
+              <p className="text-xs font-bold text-zinc-500">{signal.label}</p>
+              <p className="mt-1 text-lg font-extrabold text-white sm:text-xl">
+                {Math.round(signal.value)}%
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

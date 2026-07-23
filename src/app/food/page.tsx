@@ -56,9 +56,14 @@ export default async function FoodPage() {
       </section>
 
       <section className="mb-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="font-bold text-white">Today&apos;s totals</h2>
-        <div className="mt-4 grid grid-cols-2 gap-3">
-          <Metric label="Calories" value={`${totals.calories} kcal`} />
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-bold text-zinc-400">Today</p>
+            <p className="mt-1 text-4xl font-extrabold text-white">{totals.calories}<span className="ml-1 text-lg font-bold text-zinc-500">kcal</span></p>
+          </div>
+          <p className="text-sm font-bold text-zinc-500">Logged</p>
+        </div>
+        <div className="mt-5 grid grid-cols-3 divide-x divide-[var(--border)] border-t border-[var(--border)] pt-4">
           <Metric label="Protein" value={`${Math.round(totals.proteinG)} g`} />
           <Metric label="Carbs" value={`${Math.round(totals.carbsG)} g`} />
           <Metric label="Fat" value={`${Math.round(totals.fatG)} g`} />
@@ -86,7 +91,7 @@ export default async function FoodPage() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5 p-3">
+    <div className="px-3 first:pl-0 last:pr-0">
       <p className="text-xs text-zinc-500">{label}</p>
       <p className="mt-1 font-bold text-white">{value}</p>
     </div>

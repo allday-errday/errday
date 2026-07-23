@@ -76,7 +76,7 @@ export function FoodResultRow({
   }
 
   return (
-    <article className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-sm shadow-black/10 transition">
+    <article className="rounded-xl border border-[var(--border)] bg-[var(--surface)] transition">
       <button
         aria-expanded={open}
         className="flex w-full items-center gap-3 p-4 text-left"
@@ -100,7 +100,7 @@ export function FoodResultRow({
           className={`grid size-10 shrink-0 place-items-center rounded-full transition ${
             open
               ? "bg-white/[0.08] text-zinc-300"
-              : "bg-[var(--accent)] text-[var(--on-accent)] shadow-sm shadow-[var(--accent)]/25"
+              : "bg-[var(--accent)] text-[var(--on-accent)]"
           } ${canLog ? "" : "opacity-30"}`}
         >
           {open ? <X className="size-4" /> : <Plus className="size-5" />}
@@ -215,7 +215,7 @@ export function FoodResultRow({
           ) : null}
 
           <button
-            className="min-h-12 rounded-full bg-[var(--accent)] px-4 text-sm font-extrabold text-[var(--on-accent)] shadow-sm shadow-[var(--accent)]/25 transition hover:brightness-110"
+            className="min-h-12 rounded-lg bg-[var(--accent)] px-4 text-sm font-extrabold text-[var(--on-accent)] transition hover:brightness-110"
             type="submit"
           >
             Log{kcalForGrams !== null ? ` · ${kcalForGrams} kcal` : ""}

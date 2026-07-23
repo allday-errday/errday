@@ -328,7 +328,7 @@ function ChoiceCard({
         centered ? "text-center" : "flex items-center gap-4 text-left"
       } ${
         active
-          ? "border-[var(--accent)]/60 bg-[var(--accent-soft)] shadow-lg shadow-[var(--accent)]/10"
+          ? "border-[var(--accent)] bg-[var(--accent-soft)]"
           : "border-[var(--border)] bg-[var(--surface-2)]/70 hover:border-[var(--accent)]/30 hover:bg-[var(--surface-3)]"
       }`}
       onClick={onClick}
@@ -345,6 +345,11 @@ function ChoiceCard({
           </span>
         ) : null}
       </span>
+      {!centered ? (
+        <span className={`ml-auto grid size-6 shrink-0 place-items-center rounded-full border ${active ? "border-[var(--accent)] bg-[var(--accent)]" : "border-white/25"}`}>
+          {active ? <span className="size-2 rounded-full bg-[var(--on-accent)]" /> : null}
+        </span>
+      ) : null}
     </button>
   );
 }
