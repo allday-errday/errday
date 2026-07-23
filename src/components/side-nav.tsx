@@ -18,7 +18,7 @@ export function SideNav() {
       <div className="mx-auto grid min-h-16 max-w-[1280px] grid-cols-[1fr_auto] items-center gap-x-4 px-4 py-3 sm:min-h-20 sm:px-8 sm:py-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-x-8 lg:px-12 lg:py-0">
         <BrandLogo className="justify-self-start" href="/today" markClassName="size-10 sm:size-11" wordmarkClassName="text-lg sm:text-xl" />
 
-        <nav className="hidden lg:order-none lg:col-span-1 lg:mx-0 lg:mt-0 lg:grid lg:w-[34rem] lg:grid-cols-5 lg:justify-self-center lg:overflow-visible lg:px-0">
+        <nav className="hidden lg:order-none lg:col-span-1 lg:mx-0 lg:mt-0 lg:grid lg:w-[28rem] lg:grid-cols-4 lg:justify-self-center lg:overflow-visible lg:px-0">
           {navItems.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -43,23 +43,7 @@ export function SideNav() {
           })}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2 justify-self-end">
-          <Link
-            aria-current={pathname === "/settings" ? "page" : undefined}
-            aria-label="Open settings"
-            className={`grid size-10 place-items-center rounded-full border transition sm:size-11 ${
-              pathname === "/settings"
-                ? "border-[var(--accent)]/50 bg-[var(--accent-soft)] text-white"
-                : "border-white/[0.09] bg-white/[0.03] text-zinc-400 hover:border-white/20 hover:text-white"
-            }`}
-            href="/settings"
-          >
-            <svg aria-hidden="true" className="size-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="3" />
-              <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21h-4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H3v-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.3 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1v4H21a1.7 1.7 0 0 0-1.6 1Z" />
-            </svg>
-          </Link>
-        </div>
+        <div aria-hidden="true" className="hidden lg:block" />
       </div>
     </header>
   );

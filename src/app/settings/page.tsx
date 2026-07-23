@@ -30,7 +30,12 @@ export default async function SettingsPage() {
 
   return (
     <div>
-      <PageHeader title="Settings" />
+      <PageHeader title="Profile" />
+
+      <section className="mb-6 border-y border-[var(--border)] py-4">
+        <p className="text-sm font-extrabold text-white">{user.email}</p>
+        <p className="mt-1 text-sm text-zinc-500">Account, goals and preferences</p>
+      </section>
 
       <SettingsSection description="Theme and display preference on this device." title="Appearance">
         <AppearanceToggle />
@@ -65,13 +70,19 @@ export default async function SettingsPage() {
         <AppleHealthCard origin={origin} token={healthToken?.token ?? null} />
       </SettingsSection>
 
-      <SettingsSection description="Calendar and help when you need it." title="More">
+      <SettingsSection description="Sleep, reflection, planning and recap." title="Daily tools">
         <div className="grid gap-2 sm:grid-cols-2">
-          <Link className="flex min-h-11 items-center rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/calendar">
-            Calendar
+          <Link className="flex min-h-11 items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/sleep">
+            Sleep <span className="text-[var(--accent)]">›</span>
           </Link>
-          <Link className="flex min-h-11 items-center rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/coach">
-            Ask Errday
+          <Link className="flex min-h-11 items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/journal">
+            Journal <span className="text-[var(--accent)]">›</span>
+          </Link>
+          <Link className="flex min-h-11 items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/recap">
+            Monthly recap <span className="text-[var(--accent)]">›</span>
+          </Link>
+          <Link className="flex min-h-11 items-center rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/calendar">
+            Calendar <span className="ml-auto text-[var(--accent)]">›</span>
           </Link>
         </div>
       </SettingsSection>

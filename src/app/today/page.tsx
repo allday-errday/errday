@@ -6,6 +6,7 @@ import { getHealthMetricsForDay } from "@/lib/db/health";
 import { safeRead } from "@/lib/db/safe-read";
 import { getTodayDashboard } from "@/lib/db/today";
 import { DailyScoreCard } from "./_components/DailyScoreCard";
+import { DailyTools } from "./_components/DailyTools";
 import { MealPlan } from "./_components/MealPlan";
 import { TodayHeader } from "./_components/TodayHeader";
 import { WaterLogButtons } from "./_components/WaterLogButtons";
@@ -72,6 +73,7 @@ export default async function TodayPage({
         </div>
         <aside>{isToday ? <WaterLogButtons /> : null}</aside>
       </div>
+      {isToday ? <DailyTools /> : null}
     </div>
   );
 }

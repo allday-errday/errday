@@ -3,6 +3,7 @@ export type NavIconName =
   | "food"
   | "gym"
   | "journal"
+  | "profile"
   | "sleep"
   | "today";
 
@@ -16,8 +17,7 @@ export const navItems: NavItem[] = [
   { href: "/today", icon: "today", label: "Today" },
   { href: "/gym", icon: "gym", label: "Gym" },
   { href: "/food", icon: "food", label: "Food" },
-  { href: "/sleep", icon: "sleep", label: "Sleep" },
-  { href: "/journal", icon: "journal", label: "Journal" },
+  { href: "/settings", icon: "profile", label: "Profile" },
 ];
 
 export function NavIcon({
@@ -80,6 +80,15 @@ export function NavIcon({
         <path d="M8 3v4" />
         <path d="M16 3v4" />
         <path d="m9.5 15.5 1.5 1.5 3.5-3.5" />
+      </svg>
+    );
+  }
+
+  if (name === "profile") {
+    return (
+      <svg {...common}>
+        <circle cx="12" cy="8" r="3.5" />
+        <path d="M5 21c.8-4 3.1-6 7-6s6.2 2 7 6" />
       </svg>
     );
   }
