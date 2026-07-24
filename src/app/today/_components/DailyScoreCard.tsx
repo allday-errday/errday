@@ -1,6 +1,9 @@
 import {
   Apple,
   Beef,
+  ChevronRight,
+  CircleCheck,
+  CircleDot,
   Droplets,
   Flame,
   Footprints,
@@ -15,6 +18,7 @@ import type { DailyScoreInsightKey } from "@/lib/daily-flow/score-insights";
 type DailyScoreCardProps = {
   focus: {
     detail: string;
+    href?: string;
     label: string;
     state: "complete" | "open";
   };
@@ -25,6 +29,7 @@ type DailyScoreCardProps = {
 
 type DailyInsight = {
   helper: string;
+  href?: string;
   kind: DailyScoreInsightKey;
   label: string;
   value: string;
@@ -67,20 +72,43 @@ export function DailyScoreCard({
           {insights.map((insight) => {
             const Icon = insightIcon[insight.kind];
 
-            return (
-              <div className="min-w-0" key={insight.kind}>
+            const content = (
+              <>
                 <Icon aria-hidden="true" className="size-5 text-[var(--accent)]" />
                 <p className="mt-3 text-sm font-bold text-white">{insight.label}</p>
                 <p className="mt-1 truncate text-sm font-semibold text-zinc-300 sm:text-base">
                   {insight.value}
                 </p>
                 <p className="mt-1 truncate text-xs text-zinc-500">{insight.helper}</p>
-              </div>
+              </>
             );
+
+            if (insight.href) {
+              return (
+                <Link
+                  className="min-w-0 rounded-lg outline-offset-2 transition hover:bg-[var(--surface-2)]"
+                  href={insight.href}
+                  key={insight.kind}
+                >
+                  {content}
+                </Link>
+              );
+            }
+
+            return <div className="min-w-0" key={insight.kind}>{content}</div>;
           })}
         </div>
 
-        <div className="flex items-center gap-3 border-t border-[var(--border)] pt-4">
+        <FocusRow focus={focus} />
+      </div>
+    </section>
+  );
+}
+
+function FocusRow({ focus }: Pick<DailyScoreCardProps, "focus">) {
+  const Icon = focus.state === "complete" ? CircleCheck : CircleDot;
+  const content = (
+    <>
           <span
             className={`grid size-8 shrink-0 place-items-center rounded-lg ${
               focus.state === "complete"
@@ -88,16 +116,28 @@ export function DailyScoreCard({
                 : "bg-[var(--accent-soft)] text-[var(--accent)]"
             }`}
           >
-            {focus.state === "complete" ? "✓" : "•"}
+            <Icon aria-hidden="true" className="size-4" />
           </span>
           <p className="min-w-0 text-sm text-zinc-300">
             <span className="font-semibold text-white">{focus.label}</span>
             <span className="text-zinc-500"> · {focus.detail}</span>
           </p>
-        </div>
-      </div>
-    </section>
+          {focus.href ? <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-zinc-500" /> : null}
+    </>
   );
+
+  if (focus.href) {
+    return (
+      <Link
+        className="flex items-center gap-3 rounded-lg border-t border-[var(--border)] pt-4 transition hover:text-white"
+        href={focus.href}
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className="flex items-center gap-3 border-t border-[var(--border)] pt-4">{content}</div>;
 }
 
 const insightIcon = {

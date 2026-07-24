@@ -36,7 +36,7 @@ export function NextUp({ event, today }: { event: CalendarEvent | null; today: s
           </span>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-base font-semibold text-white">
-              {event?.title ?? "Nothing planned"}
+              {event?.title ?? "Nothing planned yet"}
             </span>
             <span className="mt-1 block text-sm text-zinc-500">{meta}</span>
           </span>

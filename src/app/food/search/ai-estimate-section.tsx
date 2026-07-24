@@ -17,12 +17,14 @@ type AiFood = {
 
 type AiEstimateSectionProps = {
   allowInput?: boolean;
+  embedded?: boolean;
   query: string;
   selectedSlot: MealSlot | "";
 };
 
 export function AiEstimateSection({
   allowInput = false,
+  embedded = false,
   query,
   selectedSlot,
 }: AiEstimateSectionProps) {
@@ -86,9 +88,9 @@ export function AiEstimateSection({
 
   if (allowInput) {
     return (
-      <section className="mb-5 border-t border-[var(--border)] pt-5">
+      <section className={embedded ? "" : "mb-5 border-t border-[var(--border)] pt-5"}>
         <div className="mb-3 flex items-center gap-2">
-          <h2 className="font-bold text-white">Quick estimate</h2>
+          <h2 className="font-bold text-white">Ask Errday AI</h2>
         </div>
         <form
           className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]"
@@ -101,7 +103,7 @@ export function AiEstimateSection({
             aria-label="Describe your food"
             className="min-h-12 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-base text-white outline-none placeholder:text-zinc-600 focus:border-[var(--accent)]"
             onChange={(event) => setFoodDescription(event.target.value)}
-            placeholder="Describe your meal"
+            placeholder="What did you eat?"
             type="text"
             value={foodDescription}
           />
@@ -111,7 +113,7 @@ export function AiEstimateSection({
             type="submit"
           >
             {loading ? <LoaderCircle className="size-4 animate-spin" /> : null}
-            Estimate
+            Ask
           </button>
         </form>
         {error ? <p className="mt-2 text-sm text-amber-300">{error}</p> : null}

@@ -103,7 +103,7 @@ export default async function TodayPage({
           streak={streak}
         />
       </div>
-      {isToday ? <div className="mt-5 max-w-4xl"><WaterLogButtons /></div> : null}
+      {isToday ? <div className="mt-5 max-w-4xl" id="water"><WaterLogButtons /></div> : null}
       {isToday ? <NextUp event={upcomingEvents[0] ?? null} today={today} /> : null}
     </div>
   );
@@ -131,16 +131,19 @@ function scoreInsight({
   const values = {
     calories: {
       helper: dashboard.targetCalories ? `of ${Math.round(dashboard.targetCalories)} kcal` : "Food logged",
+      href: "/food",
       label: "Calories",
       value: `${Math.round(dashboard.foodTotals.calories)} kcal`,
     },
     protein: {
       helper: dashboard.targetProtein ? `of ${Math.round(dashboard.targetProtein)} g` : "Food logged",
+      href: "/food",
       label: "Protein",
       value: `${Math.round(dashboard.foodTotals.proteinG)} g`,
     },
     carbs: {
       helper: carbsTarget ? `of ${Math.round(carbsTarget)} g` : "Food logged",
+      href: "/food",
       label: "Carbs",
       value: `${Math.round(dashboard.foodTotals.carbsG)} g`,
     },
@@ -153,15 +156,17 @@ function scoreInsight({
     },
     water: {
       helper: `of ${waterTargetMl} ml`,
+      href: "#water",
       label: "Water",
       value: `${waterTotalMl} ml`,
     },
     sleep: {
       helper: `Goal ${sleepTargetHours} h`,
+      href: "/sleep",
       label: "Sleep",
       value: sleepHours ? `${sleepHours.toFixed(1)} h` : "Not logged",
     },
-  } satisfies Record<DailyScoreInsightKey, { helper: string; label: string; value: string }>;
+  } satisfies Record<DailyScoreInsightKey, { helper: string; href?: string; label: string; value: string }>;
 
   return { ...values[key], kind: key };
 }
@@ -177,10 +182,10 @@ function dailyFocus({
   waterTargetMl: number;
   waterTotalMl: number;
 }) {
-  if (!hasFood) return { detail: "Log your first meal", label: "Still open", state: "open" as const };
+  if (!hasFood) return { detail: "Log your first meal", href: "/food/search", label: "Still open", state: "open" as const };
   if (waterTotalMl < waterTargetMl) {
-    return { detail: "Add 250 ml of water", label: "Next", state: "open" as const };
+    return { detail: "Add 250 ml of water", href: "#water", label: "Next", state: "open" as const };
   }
-  if (!sleepHours) return { detail: "Log last night’s sleep", label: "Still open", state: "open" as const };
+  if (!sleepHours) return { detail: "Log last night’s sleep", href: "/sleep", label: "Still open", state: "open" as const };
   return { detail: "Your key habits are covered", label: "On track", state: "complete" as const };
 }

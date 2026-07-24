@@ -5,6 +5,8 @@ import { useFormStatus } from "react-dom";
 
 type SubmitButtonProps = {
   children: React.ReactNode;
+  cooldownMs?: number;
+  disabled?: boolean;
   pendingLabel?: string;
   variant?: "primary" | "secondary" | "danger";
 } & Omit<React.ComponentProps<"button">, "children" | "disabled" | "type">;
@@ -12,6 +14,8 @@ type SubmitButtonProps = {
 export function SubmitButton({
   children,
   className = "",
+  cooldownMs = 3_000,
+  disabled = false,
   pendingLabel = "Saving...",
   variant = "primary",
   onClick,
@@ -42,19 +46,20 @@ export function SubmitButton({
     <button
       {...buttonProps}
       className={`min-h-12 rounded-lg px-5 text-sm font-bold transition disabled:cursor-not-allowed ${classes[variant]} ${className}`}
-      disabled={pending || isCoolingDown}
+      disabled={disabled || pending || isCoolingDown}
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
         const form = event.currentTarget.form;
         if (form && !form.checkValidity()) return;
+        if (cooldownMs <= 0) return;
         setIsCoolingDown(true);
         if (cooldownTimer.current !== null) {
           window.clearTimeout(cooldownTimer.current);
         }
         cooldownTimer.current = window.setTimeout(() => {
           setIsCoolingDown(false);
-        }, 3_000);
+        }, cooldownMs);
       }}
       type="submit"
     >

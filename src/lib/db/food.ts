@@ -165,6 +165,26 @@ export async function deleteFoodLog(
   }
 }
 
+export async function updateFoodLog(
+  supabase: SupabaseClient,
+  userId: string,
+  id: string,
+  input: Pick<
+    FoodLog,
+    "calories" | "carbs_g" | "display_name" | "fat_g" | "protein_g"
+  >,
+) {
+  const { error } = await supabase
+    .from("food_logs")
+    .update(input)
+    .eq("id", id)
+    .eq("user_id", userId);
+
+  if (error) {
+    throw error;
+  }
+}
+
 export async function listFoodEntries(
   supabase: SupabaseClient,
   userId: string,

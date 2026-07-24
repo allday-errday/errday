@@ -14,6 +14,7 @@ import {
   getFoodItem,
   getFoodItemByExternalId,
   listFoodLogsForDay,
+  updateFoodLog,
 } from "@/lib/db/food";
 import { listWorkoutLogsForDay } from "@/lib/db/gym";
 import { getTodayWorkouts } from "@/lib/db/today";
@@ -294,4 +295,49 @@ export async function removeFoodLog(formData: FormData) {
     revalidatePath("/food");
     revalidatePath("/today");
   }
+}
+
+export async function editFoodLog(
+  _previousState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const { supabase, user } = await requireUser();
+  const id = formString(formData, "id");
+  const displayName = formString(formData, "display_name");
+  const calories = integerValue(formData, "calories");
+  const proteinG = numberValue(formData, "protein_g");
+  const carbsG = numberValue(formData, "carbs_g");
+  const fatG = numberValue(formData, "fat_g");
+
+  const validationError =
+    validateNonNegative(calories, "Calories") ??
+    validateNonNegative(proteinG, "Protein") ??
+    validateNonNegative(carbsG, "Carbs") ??
+    validateNonNegative(fatG, "Fat");
+
+  if (!id || !displayName || calories === null || validationError) {
+    return {
+      status: "error",
+      message: validationError ?? "Name and calories are required.",
+    };
+  }
+
+  try {
+    await updateFoodLog(supabase, user.id, id, {
+      calories,
+      carbs_g: carbsG ?? 0,
+      display_name: displayName,
+      fat_g: fatG ?? 0,
+      protein_g: proteinG ?? 0,
+    });
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Could not update food.",
+    };
+  }
+
+  revalidatePath("/food");
+  revalidatePath("/today");
+  return { status: "success", message: "Food updated." };
 }

@@ -43,6 +43,8 @@ export function DailyScoreSettingsForm({
     [dailyProfile?.daily_score_insights],
   );
   const [selected, setSelected] = useState<DailyScoreInsightKey[]>(initialSelection);
+  const selectionMessage =
+    selected.length === 3 ? "3 of 3 selected" : `Choose ${3 - selected.length} more`;
 
   function toggleInsight(key: DailyScoreInsightKey) {
     setSelected((current) => {
@@ -56,10 +58,15 @@ export function DailyScoreSettingsForm({
 
   return (
     <form action={formAction} className="grid gap-4">
-      <div>
-        <p className="text-sm font-semibold text-white">Choose three values</p>
-        <p className="mt-1 text-sm leading-6 text-zinc-400">
-          These appear below your Daily Score.
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-white">Choose three values</p>
+          <p className="mt-1 text-sm leading-6 text-zinc-400">
+            These appear below your Daily Score.
+          </p>
+        </div>
+        <p className={`shrink-0 text-sm font-semibold ${selected.length === 3 ? "text-emerald-300" : "text-amber-300"}`}>
+          {selectionMessage}
         </p>
       </div>
 
@@ -103,7 +110,9 @@ export function DailyScoreSettingsForm({
       ))}
 
       <FormMessage state={state} />
-      <SubmitButton pendingLabel="Saving Daily Score...">Save Daily Score</SubmitButton>
+      <SubmitButton cooldownMs={0} disabled={selected.length !== 3} pendingLabel="Saving...">
+        Save Daily Score
+      </SubmitButton>
     </form>
   );
 }
