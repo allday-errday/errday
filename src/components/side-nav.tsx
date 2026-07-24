@@ -18,7 +18,7 @@ export function SideNav() {
       <div className="mx-auto grid min-h-16 max-w-[1280px] grid-cols-[1fr_auto] items-center gap-x-4 px-4 py-3 sm:min-h-20 sm:px-8 sm:py-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-x-8 lg:px-12 lg:py-0">
         <BrandLogo className="justify-self-start" href="/today" markClassName="size-10 sm:size-11" wordmarkClassName="text-lg sm:text-xl" />
 
-        <nav className="hidden lg:order-none lg:col-span-1 lg:mx-0 lg:mt-0 lg:grid lg:w-[28rem] lg:grid-cols-4 lg:justify-self-center lg:overflow-visible lg:px-0">
+        <nav className="hidden lg:order-none lg:col-span-1 lg:mx-0 lg:mt-0 lg:grid lg:w-[46rem] lg:grid-cols-7 lg:justify-self-center lg:overflow-visible lg:px-0">
           {navItems.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(`${item.href}/`);

@@ -28,6 +28,9 @@ export const navItems: NavItem[] = [
   { href: "/today", icon: "today", label: "Today" },
   { href: "/gym", icon: "gym", label: "Gym" },
   { href: "/food", icon: "food", label: "Food" },
+  { href: "/sleep", icon: "sleep", label: "Sleep" },
+  { href: "/journal", icon: "journal", label: "Journal" },
+  { href: "/calendar", icon: "calendar", label: "Calendar" },
   { href: "/settings", icon: "profile", label: "Profile" },
 ];
 
