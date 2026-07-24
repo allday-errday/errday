@@ -4,7 +4,7 @@
   color-scheme: dark;
 
   --bg: #15171c;
-  --nav-bg: #15171c;
+  --nav-bg: rgb(21 23 28 / 0.98);
   --bg-soft: #1b1e25;
   --surface: rgba(255, 255, 255, 0.045);
   --surface-2: rgba(255, 255, 255, 0.075);
@@ -53,7 +53,7 @@
   color-scheme: light;
 
   --bg: #f3f4f8;
-  --nav-bg: #ffffff;
+  --nav-bg: rgb(243 244 248 / 0.98);
   --bg-soft: #eaecf2;
   --surface: rgba(18, 21, 30, 0.04);
   --surface-2: rgba(18, 21, 30, 0.065);

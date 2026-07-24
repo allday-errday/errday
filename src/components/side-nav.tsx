@@ -14,7 +14,7 @@ export function SideNav() {
   }
 
   return (
-    <header className="errday-top-nav z-30 border-b border-[var(--border)] bg-[var(--nav-bg)]">
+    <header className="errday-top-nav z-30 border-b border-[var(--border)] bg-[var(--nav-bg)] backdrop-blur-xl">
       <div className="mx-auto grid min-h-16 max-w-[1280px] grid-cols-[1fr_auto] items-center gap-x-4 px-4 py-3 sm:min-h-20 sm:px-8 sm:py-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-x-8 lg:px-12 lg:py-0">
         <BrandLogo className="justify-self-start" href="/today" markClassName="size-10 sm:size-11" wordmarkClassName="text-lg sm:text-xl" />
 
