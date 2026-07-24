@@ -1,11 +1,13 @@
 import { requireUser } from "@/lib/auth";
 import { calculateDailyFlowScore } from "@/lib/daily-flow/score";
-import { todayDateString } from "@/lib/dates";
+import { shiftDateString, todayDateString } from "@/lib/dates";
+import { listCalendarEvents } from "@/lib/db/calendar";
 import { getDailyProfile, getTodayWaterTotal } from "@/lib/db/daily-flow";
 import { getHealthMetricsForDay } from "@/lib/db/health";
 import { safeRead } from "@/lib/db/safe-read";
 import { getTodayDashboard } from "@/lib/db/today";
 import { DailyScoreCard } from "./_components/DailyScoreCard";
+import { NextUp } from "./_components/NextUp";
 import { TodayHeader } from "./_components/TodayHeader";
 import { WaterLogButtons } from "./_components/WaterLogButtons";
 import { WeekDatePicker } from "./_components/WeekDatePicker";
@@ -27,11 +29,16 @@ export default async function TodayPage({
   const { date: rawDate } = await searchParams;
   const today = normalizeDate(rawDate, actualToday);
   const isToday = today === actualToday;
-  const [dashboard, dailyProfile, waterTotalMl, healthMetrics] = await Promise.all([
+  const [dashboard, dailyProfile, waterTotalMl, healthMetrics, upcomingEvents] = await Promise.all([
     getTodayDashboard(supabase, user.id, today),
     safeRead(getDailyProfile(supabase, user.id), null, "daily profile"),
     safeRead(getTodayWaterTotal(supabase, user.id, today), 0, "water total"),
     safeRead(getHealthMetricsForDay(supabase, user.id, today), null, "health metrics"),
+    safeRead(
+      listCalendarEvents(supabase, user.id, today, shiftDateString(today, 7)),
+      [],
+      "upcoming events",
+    ),
   ]);
   const waterTargetMl = dailyProfile?.water_goal_ml ?? 2500;
   const sleepTargetHours = dailyProfile ? Number(dailyProfile.sleep_goal_hours) : 8;
@@ -59,9 +66,36 @@ export default async function TodayPage({
       <TodayHeader isToday={isToday} />
       <WeekDatePicker date={today} key={today} today={actualToday} />
       <div className="max-w-4xl">
-        <DailyScoreCard result={scoreResult} />
+        <DailyScoreCard
+          insights={[
+            {
+              helper: dashboard.targetCalories
+                ? `of ${Math.round(dashboard.targetCalories)} kcal`
+                : "Food logged",
+              kind: "food",
+              label: "Food",
+              value: `${Math.round(dashboard.foodTotals.calories)} kcal`,
+            },
+            {
+              helper: "Today",
+              kind: "move",
+              label: "Move",
+              value: healthMetrics?.steps
+                ? `${Math.round(healthMetrics.steps).toLocaleString("en-US")} steps`
+                : "No steps yet",
+            },
+            {
+              helper: sleepTargetHours ? `Goal ${sleepTargetHours} h` : "Sleep",
+              kind: "recover",
+              label: "Recover",
+              value: sleepHours ? `${sleepHours.toFixed(1)} h` : "No sleep logged",
+            },
+          ]}
+          result={scoreResult}
+        />
       </div>
       {isToday ? <div className="mt-5 max-w-4xl"><WaterLogButtons /></div> : null}
+      {isToday ? <NextUp event={upcomingEvents[0] ?? null} today={today} /> : null}
     </div>
   );
 }
