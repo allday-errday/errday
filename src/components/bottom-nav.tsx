@@ -22,9 +22,9 @@ export function BottomNav() {
           return (
             <Link
               aria-current={isActive ? "page" : undefined}
-              className={`relative flex min-h-16 min-w-0 flex-col items-center justify-center gap-1 px-1 text-[0.68rem] font-bold transition ${
+              className={`flex min-h-16 min-w-0 flex-col items-center justify-center gap-1 px-1 text-[0.68rem] font-bold transition ${
                 isActive
-                  ? "text-[var(--accent)]"
+                  ? "text-[var(--accent-strong)]"
                   : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200"
               }`}
               href={item.href}
@@ -32,7 +32,11 @@ export function BottomNav() {
               onClick={resetPageScroll}
               scroll
             >
-              <span className="grid size-6 place-items-center">
+              <span
+                className={`grid size-8 place-items-center rounded-lg transition ${
+                  isActive ? "bg-[var(--accent-soft)]" : ""
+                }`}
+              >
                 <NavIcon className="size-5" name={item.icon} />
               </span>
               <span>{item.label}</span>
