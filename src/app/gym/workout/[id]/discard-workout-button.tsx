@@ -50,15 +50,15 @@ export function DiscardWorkoutButton({
             onClick={keepWorkout}
             type="button"
           />
-          <div className="relative z-10 w-full max-w-md overflow-hidden rounded-t-[1.5rem] border border-red-500/25 bg-[var(--bg)] shadow-2xl shadow-black/60 sm:rounded-[1.5rem]">
+          <div className="relative z-10 w-full max-w-md overflow-hidden rounded-t-[1.5rem] border border-red-500/25 bg-[var(--bg)] shadow-sm shadow-black/60 sm:rounded-xl">
             <div className="flex items-start gap-3 border-b border-white/10 p-5">
-              <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-red-500/15 text-red-300">
+              <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-red-500/15 text-red-300">
                 <AlertTriangle className="size-5" />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="eyebrow text-red-300">Discard workout</p>
                 <h2
-                  className="mt-2 text-xl font-black leading-tight text-white"
+                  className="mt-2 text-xl font-bold leading-tight text-white"
                   id="discard-workout-title"
                 >
                   Delete this session?
@@ -80,7 +80,7 @@ export function DiscardWorkoutButton({
                 will be removed, including {setCount} logged set
                 {setCount === 1 ? "" : "s"}. This cannot be undone.
               </p>
-              <p className="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-xs font-semibold leading-5 text-zinc-500">
+              <p className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs font-semibold leading-5 text-zinc-500">
                 Choose Keep workout if you opened this by mistake. Choose
                 Discard permanently to delete the active workout and return to
                 Gym.
@@ -113,7 +113,7 @@ function DiscardSubmitButton() {
 
   return (
     <button
-      className="min-h-12 w-full rounded-xl bg-red-500 px-4 text-sm font-black text-white transition hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-60"
+      className="min-h-12 w-full rounded-xl bg-red-500 px-4 text-sm font-bold text-white transition hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-60"
       disabled={pending}
       type="submit"
     >

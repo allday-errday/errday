@@ -67,7 +67,7 @@ export function AiEstimateSection({
   if (foods) {
     return (
       <section className="mt-6">
-        <p className="mb-3 px-1 text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
+        <p className="mb-3 px-1 text-xs font-bold uppercase tracking-wide text-zinc-500">
           Quick estimate · double-check the numbers
         </p>
         <div className="space-y-3">
@@ -88,7 +88,7 @@ export function AiEstimateSection({
     return (
       <section className="mb-5 border-t border-[var(--border)] pt-5">
         <div className="mb-3 flex items-center gap-2">
-          <h2 className="font-extrabold text-white">Quick estimate</h2>
+          <h2 className="font-bold text-white">Quick estimate</h2>
         </div>
         <form
           className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]"
@@ -106,7 +106,7 @@ export function AiEstimateSection({
             value={foodDescription}
           />
           <button
-            className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 text-sm font-extrabold text-[var(--on-accent)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 text-sm font-bold text-[var(--on-accent)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={loading}
             type="submit"
           >
@@ -122,7 +122,7 @@ export function AiEstimateSection({
   return (
     <div className="mt-6">
       <button
-        className="flex min-h-13 w-full items-center justify-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-3.5 text-sm font-extrabold text-zinc-200 shadow-sm shadow-black/10 transition hover:border-[var(--accent)]/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex min-h-13 w-full items-center justify-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-3.5 text-sm font-bold text-zinc-200 shadow-sm shadow-black/10 transition hover:border-[var(--accent)]/50 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
         disabled={loading}
         onClick={() => void generate(query)}
         type="button"

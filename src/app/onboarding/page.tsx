@@ -26,7 +26,7 @@ export default async function OnboardingPage() {
     <div className="mx-auto grid min-h-dvh w-full max-w-xl content-start gap-8 px-4 py-10 sm:py-14">
       <BrandLogo href="/today" showTagline={false} />
       <div>
-        <h1 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+        <h1 className="text-3xl font-bold leading-tight text-white sm:text-4xl">
           Set up your profile
         </h1>
         <p className="mt-3 text-sm leading-6 text-zinc-400">

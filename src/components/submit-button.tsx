@@ -26,7 +26,7 @@ export function SubmitButton({
 
   return (
     <button
-      className={`min-h-12 rounded-lg px-5 text-sm font-extrabold transition disabled:cursor-not-allowed ${classes[variant]}`}
+      className={`min-h-12 rounded-lg px-5 text-sm font-bold transition disabled:cursor-not-allowed ${classes[variant]}`}
       disabled={pending}
       type="submit"
     >

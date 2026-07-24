@@ -26,7 +26,7 @@ export function SideNav() {
             return (
               <Link
                 aria-current={isActive ? "page" : undefined}
-                className={`relative flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full px-4 text-sm font-bold transition lg:w-full lg:px-2 ${
+                className={`relative flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold transition lg:w-full lg:px-2 ${
                   isActive
                     ? "bg-[var(--accent)] text-[var(--on-accent)]"
                     : "text-zinc-400 hover:bg-white/[0.05] hover:text-white"

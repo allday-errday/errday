@@ -24,7 +24,7 @@ export default async function JournalPage() {
   return (
     <div>
       <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
-        <h1 className="text-2xl font-extrabold text-white sm:text-3xl">Journal</h1>
+        <h1 className="text-2xl font-bold text-white sm:text-3xl">Journal</h1>
         {streak > 0 ? (
           <span className="flex min-h-10 items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent-soft)] px-4 text-sm font-bold text-[var(--accent-strong)]">
             🔥 {streak}-day streak
@@ -41,7 +41,7 @@ export default async function JournalPage() {
       />
 
       <section className="mt-8">
-        <h2 className="mb-4 text-lg font-extrabold text-white sm:text-xl">
+        <h2 className="mb-4 text-lg font-bold text-white sm:text-xl">
           Previous entries
         </h2>
         {past.length > 0 ? (
@@ -59,7 +59,7 @@ export default async function JournalPage() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline justify-between gap-3">
-                    <p className="text-sm font-extrabold text-white">
+                    <p className="text-sm font-bold text-white">
                       {formatDate(entry.date)}
                     </p>
                     <MetaDots energy={entry.energy} stress={entry.stress} />

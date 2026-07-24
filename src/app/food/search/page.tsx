@@ -145,7 +145,7 @@ export default async function FoodSearchPage({
   return (
     <div>
       <header className="mb-5 flex items-center justify-between gap-3 sm:mb-8">
-        <h1 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">Food</h1>
+        <h1 className="text-3xl font-bold leading-tight text-white sm:text-4xl">Food</h1>
         <BarcodeScanButton />
       </header>
 
@@ -210,7 +210,7 @@ export default async function FoodSearchPage({
           ) : null}
           {catalogProducts.length > 0 ? (
             <section className={products.length > 0 ? "mt-6" : ""}>
-              <p className="mb-3 px-1 text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
+              <p className="mb-3 px-1 text-xs font-bold uppercase tracking-wide text-zinc-500">
                 Swiss supermarket products
               </p>
               <div className="space-y-3">
@@ -226,7 +226,7 @@ export default async function FoodSearchPage({
           ) : null}
           {usdaProducts.length > 0 ? (
             <section className="mt-6">
-              <p className="mb-3 px-1 text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
+              <p className="mb-3 px-1 text-xs font-bold uppercase tracking-wide text-zinc-500">
                 More foods · USDA database
               </p>
               <div className="space-y-3">
@@ -292,7 +292,7 @@ function BarcodeResult({
   };
 
   return (
-    <p className="mb-4 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
+    <p className="mb-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
       {result.status === "error" ? result.message : messages[result.status]}
     </p>
   );
@@ -312,7 +312,7 @@ function ErrorMessage({
   };
 
   return (
-    <p className="mb-4 rounded-2xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+    <p className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
       {message ?? messages[error ?? ""] ?? "Something went wrong."}
     </p>
   );

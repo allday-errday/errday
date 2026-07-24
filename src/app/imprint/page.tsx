@@ -10,7 +10,7 @@ export default function ImprintPage() {
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:py-14">
       <BrandLogo href="/" showTagline={false} />
 
-      <h1 className="mt-8 text-3xl font-extrabold text-white">
+      <h1 className="mt-8 text-3xl font-bold text-white">
         Legal notice <span className="text-zinc-500">(Impressum)</span>
       </h1>
 

@@ -35,7 +35,7 @@ export function AppleCalendarCard({ feedPath, origin }: AppleCalendarCardProps) 
           alerts.
         </p>
         <button
-          className="mt-4 min-h-12 rounded-xl bg-white px-5 text-sm font-extrabold text-[var(--bg)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-4 min-h-12 rounded-xl bg-white px-5 text-sm font-bold text-[var(--bg)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isPending}
           onClick={() =>
             startTransition(async () => {
@@ -79,8 +79,8 @@ export function AppleCalendarCard({ feedPath, origin }: AppleCalendarCardProps) 
         </li>
         <li>
           <span className="font-semibold text-zinc-200">2.</span> On your
-          iPhone: Settings → Apps → Calendar → Calendar Accounts → Add Account
-          → Other → <span className="text-zinc-200">Add Subscribed Calendar</span>.
+          iPhone: Settings, Apps, Calendar, Calendar Accounts, Add Account,
+          Other, then <span className="text-zinc-200">Add Subscribed Calendar</span>.
         </li>
         <li>
           <span className="font-semibold text-zinc-200">3.</span> Paste the

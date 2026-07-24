@@ -102,7 +102,7 @@ export function RestTimer({ exerciseName = "default" }: RestTimerProps) {
   if (remaining !== null && remaining <= 0) {
     return (
       <button
-        className="mb-5 flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--signal)]/15 px-4 text-base font-extrabold text-[var(--signal)]"
+        className="mb-5 flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--signal)]/15 px-4 text-base font-bold text-[var(--signal)]"
         onClick={toggle}
         type="button"
       >
@@ -124,7 +124,7 @@ export function RestTimer({ exerciseName = "default" }: RestTimerProps) {
           style={{ width: `${progress * 100}%` }}
         />
         <span className="relative text-sm font-bold">Resting — tap to skip</span>
-        <span className="relative text-lg font-extrabold tabular-nums">
+        <span className="relative text-lg font-bold tabular-nums">
           {format(remaining)}
         </span>
       </button>
@@ -139,11 +139,11 @@ export function RestTimer({ exerciseName = "default" }: RestTimerProps) {
         type="button"
       >
         <span className="text-sm font-bold">Rest timer</span>
-        <span className="text-sm font-extrabold tabular-nums">{format(duration)}</span>
+        <span className="text-sm font-bold tabular-nums">{format(duration)}</span>
       </button>
       <button
         aria-label="Shorter rest"
-        className="grid w-11 shrink-0 place-items-center rounded-xl border border-[var(--border)] bg-[var(--surface-2)] text-lg font-extrabold text-zinc-400 transition hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+        className="grid w-11 shrink-0 place-items-center rounded-xl border border-[var(--border)] bg-[var(--surface-2)] text-lg font-bold text-zinc-400 transition hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
         onClick={() => adjust(-15)}
         type="button"
       >
@@ -151,7 +151,7 @@ export function RestTimer({ exerciseName = "default" }: RestTimerProps) {
       </button>
       <button
         aria-label="Longer rest"
-        className="grid w-11 shrink-0 place-items-center rounded-xl border border-[var(--border)] bg-[var(--surface-2)] text-lg font-extrabold text-zinc-400 transition hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
+        className="grid w-11 shrink-0 place-items-center rounded-xl border border-[var(--border)] bg-[var(--surface-2)] text-lg font-bold text-zinc-400 transition hover:border-[var(--accent)]/40 hover:text-[var(--accent)]"
         onClick={() => adjust(15)}
         type="button"
       >

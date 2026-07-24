@@ -14,14 +14,14 @@ export default async function GymTemplatesPage() {
         title="Templates"
       />
 
-      <section className="mb-5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+      <section className="mb-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
         <h2 className="mb-4 text-lg font-semibold text-white">
           Create Template
         </h2>
         <TemplateForm />
       </section>
 
-      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
         <h2 className="text-lg font-semibold text-white">Your Templates</h2>
         {templates.length === 0 ? (
           <p className="mt-3 text-sm leading-6 text-zinc-400">

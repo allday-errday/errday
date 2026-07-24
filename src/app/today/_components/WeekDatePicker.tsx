@@ -117,7 +117,7 @@ export function WeekDatePicker({ date, today }: WeekDatePickerProps) {
                 {label}
               </span>
               <span
-                className={`mt-1 grid size-10 place-items-center rounded-full border text-sm font-extrabold transition sm:size-12 sm:text-base ${
+                className={`mt-1 grid size-10 place-items-center rounded-full border text-sm font-bold transition sm:size-12 sm:text-base ${
                   isActive
                     ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--on-accent)]"
                     : isFuture

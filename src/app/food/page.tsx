@@ -36,7 +36,7 @@ export default async function FoodPage() {
             <p className="mt-1 text-sm text-zinc-500">Search or scan a product</p>
           </div>
           <Link
-            className="flex min-h-11 items-center gap-2 rounded-lg bg-[var(--accent)] px-4 text-sm font-extrabold text-[var(--on-accent)]"
+            className="flex min-h-11 items-center gap-2 rounded-lg bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)]"
             href="/food/search"
           >
             <Plus className="size-4" />
@@ -52,7 +52,7 @@ export default async function FoodPage() {
         <div className="flex items-end justify-between gap-4">
           <div>
             <p className="text-sm font-bold text-zinc-400">Today</p>
-            <p className="mt-1 text-4xl font-extrabold text-white">{totals.calories}<span className="ml-1 text-lg font-bold text-zinc-500">kcal</span></p>
+            <p className="mt-1 text-4xl font-bold text-white">{totals.calories}<span className="ml-1 text-lg font-bold text-zinc-500">kcal</span></p>
           </div>
         </div>
         <div className="mt-5 grid grid-cols-3 divide-x divide-[var(--border)] border-t border-[var(--border)] pt-4">

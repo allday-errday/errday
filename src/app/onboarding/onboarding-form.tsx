@@ -84,7 +84,7 @@ export function OnboardingForm() {
       </div>
 
       <div className="[animation:fadeRise_0.3s_ease]" key={step}>
-        <h2 className="mb-5 text-xl font-extrabold text-white sm:text-2xl">
+        <h2 className="mb-5 text-xl font-bold text-white sm:text-2xl">
           {questions[step]}
         </h2>
 
@@ -243,7 +243,7 @@ function BirthdateStep({
   }
 
   const boxClassName =
-    "min-h-16 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-2)] text-center text-2xl font-extrabold text-white outline-none transition placeholder:text-zinc-600 focus:border-[var(--accent)]";
+    "min-h-16 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-2)] text-center text-2xl font-bold text-white outline-none transition placeholder:text-zinc-600 focus:border-[var(--accent)]";
 
   return (
     <div className="grid gap-5">
@@ -292,7 +292,7 @@ function BirthdateStep({
         </label>
       </div>
       <button
-        className="min-h-12 rounded-xl bg-[var(--accent)] text-sm font-extrabold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-40"
+        className="min-h-12 rounded-xl bg-[var(--accent)] text-sm font-bold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-40"
         disabled={!birthdate}
         onClick={onContinue}
         type="button"
@@ -334,7 +334,7 @@ function ChoiceCard({
         <span className={`text-2xl ${centered ? "block" : ""}`}>{emoji}</span>
       ) : null}
       <span className={centered ? "mt-2 block" : "min-w-0"}>
-        <span className="block font-extrabold text-white">{label}</span>
+        <span className="block font-bold text-white">{label}</span>
         {detail ? (
           <span className="mt-0.5 block text-xs font-semibold text-zinc-500">
             {detail}

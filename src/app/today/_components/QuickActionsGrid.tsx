@@ -13,7 +13,7 @@ export function QuickActionsGrid() {
       <div className="mb-4">
         <div>
           <p className="eyebrow">Quick moves</p>
-          <h2 className="mt-2 text-lg font-extrabold leading-tight text-white sm:text-xl">
+          <h2 className="mt-2 text-lg font-bold leading-tight text-white sm:text-xl">
             Move the day forward.
           </h2>
         </div>
@@ -21,7 +21,7 @@ export function QuickActionsGrid() {
       <div className="grid flex-1 grid-cols-2 gap-3">
         {actions.map((action) => (
           <Link
-            className="group relative flex min-h-32 flex-col justify-between overflow-hidden rounded-2xl border border-white/[0.08] bg-black/20 p-4 transition duration-300 hover:-translate-y-1 hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/[0.08] active:scale-[0.98] sm:min-h-36"
+            className="group relative flex min-h-32 flex-col justify-between overflow-hidden rounded-xl border border-white/[0.08] bg-black/20 p-4 transition duration-300 hover:-translate-y-1 hover:border-[var(--accent)]/40 hover:bg-[var(--accent)]/[0.08] active:scale-[0.98] sm:min-h-36"
             href={action.href}
             key={action.href}
           >
@@ -29,7 +29,7 @@ export function QuickActionsGrid() {
               <ActionIcon name={action.icon} />
             </span>
             <span>
-              <span className="block text-sm font-extrabold leading-tight text-white sm:text-base">{action.label}</span>
+              <span className="block text-sm font-bold leading-tight text-white sm:text-base">{action.label}</span>
               <span className="mt-1 block text-xs font-semibold text-zinc-500">{action.detail}</span>
             </span>
           </Link>

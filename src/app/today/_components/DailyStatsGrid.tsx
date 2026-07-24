@@ -177,7 +177,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
       <div className="mb-4 flex items-end justify-between gap-3 sm:mb-5">
         <div>
           <p className="eyebrow">At a glance</p>
-          <h2 className="mt-2 text-lg font-extrabold leading-tight text-white sm:text-xl">
+          <h2 className="mt-2 text-lg font-bold leading-tight text-white sm:text-xl">
             Your vital signals.
           </h2>
         </div>
@@ -209,7 +209,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
           <div
             aria-labelledby="daily-stats-customizer-title"
             aria-modal="true"
-            className="relative z-10 w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/12 bg-[var(--bg)]/95 shadow-2xl shadow-black/50"
+            className="relative z-10 w-full max-w-2xl overflow-hidden rounded-xl border border-white/12 bg-[var(--bg)]/95 shadow-sm shadow-black/50"
             id="daily-stats-customizer"
             role="dialog"
           >
@@ -218,7 +218,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
                 <div>
                   <p className="eyebrow">Customize</p>
                   <h3
-                    className="mt-2 text-2xl font-extrabold text-white"
+                    className="mt-2 text-2xl font-bold text-white"
                     id="daily-stats-customizer-title"
                   >
                     Choose your signals.
@@ -246,7 +246,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
                   return (
                     <button
                       aria-pressed={on}
-                      className={`flex min-h-24 items-center gap-3 rounded-2xl border p-4 text-left transition ${
+                      className={`flex min-h-24 items-center gap-3 rounded-xl border p-4 text-left transition ${
                         on
                           ? "border-[var(--accent)]/60 bg-[var(--accent-soft)] text-white shadow-lg shadow-[var(--accent)]/10"
                           : "border-white/10 bg-white/[0.025] text-zinc-500 hover:border-white/20 hover:bg-white/[0.05] hover:text-zinc-200"
@@ -265,7 +265,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
                         <Icon className="size-6" name={stat.icon} />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block font-extrabold text-current">
+                        <span className="block font-bold text-current">
                           {stat.label}
                         </span>
                         <span className="mt-1 block truncate text-xs font-semibold text-zinc-500">
@@ -273,7 +273,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
                         </span>
                       </span>
                       <span
-                        className={`grid size-7 shrink-0 place-items-center rounded-full border text-xs font-black ${
+                        className={`grid size-7 shrink-0 place-items-center rounded-full border text-xs font-bold ${
                           on
                             ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--on-accent)]"
                             : "border-white/10 text-zinc-600"
@@ -307,7 +307,7 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
                   Show all
                 </button>
                 <button
-                  className="rounded-full bg-white px-5 py-2 text-sm font-extrabold text-[var(--on-accent)] transition hover:bg-[var(--accent)]"
+                  className="rounded-full bg-white px-5 py-2 text-sm font-bold text-[var(--on-accent)] transition hover:bg-[var(--accent)]"
                   onClick={() => setCustomizing(false)}
                   type="button"
                 >
@@ -321,14 +321,14 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
       ) : null}
 
       {shown.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-white/15 p-6 text-center text-sm text-zinc-500">
+        <p className="rounded-xl border border-dashed border-white/15 p-6 text-center text-sm text-zinc-500">
           No stats selected. Tap Customize to add some.
         </p>
       ) : (
         <div className={gridClassName(shown.length)}>
           {shown.map((stat) => (
             <article
-              className={`group min-h-32 rounded-2xl border border-white/10 bg-[var(--bg-soft)]/80 p-4 text-left shadow-xl shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-white/20 ${
+              className={`group min-h-32 rounded-xl border border-white/10 bg-[var(--bg-soft)]/80 p-4 text-left shadow-sm shadow-black/20 transition duration-300 hover:-translate-y-1 hover:border-white/20 ${
                 customizing ? "ring-1 ring-[var(--accent)]/30" : ""
               }`}
               key={stat.icon}
@@ -336,10 +336,10 @@ export function DailyStatsGrid({ stats }: DailyStatsGridProps) {
               <div className="grid size-9 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)] transition group-hover:bg-[var(--accent)] group-hover:text-[var(--on-accent)]">
                 <Icon className="size-5" name={stat.icon} />
               </div>
-              <p className="mt-3 text-xs font-bold uppercase tracking-[0.13em] text-zinc-500">
+              <p className="mt-3 text-xs font-bold uppercase tracking-wide text-zinc-500">
                 {stat.label}
               </p>
-              <p className="mt-1 whitespace-nowrap text-xl font-extrabold text-white sm:text-2xl">
+              <p className="mt-1 whitespace-nowrap text-xl font-bold text-white sm:text-2xl">
                 {stat.value}
               </p>
               <p className="mt-1 whitespace-nowrap text-xs font-semibold leading-5 text-zinc-500">

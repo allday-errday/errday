@@ -37,7 +37,7 @@ export default async function CalendarPage({
 
   return (
     <div>
-      <h1 className="mb-6 text-3xl font-extrabold text-white sm:text-4xl">Calendar</h1>
+      <h1 className="mb-6 text-3xl font-bold text-white sm:text-4xl">Calendar</h1>
       <CalendarView events={events} month={month} today={todayDateString()} />
     </div>
   );

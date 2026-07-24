@@ -10,7 +10,7 @@ export default function TermsPage() {
     <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:py-14">
       <BrandLogo href="/" showTagline={false} />
 
-      <h1 className="mt-8 text-3xl font-extrabold text-white">Terms of Use</h1>
+      <h1 className="mt-8 text-3xl font-bold text-white">Terms of Use</h1>
       <p className="mt-2 text-sm text-zinc-500">Last updated: July 9, 2026</p>
 
       <div className="mt-6 space-y-6 text-sm leading-7 text-zinc-300">

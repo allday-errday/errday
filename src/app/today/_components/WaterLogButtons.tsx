@@ -10,9 +10,9 @@ export function WaterLogButtons() {
               <path d="M12 3s6 6.1 6 11a6 6 0 0 1-12 0c0-4.9 6-11 6-11Z" />
             </svg>
           </span>
-          <h2 className="text-lg font-extrabold text-white">Water</h2>
+          <h2 className="text-lg font-bold text-white">Water</h2>
         </div>
-        <div className="flex items-center divide-x divide-[var(--border)] text-sm font-extrabold">
+        <div className="flex items-center divide-x divide-[var(--border)] text-sm font-bold">
           {[250, 500].map((amount) => (
             <form action={logWater} className="first:pr-3 last:pl-3" key={amount}>
               <input name="amount_ml" type="hidden" value={amount} />

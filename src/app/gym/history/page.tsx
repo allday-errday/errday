@@ -16,7 +16,7 @@ export default async function GymHistoryPage() {
       />
 
       {workouts.length === 0 ? (
-        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+        <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
           <p className="text-sm leading-6 text-zinc-400">
             No workouts yet. Start a workout and it will appear here.
           </p>

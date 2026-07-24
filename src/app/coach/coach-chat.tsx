@@ -448,18 +448,18 @@ export function CoachChat({
 
   return (
     <div className="mx-auto max-w-4xl">
-      <section className="flex h-[min(720px,calc(100dvh-12rem))] min-h-[30rem] flex-col overflow-hidden rounded-[1.5rem] border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_80%,transparent)] shadow-[0_30px_90px_-55px_black] backdrop-blur-xl sm:min-h-[560px] sm:rounded-[2rem]">
+      <section className="flex h-[min(720px,calc(100dvh-12rem))] min-h-[30rem] flex-col overflow-hidden rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_80%,transparent)] backdrop-blur sm:min-h-[560px]">
         <div className="flex items-start justify-between gap-3 border-b border-[var(--border)] px-4 py-4 sm:items-center sm:px-6">
           <div className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-2xl bg-[var(--accent)] text-[var(--on-accent)] shadow-[0_0_24px_color-mix(in_srgb,var(--accent)_30%,transparent)]">
+            <span className="grid size-10 place-items-center rounded-xl bg-[var(--accent)] text-[var(--on-accent)]">
               <Sparkles className="size-5" />
             </span>
             <div>
-              <h2 className="font-black text-white">Errday Coach</h2>
+              <h2 className="font-bold text-white">Errday Coach</h2>
               <p className="text-xs text-zinc-500">{cloud ? `${providerName} cloud` : "Local · private"}</p>
             </div>
           </div>
-          <span className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-black ${available ? "border-[var(--signal)]/25 bg-[color-mix(in_srgb,var(--signal)_9%,transparent)] text-[var(--signal)]" : "border-amber-400/25 bg-amber-400/10 text-amber-300"}`}>
+          <span className={`shrink-0 rounded-full border px-3 py-1.5 text-xs font-bold ${available ? "border-[var(--signal)]/25 bg-[color-mix(in_srgb,var(--signal)_9%,transparent)] text-[var(--signal)]" : "border-amber-400/25 bg-amber-400/10 text-amber-300"}`}>
             {available ? (cloud ? "Cloud & ready" : "Local & ready") : "AI offline"}
           </span>
         </div>
@@ -468,10 +468,10 @@ export function CoachChat({
           <ConversationContent className="gap-6 p-5 sm:p-6">
             {messages.length === 0 ? (
               <div className="mx-auto flex min-h-[300px] max-w-xl flex-col items-center justify-center py-8 text-center">
-                <div className="grid size-14 place-items-center rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--accent)]">
+                <div className="grid size-14 place-items-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--accent)]">
                   <Sparkles className="size-6" />
                 </div>
-                <h3 className="mt-5 text-2xl font-black text-white">
+                <h3 className="mt-5 text-2xl font-bold text-white">
                   What are we working on?
                 </h3>
                 <p className="mt-2 max-w-md text-sm leading-6 text-zinc-500">
@@ -494,10 +494,10 @@ export function CoachChat({
             ) : (
               messages.map((message) => (
                 <Message from={message.role} key={message.id}>
-                  <p className="text-[0.68rem] font-black uppercase tracking-[0.16em] text-zinc-600">
+                  <p className="text-[0.68rem] font-bold uppercase tracking-wide text-zinc-600">
                     {message.role === "user" ? "You" : "Coach"}
                   </p>
-                  <MessageContent className={message.role === "user" ? "rounded-2xl bg-[var(--accent)] px-4 py-3 text-[var(--on-accent)]" : "text-zinc-200"}>
+                  <MessageContent className={message.role === "user" ? "rounded-xl bg-[var(--accent)] px-4 py-3 text-[var(--on-accent)]" : "text-zinc-200"}>
                     {message.parts.map((part, index) => {
                       if (part.type === "text") {
                         return message.role === "assistant" ? (
@@ -563,7 +563,7 @@ export function CoachChat({
 
         <div className="border-t border-[var(--border)] bg-[var(--bg)]/70 p-3 sm:p-4">
           {!available ? (
-            <p className="mb-3 rounded-2xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm leading-6 text-amber-200">
+            <p className="mb-3 rounded-xl border border-amber-400/20 bg-amber-400/10 px-4 py-3 text-sm leading-6 text-amber-200">
               {cloud
                 ? `${providerName} is not reachable right now. Try again in a moment.`
                 : `Start Ollama on this PC, make sure ${modelName} is installed (ollama pull ${modelName}), then reload this page.`}
@@ -592,7 +592,7 @@ export function CoachChat({
             />
             <button
               aria-label="Take or attach a photo"
-              className="grid size-12 shrink-0 place-items-center rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-zinc-400 transition hover:border-[var(--accent)]/40 hover:text-white disabled:opacity-40"
+              className="grid size-12 shrink-0 place-items-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-zinc-400 transition hover:border-[var(--accent)]/40 hover:text-white disabled:opacity-40"
               disabled={!available || isBusy}
               onClick={() => fileInputRef.current?.click()}
               type="button"
@@ -601,7 +601,7 @@ export function CoachChat({
             </button>
             <textarea
               aria-label="Message to Errday Coach"
-              className="max-h-32 min-h-12 flex-1 resize-none rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="max-h-32 min-h-12 flex-1 resize-none rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-white outline-none placeholder:text-zinc-600 focus:border-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-50"
               disabled={!available || isBusy}
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={(event) => {
@@ -615,9 +615,9 @@ export function CoachChat({
               value={input}
             />
             {isCoachBusy ? (
-              <button aria-label="Stop response" className="grid size-12 shrink-0 place-items-center rounded-2xl bg-white text-[var(--on-accent)]" onClick={stop} type="button"><span className="size-3 rounded-sm bg-[#0b0c10]" /></button>
+              <button aria-label="Stop response" className="grid size-12 shrink-0 place-items-center rounded-xl bg-white text-[var(--on-accent)]" onClick={stop} type="button"><span className="size-3 rounded-sm bg-[#0b0c10]" /></button>
             ) : (
-              <button aria-label="Send message" className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[var(--accent)] text-[var(--on-accent)] shadow-lg shadow-[var(--accent)]/20 disabled:cursor-not-allowed disabled:opacity-40" disabled={!available || (!input.trim() && !selectedFile)} type="submit"><Send className="size-5" /></button>
+              <button aria-label="Send message" className="grid size-12 shrink-0 place-items-center rounded-xl bg-[var(--accent)] text-[var(--on-accent)] shadow-lg shadow-[var(--accent)]/20 disabled:cursor-not-allowed disabled:opacity-40" disabled={!available || (!input.trim() && !selectedFile)} type="submit"><Send className="size-5" /></button>
             )}
           </form>
           <p className="mt-3 px-1 text-xs leading-5 text-zinc-600">
@@ -728,7 +728,7 @@ function MealAnalysisCard({
 }) {
   if (data.status === "analyzing") {
     return (
-      <div className="w-fit rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-zinc-300">
+      <div className="w-fit rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-zinc-300">
         <span className="flex items-center gap-2 font-bold">
           <LoaderCircle className="size-4 animate-spin text-[var(--accent)]" />
           Analyzing meal...
@@ -742,7 +742,7 @@ function MealAnalysisCard({
 
   if (data.status === "error") {
     return (
-      <div className="w-fit max-w-md rounded-2xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+      <div className="w-fit max-w-md rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">
         {data.error ?? "I could not analyze this meal."}
       </div>
     );
@@ -756,19 +756,19 @@ function MealAnalysisCard({
   const logging = data.status === "logging";
 
   return (
-    <article className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
+    <article className="w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-[var(--accent)]">
+          <p className="text-xs font-bold uppercase tracking-wide text-[var(--accent)]">
             Meal preview
           </p>
-          <h3 className="mt-2 font-black text-white">{analysis.name}</h3>
+          <h3 className="mt-2 font-bold text-white">{analysis.name}</h3>
           <p className="mt-1 text-sm font-semibold text-zinc-400">
             {analysis.amount}
             {analysis.servingGrams ? ` · ${analysis.servingGrams} g` : ""}
           </p>
         </div>
-        <p className="rounded-full bg-[var(--accent-soft)] px-3 py-1.5 text-sm font-black text-[var(--accent)]">
+        <p className="rounded-full bg-[var(--accent-soft)] px-3 py-1.5 text-sm font-bold text-[var(--accent)]">
           {Math.round(analysis.calories)} kcal
         </p>
       </div>
@@ -808,7 +808,7 @@ function MealAnalysisCard({
       ) : (
         <div className="mt-4 grid grid-cols-2 gap-2">
           <button
-            className="min-h-11 rounded-full bg-[var(--accent)] px-4 text-sm font-black text-[var(--on-accent)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="min-h-11 rounded-full bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)] disabled:cursor-not-allowed disabled:opacity-60"
             disabled={logging}
             onClick={onConfirm}
             type="button"
@@ -823,7 +823,7 @@ function MealAnalysisCard({
             )}
           </button>
           <button
-            className="min-h-11 rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-black text-zinc-300 disabled:cursor-not-allowed disabled:opacity-60"
+            className="min-h-11 rounded-full border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-zinc-300 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={logging}
             onClick={onDismiss}
             type="button"
@@ -842,16 +842,16 @@ function MealMetric({ label, value }: { label: string; value: string }) {
       <p className="text-[0.65rem] font-bold uppercase tracking-wide text-zinc-500">
         {label}
       </p>
-      <p className="mt-1 font-black text-white">{value}</p>
+      <p className="mt-1 font-bold text-white">{value}</p>
     </div>
   );
 }
 
 function InfoCard({ children, icon, title }: { children: string; icon: string; title: string }) {
   return (
-    <article className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-4">
-      <p className="text-xs font-black text-[var(--accent)]">{icon}</p>
-      <h3 className="mt-3 font-black text-white">{title}</h3>
+    <article className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+      <p className="text-xs font-bold text-[var(--accent)]">{icon}</p>
+      <h3 className="mt-3 font-bold text-white">{title}</h3>
       <p className="mt-2 text-sm leading-6 text-zinc-500">{children}</p>
     </article>
   );

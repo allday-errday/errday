@@ -33,7 +33,7 @@ export function ErrdayMark({
 
 export function ErrdayWordmark({ className = "" }: { className?: string }) {
   return (
-    <span className={`font-extrabold text-[var(--text)] ${className}`}>
+    <span className={`font-bold text-[var(--text)] ${className}`}>
       errday<span className="text-[var(--accent)]">.</span>
     </span>
   );
@@ -55,7 +55,7 @@ export function BrandLogo({
       <span className="min-w-0">
         <ErrdayWordmark className={`block leading-none ${wordmarkClassName}`} />
         {showTagline ? (
-          <span className="mt-1 hidden text-[0.62rem] font-bold uppercase tracking-[0.22em] text-[#7b8290] xl:block">
+          <span className="mt-1 hidden text-[0.62rem] font-bold uppercase tracking-wide text-[#7b8290] xl:block">
             {tagline}
           </span>
         ) : null}

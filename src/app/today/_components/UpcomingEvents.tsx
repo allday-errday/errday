@@ -29,7 +29,7 @@ export function UpcomingEvents({
   today: string;
 }) {
   return (
-    <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+    <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-white">Coming up</h2>
         <Link

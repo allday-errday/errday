@@ -111,8 +111,8 @@ export function ReminderSettingsForm({ profile }: ReminderSettingsFormProps) {
         <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/70 p-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-black text-white">Native iPhone reminders</p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+              <p className="text-sm font-bold text-white">Native iPhone reminders</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-wide text-zinc-500">
                 Xcode app
               </p>
             </div>

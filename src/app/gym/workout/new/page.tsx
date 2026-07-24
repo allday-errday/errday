@@ -76,7 +76,7 @@ function CustomWorkoutBuilder({
 
       <form className="mb-4">
         <input
-          className="min-h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-4 text-base text-white outline-none focus:border-[var(--accent)]"
+          className="min-h-12 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-4 text-base text-white outline-none focus:border-[var(--accent)]"
           defaultValue={query}
           name="q"
           placeholder="Search exercises"
@@ -93,17 +93,17 @@ function CustomWorkoutBuilder({
       </div>
 
       {error === "select-exercise" ? (
-        <p className="mb-4 rounded-2xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+        <p className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
           Select at least one exercise to start.
         </p>
       ) : null}
 
       <form action={startWorkoutFromSelection} className="space-y-5">
-        <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
+        <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20">
           <label className="grid gap-2 text-sm font-medium text-zinc-300">
             Workout name
             <input
-              className="min-h-12 rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
+              className="min-h-12 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
               defaultValue="Workout"
               name="name"
             />
@@ -113,7 +113,7 @@ function CustomWorkoutBuilder({
         <section className="space-y-3">
           {exercises.map((exercise) => (
             <label
-              className="flex items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-sm shadow-black/20"
+              className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3 shadow-sm shadow-black/20"
               key={exercise.id}
             >
               <input
@@ -138,7 +138,7 @@ function CustomWorkoutBuilder({
           ))}
         </section>
 
-        <div className="sticky bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-10 grid gap-2 rounded-2xl border border-[var(--border)] bg-[var(--bg-soft)]/90 p-2 backdrop-blur-xl sm:rounded-full">
+        <div className="sticky bottom-[calc(5.75rem+env(safe-area-inset-bottom))] z-10 grid gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-soft)]/90 p-2 backdrop-blur-xl sm:rounded-full">
           <SubmitButton pendingLabel="Starting...">Start Workout</SubmitButton>
           <Link
             className="text-center text-sm font-semibold text-zinc-500"
@@ -198,7 +198,7 @@ function PresetWorkoutStart({
         </p>
       </section>
 
-      <section className="mb-7 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+      <section className="mb-7 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
         <div className="grid grid-cols-3 divide-x divide-white/10 text-center">
           <PresetMetric label="Total Sets" value={`${totalSets}`} />
           <PresetMetric label="Duration" value={`~${preset.durationMinutes} min`} />
@@ -207,7 +207,7 @@ function PresetWorkoutStart({
       </section>
 
       {error === "select-exercise" ? (
-        <p className="mb-4 rounded-2xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+        <p className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
           This preset needs exercises from the library. Apply migration 0003 if
           this list is empty.
         </p>
@@ -237,7 +237,7 @@ function PresetWorkoutStart({
 
         <div className="fixed inset-x-4 bottom-[calc(6.2rem+env(safe-area-inset-bottom))] z-30 mx-auto max-w-sm lg:static lg:mx-0 lg:mt-6 lg:max-w-xs">
           <button
-            className="flex min-h-16 w-full items-center justify-center rounded-full bg-[var(--accent)] px-5 text-lg font-bold text-[var(--on-accent)] shadow-xl shadow-[var(--accent)]/30"
+            className="flex min-h-16 w-full items-center justify-center rounded-full bg-[var(--accent)] px-5 text-lg font-bold text-[var(--on-accent)] shadow-sm shadow-[var(--accent)]/30"
             type="submit"
           >
             Start workout

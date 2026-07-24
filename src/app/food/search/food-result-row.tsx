@@ -171,7 +171,7 @@ export function FoodResultRow({
             </button>
             <label className="grid flex-1 gap-1 text-center">
               <input
-                className="min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 text-center text-lg font-extrabold text-white outline-none focus:border-[var(--accent)]"
+                className="min-h-11 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 text-center text-lg font-bold text-white outline-none focus:border-[var(--accent)]"
                 inputMode="decimal"
                 min={unit === "serving" ? "0.5" : "1"}
                 onChange={(event) => setQuantity(Number(event.target.value) || 0)}
@@ -215,7 +215,7 @@ export function FoodResultRow({
           ) : null}
 
           <button
-            className="min-h-12 rounded-lg bg-[var(--accent)] px-4 text-sm font-extrabold text-[var(--on-accent)] transition hover:brightness-110"
+            className="min-h-12 rounded-lg bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)] transition hover:brightness-110"
             type="submit"
           >
             Log{kcalForGrams !== null ? ` · ${kcalForGrams} kcal` : ""}

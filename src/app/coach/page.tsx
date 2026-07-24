@@ -23,7 +23,7 @@ export default async function CoachPage() {
   return (
     <div className="mx-auto max-w-[1120px]">
       <header className="mb-6 max-w-3xl sm:mb-7">
-        <h1 className="text-3xl font-black leading-tight text-white sm:text-5xl">Ask Errday</h1>
+        <h1 className="text-3xl font-bold leading-tight text-white sm:text-5xl">Ask Errday</h1>
         <p className="mt-2 text-sm leading-6 text-zinc-400 sm:text-base sm:leading-7">
           Ask a question when you need help.
         </p>

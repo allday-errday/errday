@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { headers } from "next/headers";
 import type { ReactNode } from "react";
@@ -33,7 +33,7 @@ export default async function SettingsPage() {
       <PageHeader title="Profile" />
 
       <section className="mb-6 border-y border-[var(--border)] py-4">
-        <p className="text-sm font-extrabold text-white">{user.email}</p>
+        <p className="text-sm font-bold text-white">{user.email}</p>
         <p className="mt-1 text-sm text-zinc-500">Account</p>
       </section>
 
@@ -73,16 +73,16 @@ export default async function SettingsPage() {
       <SettingsSection description="Sleep, journal, calendar and recap" title="Daily tools">
         <div className="grid gap-2 sm:grid-cols-2">
           <Link className="flex min-h-11 items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/sleep">
-            Sleep <span className="text-[var(--accent)]">›</span>
+            Sleep <ChevronRight aria-hidden="true" className="size-4 text-[var(--accent)]" />
           </Link>
           <Link className="flex min-h-11 items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/journal">
-            Journal <span className="text-[var(--accent)]">›</span>
+            Journal <ChevronRight aria-hidden="true" className="size-4 text-[var(--accent)]" />
           </Link>
           <Link className="flex min-h-11 items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/recap">
-            Monthly recap <span className="text-[var(--accent)]">›</span>
+            Monthly recap <ChevronRight aria-hidden="true" className="size-4 text-[var(--accent)]" />
           </Link>
           <Link className="flex min-h-11 items-center rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/calendar">
-            Calendar <span className="ml-auto text-[var(--accent)]">›</span>
+            Calendar <ChevronRight aria-hidden="true" className="ml-auto size-4 text-[var(--accent)]" />
           </Link>
         </div>
       </SettingsSection>

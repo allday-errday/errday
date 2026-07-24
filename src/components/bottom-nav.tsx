@@ -13,9 +13,8 @@ export function BottomNav() {
   }
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto w-full max-w-md px-2 pb-[calc(0.55rem+env(safe-area-inset-bottom))] pt-2 lg:hidden">
-      <div className="rounded-2xl border border-white/10 bg-[var(--bg-soft)]/95 px-2 py-2 shadow-2xl shadow-black/45 backdrop-blur-xl">
-        <div className="grid grid-cols-4 gap-1">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[var(--bg)]/95 pb-[env(safe-area-inset-bottom)] backdrop-blur lg:hidden">
+      <div className="mx-auto grid min-h-16 w-full max-w-md grid-cols-4">
           {navItems.map((item) => {
             const isActive =
               pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -23,7 +22,7 @@ export function BottomNav() {
             return (
               <Link
                 aria-current={isActive ? "page" : undefined}
-                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-xl text-[0.68rem] font-bold transition ${
+                className={`relative flex min-h-16 flex-col items-center justify-center gap-0.5 text-[0.68rem] font-bold transition ${
                   isActive
                     ? "text-[var(--accent)]"
                     : "text-zinc-400 hover:bg-white/[0.04] hover:text-zinc-200"
@@ -37,11 +36,10 @@ export function BottomNav() {
                   <NavIcon className="size-5" name={item.icon} />
                 </span>
                 <span>{item.label}</span>
-                <span className={`mt-0.5 h-1 w-8 rounded-full ${isActive ? "bg-[var(--accent)]" : "bg-transparent"}`} />
+                <span className={`absolute inset-x-6 top-0 h-0.5 ${isActive ? "bg-[var(--accent)]" : "bg-transparent"}`} />
               </Link>
             );
           })}
-        </div>
       </div>
     </nav>
   );

@@ -56,7 +56,7 @@ export default async function ExerciseLibraryPage({
         ))}
       </section>
 
-      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
         <h2 className="mb-4 text-lg font-semibold text-white">
           Add Custom Exercise
         </h2>

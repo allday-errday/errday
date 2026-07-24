@@ -53,11 +53,11 @@ export function JournalCheckin({
     return (
       <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
         <div className="max-w-xl">
-          <p className="text-2xl font-extrabold leading-snug text-white sm:text-3xl">
+          <p className="text-2xl font-bold leading-snug text-white sm:text-3xl">
             {hasToday ? "Today is saved." : "Write a note."}
           </p>
           <button
-            className="mt-5 min-h-12 rounded-lg bg-[var(--accent)] px-5 text-sm font-extrabold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)] active:scale-[0.98]"
+            className="mt-5 min-h-12 rounded-lg bg-[var(--accent)] px-5 text-sm font-bold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)] active:scale-[0.98]"
             onClick={() => setIsComposing(true)}
             type="button"
           >
@@ -94,7 +94,7 @@ export function JournalCheckin({
           </button>
         </div>
         <p
-          className="mt-3 text-2xl font-extrabold leading-snug text-white [animation:fadeRise_0.25s_ease]"
+          className="mt-3 text-2xl font-bold leading-snug text-white [animation:fadeRise_0.25s_ease]"
           key={promptIndex}
         >
           {prompts[promptIndex]}

@@ -31,9 +31,9 @@ export function WorkoutLogForm({ templates }: WorkoutLogFormProps) {
 
             return (
               <label
-                className={`group flex cursor-pointer items-center gap-3 rounded-2xl border p-3.5 transition ${
+                className={`group flex cursor-pointer items-center gap-3 rounded-xl border p-3.5 transition ${
                   isSelected
-                    ? "border-[var(--accent)] bg-[var(--accent-soft)] shadow-[0_12px_30px_-22px_var(--accent)]"
+                    ? "border-[var(--accent)] bg-[var(--accent-soft)]"
                     : "border-[var(--border)] bg-[var(--surface-2)]/55 hover:border-[var(--border-strong)]"
                 }`}
                 key={template.id}
@@ -49,7 +49,7 @@ export function WorkoutLogForm({ templates }: WorkoutLogFormProps) {
                 />
                 <span
                   aria-hidden="true"
-                  className={`grid size-10 shrink-0 place-items-center rounded-xl text-sm font-black ${
+                  className={`grid size-10 shrink-0 place-items-center rounded-xl text-sm font-bold ${
                     isSelected
                       ? "bg-[var(--accent)] text-[var(--on-accent)]"
                       : "bg-white/[0.05] text-zinc-500 group-hover:text-white"
@@ -96,7 +96,7 @@ export function WorkoutLogForm({ templates }: WorkoutLogFormProps) {
           />
         </Field>
       </div>
-      <details className="rounded-2xl border border-[var(--border)] bg-[var(--surface-2)]/45 p-3.5">
+      <details className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/45 p-3.5">
         <summary className="cursor-pointer text-sm font-bold text-zinc-400">
           Add a note
         </summary>

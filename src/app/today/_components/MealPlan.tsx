@@ -10,14 +10,14 @@ const meals: Array<{ label: string; slot: MealSlot }> = [
 export function MealPlan({ loggedSlots }: { loggedSlots: MealSlot[] }) {
   return (
     <section>
-      <h2 className="mb-2 text-lg font-extrabold text-white">Meals</h2>
+      <h2 className="mb-2 text-lg font-bold text-white">Meals</h2>
       <div className="divide-y divide-[var(--border)] border-y border-[var(--border)]">
         {meals.map((meal) => {
           const logged = loggedSlots.includes(meal.slot);
 
           return (
             <Link
-              className={`flex min-h-14 items-center justify-between px-1 text-sm font-extrabold transition ${
+              className={`flex min-h-14 items-center justify-between px-1 text-sm font-bold transition ${
                 logged
                   ? "text-white"
                   : "text-zinc-400 hover:text-white"

@@ -239,7 +239,7 @@ function Shell({
 }) {
   return (
     <div className="flex flex-col items-center rounded-xl border border-[var(--border)] bg-[var(--surface)] px-6 py-10 text-center">
-      <span className="grid size-12 place-items-center rounded-2xl bg-[var(--accent-soft)] text-[var(--accent)]">
+      <span className="grid size-12 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]">
         {icon === "moon" ? (
           <svg aria-hidden="true" className="size-6" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
             <path d="M21 14.5A7.5 7.5 0 0 1 9.5 3 8.5 8.5 0 1 0 21 14.5Z" />
@@ -288,7 +288,7 @@ function Ring({
       </svg>
       <div className="text-center">
         <p className="text-4xl font-bold tabular-nums text-white">{label}</p>
-        <p className="mt-1 text-xs uppercase tracking-[0.18em] text-zinc-500">
+        <p className="mt-1 text-xs uppercase tracking-wide text-zinc-500">
           {hint}
         </p>
       </div>

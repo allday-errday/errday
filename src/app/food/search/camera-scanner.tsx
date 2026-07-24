@@ -176,7 +176,7 @@ export function CameraScanner({ onBarcode, onClose }: CameraScannerProps) {
       </div>
 
       {error ? (
-        <div className="relative mx-6 mb-3 rounded-2xl bg-black/60 p-4 text-center text-sm text-amber-200 backdrop-blur">
+        <div className="relative mx-6 mb-3 rounded-xl bg-black/60 p-4 text-center text-sm text-amber-200 backdrop-blur">
           {error}
         </div>
       ) : null}

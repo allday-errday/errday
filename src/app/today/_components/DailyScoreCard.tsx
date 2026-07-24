@@ -16,13 +16,13 @@ export function DailyScoreCard({ result }: DailyScoreCardProps) {
     <section className="flow-hero relative overflow-hidden rounded-xl border border-white/10 p-5 sm:p-8">
       <div className="flex h-full flex-col gap-6">
         <div>
-          <p className="text-sm font-extrabold text-white">Today</p>
+          <p className="text-sm font-bold text-white">Today</p>
           <p className="mt-1 text-sm text-zinc-500">Today so far</p>
         </div>
 
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:gap-8">
           <div>
-            <p className="text-6xl font-extrabold leading-none text-white sm:text-7xl">
+            <p className="text-6xl font-bold leading-none text-white sm:text-7xl">
               {result.score}<span className="ml-2 text-2xl font-bold text-zinc-500">/100</span>
             </p>
             <p className="mt-3 text-sm font-semibold text-zinc-400">Daily score</p>
@@ -34,7 +34,7 @@ export function DailyScoreCard({ result }: DailyScoreCardProps) {
           {signals.map((signal) => (
             <div className="px-3 first:pl-0 last:pr-0" key={signal.label}>
               <p className="text-xs font-bold text-zinc-500">{signal.label}</p>
-              <p className="mt-1 text-lg font-extrabold text-white sm:text-xl">
+              <p className="mt-1 text-lg font-bold text-white sm:text-xl">
                 {Math.round(signal.value)}%
               </p>
             </div>

@@ -21,7 +21,7 @@ export function FinishWorkoutDialog({
   return (
     <>
       <button
-        className="min-h-12 rounded-xl bg-white px-5 text-sm font-extrabold text-[var(--on-accent,#101116)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--accent-strong)]"
+        className="min-h-12 rounded-xl bg-white px-5 text-sm font-bold text-[var(--on-accent,#101116)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--accent-strong)]"
         onClick={() => setOpen(true)}
         type="button"
       >
@@ -41,10 +41,10 @@ export function FinishWorkoutDialog({
         >
           <form
             action={finishWorkout}
-            className="w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--bg-soft,#191b22)] p-5 shadow-2xl shadow-black/50"
+            className="w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--bg-soft,#191b22)] p-5 shadow-sm shadow-black/50"
           >
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-xl font-extrabold text-white">
+              <h2 className="text-xl font-bold text-white">
                 Finish workout
               </h2>
               <button

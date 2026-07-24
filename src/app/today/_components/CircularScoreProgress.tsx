@@ -44,10 +44,10 @@ export function CircularScoreProgress({
       </svg>
       {showValue ? (
         <span className="absolute grid place-items-center text-white">
-          <span className="text-4xl font-extrabold leading-none sm:text-5xl">
+          <span className="text-4xl font-bold leading-none sm:text-5xl">
             {score}
           </span>
-          <span className="mt-1 text-[0.65rem] font-bold uppercase tracking-[0.16em] text-white/45">
+          <span className="mt-1 text-[0.65rem] font-bold uppercase tracking-wide text-white/45">
             of 100
           </span>
         </span>

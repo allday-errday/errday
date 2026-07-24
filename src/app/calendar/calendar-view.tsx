@@ -143,7 +143,7 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
 
   return (
     <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(20rem,1fr)]">
-      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20 sm:p-5">
+      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20 sm:p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-lg font-bold text-white">{monthLabel(month)}</h2>
           <div className="flex items-center gap-1.5">
@@ -173,7 +173,7 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
         <div className="grid grid-cols-7 gap-1 text-center">
           {weekdays.map((day) => (
             <p
-              className="pb-2 text-[0.65rem] font-bold uppercase tracking-[0.14em] text-zinc-500"
+              className="pb-2 text-[0.65rem] font-bold uppercase tracking-wide text-zinc-500"
               key={day}
             >
               {day}
@@ -199,7 +199,7 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
                 <span
                   className={
                     isToday
-                      ? "grid size-6 place-items-center rounded-full bg-[var(--accent)] text-xs font-black text-[var(--on-accent)]"
+                      ? "grid size-6 place-items-center rounded-full bg-[var(--accent)] text-xs font-bold text-[var(--on-accent)]"
                       : undefined
                   }
                 >
@@ -223,10 +223,10 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[var(--accent)]">
+            <p className="text-xs font-bold uppercase tracking-wide text-[var(--accent)]">
               {selectedDate === today ? "Today" : "Selected day"}
             </p>
             <h2 className="mt-1 text-lg font-bold text-white">

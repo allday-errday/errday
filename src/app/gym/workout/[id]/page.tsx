@@ -94,7 +94,7 @@ export default async function WorkoutPage({
         </div>
       </header>
 
-      <section className="mb-7 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+      <section className="mb-7 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
         <div className="grid grid-cols-3 divide-x divide-white/10 text-center">
           <WorkoutMetric
             label="Duration"
@@ -107,7 +107,7 @@ export default async function WorkoutPage({
 
       <section className="space-y-8">
         {workout.workout_exercises.length === 0 ? (
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
             <p className="text-sm leading-6 text-zinc-400">
               No exercises yet. Use Add Exercises to build this workout.
             </p>
@@ -145,13 +145,13 @@ export default async function WorkoutPage({
       </section>
 
       <section
-        className="mt-10 rounded-2xl border border-[var(--accent)]/35 bg-[var(--surface)] p-4 shadow-sm shadow-black/20"
+        className="mt-10 rounded-xl border border-[var(--accent)]/35 bg-[var(--surface)] p-4 shadow-sm shadow-black/20"
         id="add-exercises"
       >
         <h2 className="text-xl font-bold text-white">Add Exercises</h2>
         <form className="mt-4">
           <input
-            className="min-h-12 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] px-4 text-base text-white outline-none focus:border-[var(--accent)]"
+            className="min-h-12 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-4 text-base text-white outline-none focus:border-[var(--accent)]"
             defaultValue={query}
             name="q"
             placeholder="Search exercises"

@@ -81,16 +81,16 @@ export default async function RecapPage() {
 
       <section className="mt-8">
         <p className="eyebrow">Where to improve</p>
-        <h2 className="mt-2 text-lg font-extrabold text-white sm:text-xl">
+        <h2 className="mt-2 text-lg font-bold text-white sm:text-xl">
           The next percent.
         </h2>
         <div className="mt-4 grid gap-3">
           {insights.map((insight) => (
             <article
-              className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20"
+              className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20"
               key={insight.area}
             >
-              <p className="text-xs font-bold uppercase tracking-[0.13em] text-[var(--accent)]">
+              <p className="text-xs font-bold uppercase tracking-wide text-[var(--accent)]">
                 {insight.area}
               </p>
               <p className="mt-2 text-sm leading-6 text-zinc-300">
@@ -114,11 +114,11 @@ function RecapTile({
   value: string;
 }) {
   return (
-    <article className="rounded-2xl border border-white/10 bg-[var(--bg-soft)]/80 p-4 shadow-xl shadow-black/20">
-      <p className="text-xs font-bold uppercase tracking-[0.13em] text-zinc-500">
+    <article className="rounded-xl border border-white/10 bg-[var(--bg-soft)]/80 p-4 shadow-sm shadow-black/20">
+      <p className="text-xs font-bold uppercase tracking-wide text-zinc-500">
         {label}
       </p>
-      <p className="mt-2 text-2xl font-extrabold text-white">{value}</p>
+      <p className="mt-2 text-2xl font-bold text-white">{value}</p>
       <p className="mt-1 text-xs font-semibold text-zinc-500">{note}</p>
     </article>
   );

@@ -52,7 +52,7 @@ export function AppleHealthCard({ origin, token }: AppleHealthCardProps) {
           Safari can use a free iOS Shortcut.
         </p>
         <button
-          className="mt-4 min-h-12 rounded-xl bg-white px-5 text-sm font-extrabold text-[var(--bg)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-4 min-h-12 rounded-xl bg-white px-5 text-sm font-bold text-[var(--bg)] transition duration-300 hover:-translate-y-0.5 hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-50"
           disabled={isPending}
           onClick={() =>
             startTransition(async () => {
@@ -79,13 +79,13 @@ export function AppleHealthCard({ origin, token }: AppleHealthCardProps) {
         <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/70 p-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-black text-white">Native Apple Health</p>
-              <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+              <p className="text-sm font-bold text-white">Native Apple Health</p>
+              <p className="mt-1 text-xs font-bold uppercase tracking-wide text-zinc-500">
                 iPhone app
               </p>
             </div>
             <button
-              className="min-h-10 rounded-full bg-[var(--accent)] px-4 text-sm font-black text-[var(--on-accent)]"
+              className="min-h-10 rounded-full bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)]"
               onClick={async () => {
                 setNativeMessage("Reading Apple Health...");
                 try {

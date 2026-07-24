@@ -98,15 +98,15 @@ export function PushNotificationControls() {
     <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/70 p-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-sm font-black text-white">iPhone push</p>
-          <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
+          <p className="text-sm font-bold text-white">iPhone push</p>
+          <p className="mt-1 text-xs font-bold uppercase tracking-wide text-zinc-500">
             {permissionLabel()}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           {canEnable ? (
             <button
-              className="min-h-10 rounded-full bg-[var(--accent)] px-4 text-sm font-black text-[var(--on-accent)]"
+              className="min-h-10 rounded-full bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)]"
               onClick={enable}
               type="button"
             >

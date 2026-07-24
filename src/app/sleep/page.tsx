@@ -71,7 +71,7 @@ export default async function SleepPage() {
                   </div>
                   {log.bedtime || log.wake_time ? (
                     <p className="mt-2 text-xs text-zinc-500">
-                      {log.bedtime?.slice(0, 5) ?? "--:--"} →{" "}
+                      {log.bedtime?.slice(0, 5) ?? "--:--"} to{" "}
                       {log.wake_time?.slice(0, 5) ?? "--:--"}
                       {log.quality ? ` · quality ${log.quality}/5` : ""}
                     </p>
