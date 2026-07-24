@@ -13,7 +13,7 @@ import {
 // Prefer OpenAI when configured so food photos work on every signed-in device.
 // Groq and local Ollama remain useful fallbacks for existing installations.
 const openaiBaseUrl = "https://api.openai.com/v1";
-const defaultOpenAiModel = "gpt-5.6-luna";
+const defaultOpenAiModel = "gpt-5-mini";
 const groqBaseUrl = "https://api.groq.com/openai/v1";
 const defaultGroqModel = "llama-3.3-70b-versatile";
 

@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { ChevronDown, ChevronRight, Plus, Search } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  Search,
+  Sparkles,
+  Utensils,
+} from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { todayDateString } from "@/lib/dates";
@@ -9,6 +16,7 @@ import {
   listFoodLogsForDay,
 } from "@/lib/db/food";
 import { safeRead } from "@/lib/db/safe-read";
+import type { FoodLogWithItem } from "@/types/database";
 import { FoodForm } from "./food-form";
 import { BarcodeScanButton } from "./search/barcode-scan-card";
 
@@ -49,6 +57,21 @@ export default async function FoodPage() {
         <div className="apple-row flex items-center">
           <BarcodeScanButton />
         </div>
+        <Link
+          className="apple-row flex items-center gap-3 px-4 transition hover:bg-[var(--surface-2)]"
+          href="/food/search?ai=1"
+        >
+          <span className="grid size-9 place-items-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
+            <Sparkles aria-hidden="true" className="size-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-base text-white">Ask Errday AI</span>
+            <span className="block truncate text-sm text-zinc-500">
+              Estimate a meal in plain words
+            </span>
+          </span>
+          <ChevronRight className="size-5 text-zinc-500" />
+        </Link>
       </section>
 
       <p className="apple-section-title">Today</p>
@@ -72,6 +95,8 @@ export default async function FoodPage() {
         </div>
       </section>
 
+      <TodayFoodLogList logs={logs} />
+
       <p className="apple-section-title">Library</p>
       <details className="apple-group group">
         <summary className="apple-row flex cursor-pointer list-none items-center justify-between gap-3 px-4">
@@ -90,6 +115,66 @@ export default async function FoodPage() {
       </details>
     </div>
   );
+}
+
+function TodayFoodLogList({ logs }: { logs: FoodLogWithItem[] }) {
+  const mealCount = logs.length;
+
+  return (
+    <details className="apple-group mb-6 group">
+      <summary className="apple-row flex cursor-pointer list-none items-center gap-3 px-4">
+        <span className="grid size-9 place-items-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
+          <Utensils aria-hidden="true" className="size-5" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold text-white">Today&apos;s food</span>
+          <span className="block text-sm text-zinc-500">
+            {mealCount === 0
+              ? "No meals logged"
+              : `${mealCount} ${mealCount === 1 ? "meal" : "meals"} · ${Math.round(
+                  logs.reduce((total, log) => total + log.calories, 0),
+                )} kcal`}
+          </span>
+        </span>
+        <ChevronDown className="size-5 text-zinc-500 transition group-open:rotate-180" />
+      </summary>
+      {mealCount === 0 ? (
+        <div className="border-t border-[var(--border)] px-4 py-5">
+          <p className="text-sm text-zinc-500">Your meals will appear here.</p>
+        </div>
+      ) : (
+        <div className="border-t border-[var(--border)]">
+          {logs.map((log) => (
+            <article
+              className="apple-row flex items-center gap-3 px-4"
+              key={log.id}
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-medium text-white">
+                  {log.display_name ?? log.food_items?.name ?? "Meal"}
+                </span>
+                <span className="block text-sm text-zinc-500">
+                  {formatLoggedTime(log.logged_at)}
+                </span>
+              </span>
+              <span className="text-sm font-semibold text-white">
+                {Math.round(log.calories)} kcal
+              </span>
+            </article>
+          ))}
+        </div>
+      )}
+    </details>
+  );
+}
+
+const timeFormatter = new Intl.DateTimeFormat("en", {
+  hour: "numeric",
+  minute: "2-digit",
+});
+
+function formatLoggedTime(value: string) {
+  return timeFormatter.format(new Date(value));
 }
 
 function Metric({ label, value }: { label: string; value: string }) {
