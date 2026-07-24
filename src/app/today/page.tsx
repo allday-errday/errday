@@ -1,8 +1,16 @@
 import { requireUser } from "@/lib/auth";
 import { calculateDailyFlowScore } from "@/lib/daily-flow/score";
+import {
+  normalizeDailyScoreInsights,
+  type DailyScoreInsightKey,
+} from "@/lib/daily-flow/score-insights";
 import { shiftDateString, todayDateString } from "@/lib/dates";
 import { listCalendarEvents } from "@/lib/db/calendar";
-import { getDailyProfile, getTodayWaterTotal } from "@/lib/db/daily-flow";
+import {
+  getDailyActivityStreak,
+  getDailyProfile,
+  getTodayWaterTotal,
+} from "@/lib/db/daily-flow";
 import { getHealthMetricsForDay } from "@/lib/db/health";
 import { safeRead } from "@/lib/db/safe-read";
 import { getTodayDashboard } from "@/lib/db/today";
@@ -29,7 +37,7 @@ export default async function TodayPage({
   const { date: rawDate } = await searchParams;
   const today = normalizeDate(rawDate, actualToday);
   const isToday = today === actualToday;
-  const [dashboard, dailyProfile, waterTotalMl, healthMetrics, upcomingEvents] = await Promise.all([
+  const [dashboard, dailyProfile, waterTotalMl, healthMetrics, upcomingEvents, streak] = await Promise.all([
     getTodayDashboard(supabase, user.id, today),
     safeRead(getDailyProfile(supabase, user.id), null, "daily profile"),
     safeRead(getTodayWaterTotal(supabase, user.id, today), 0, "water total"),
@@ -39,6 +47,7 @@ export default async function TodayPage({
       [],
       "upcoming events",
     ),
+    safeRead(getDailyActivityStreak(supabase, user.id, today), 0, "activity streak"),
   ]);
   const waterTargetMl = dailyProfile?.water_goal_ml ?? 2500;
   const sleepTargetHours = dailyProfile ? Number(dailyProfile.sleep_goal_hours) : 8;
@@ -61,41 +70,117 @@ export default async function TodayPage({
     waterMl: waterTotalMl,
     waterTargetMl,
   });
+  const selectedInsights = normalizeDailyScoreInsights(
+    dailyProfile?.daily_score_insights,
+  );
+  const insights = selectedInsights.map((key) =>
+    scoreInsight({
+      carbsTarget,
+      dashboard,
+      healthMetrics,
+      key,
+      sleepHours,
+      sleepTargetHours,
+      waterTargetMl,
+      waterTotalMl,
+    }),
+  );
+  const focus = dailyFocus({
+    hasFood: dashboard.foodLogs.length > 0,
+    sleepHours,
+    waterTargetMl,
+    waterTotalMl,
+  });
   return (
     <div className="text-white">
       <TodayHeader isToday={isToday} />
       <WeekDatePicker date={today} key={today} today={actualToday} />
       <div className="max-w-4xl">
         <DailyScoreCard
-          insights={[
-            {
-              helper: dashboard.targetCalories
-                ? `of ${Math.round(dashboard.targetCalories)} kcal`
-                : "Food logged",
-              kind: "food",
-              label: "Food",
-              value: `${Math.round(dashboard.foodTotals.calories)} kcal`,
-            },
-            {
-              helper: "Today",
-              kind: "move",
-              label: "Move",
-              value: healthMetrics?.steps
-                ? `${Math.round(healthMetrics.steps).toLocaleString("en-US")} steps`
-                : "No steps yet",
-            },
-            {
-              helper: sleepTargetHours ? `Goal ${sleepTargetHours} h` : "Sleep",
-              kind: "recover",
-              label: "Recover",
-              value: sleepHours ? `${sleepHours.toFixed(1)} h` : "No sleep logged",
-            },
-          ]}
+          focus={focus}
+          insights={insights}
           result={scoreResult}
+          streak={streak}
         />
       </div>
       {isToday ? <div className="mt-5 max-w-4xl"><WaterLogButtons /></div> : null}
       {isToday ? <NextUp event={upcomingEvents[0] ?? null} today={today} /> : null}
     </div>
   );
+}
+
+function scoreInsight({
+  carbsTarget,
+  dashboard,
+  healthMetrics,
+  key,
+  sleepHours,
+  sleepTargetHours,
+  waterTargetMl,
+  waterTotalMl,
+}: {
+  carbsTarget: number | null;
+  dashboard: Awaited<ReturnType<typeof getTodayDashboard>>;
+  healthMetrics: Awaited<ReturnType<typeof getHealthMetricsForDay>> | null;
+  key: DailyScoreInsightKey;
+  sleepHours: number;
+  sleepTargetHours: number;
+  waterTargetMl: number;
+  waterTotalMl: number;
+}) {
+  const values = {
+    calories: {
+      helper: dashboard.targetCalories ? `of ${Math.round(dashboard.targetCalories)} kcal` : "Food logged",
+      label: "Calories",
+      value: `${Math.round(dashboard.foodTotals.calories)} kcal`,
+    },
+    protein: {
+      helper: dashboard.targetProtein ? `of ${Math.round(dashboard.targetProtein)} g` : "Food logged",
+      label: "Protein",
+      value: `${Math.round(dashboard.foodTotals.proteinG)} g`,
+    },
+    carbs: {
+      helper: carbsTarget ? `of ${Math.round(carbsTarget)} g` : "Food logged",
+      label: "Carbs",
+      value: `${Math.round(dashboard.foodTotals.carbsG)} g`,
+    },
+    steps: {
+      helper: "Today",
+      label: "Steps",
+      value: healthMetrics?.steps
+        ? `${Math.round(healthMetrics.steps).toLocaleString("en-US")}`
+        : "No steps yet",
+    },
+    water: {
+      helper: `of ${waterTargetMl} ml`,
+      label: "Water",
+      value: `${waterTotalMl} ml`,
+    },
+    sleep: {
+      helper: `Goal ${sleepTargetHours} h`,
+      label: "Sleep",
+      value: sleepHours ? `${sleepHours.toFixed(1)} h` : "Not logged",
+    },
+  } satisfies Record<DailyScoreInsightKey, { helper: string; label: string; value: string }>;
+
+  return { ...values[key], kind: key };
+}
+
+function dailyFocus({
+  hasFood,
+  sleepHours,
+  waterTargetMl,
+  waterTotalMl,
+}: {
+  hasFood: boolean;
+  sleepHours: number;
+  waterTargetMl: number;
+  waterTotalMl: number;
+}) {
+  if (!hasFood) return { detail: "Log your first meal", label: "Still open", state: "open" as const };
+  if (waterTotalMl < waterTargetMl) {
+    return { detail: "Add 250 ml of water", label: "Next", state: "open" as const };
+  }
+  if (!sleepHours) return { detail: "Log last night’s sleep", label: "Still open", state: "open" as const };
+  return { detail: "Your key habits are covered", label: "On track", state: "complete" as const };
 }

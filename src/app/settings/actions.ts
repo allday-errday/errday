@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { todayDateString } from "@/lib/dates";
+import { upsertDailyProfile } from "@/lib/db/daily-flow";
 import {
   deleteCalendarFeedToken,
   rotateCalendarFeedToken,
@@ -180,6 +181,40 @@ export async function saveReminderSettings(
     status: "success",
     message: "Reminder settings saved.",
   };
+}
+
+export async function saveDailyScoreSettings(
+  _previousState: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  const insights = formData
+    .getAll("daily_score_insights")
+    .filter((value): value is string => typeof value === "string");
+  const allowed = ["calories", "protein", "carbs", "steps", "water", "sleep"];
+
+  if (
+    insights.length !== 3 ||
+    new Set(insights).size !== 3 ||
+    insights.some((value) => !allowed.includes(value))
+  ) {
+    return { status: "error", message: "Choose exactly three values." };
+  }
+
+  try {
+    const { supabase, user } = await requireUser();
+    await upsertDailyProfile(supabase, user.id, {
+      daily_score_insights: insights,
+    });
+  } catch (error) {
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Could not save Daily Score.",
+    };
+  }
+
+  revalidatePath("/settings");
+  revalidatePath("/today");
+  return { status: "success", message: "Daily Score updated." };
 }
 
 export async function enableCalendarFeed() {

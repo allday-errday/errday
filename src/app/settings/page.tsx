@@ -18,22 +18,30 @@ import { SubmitButton } from "@/components/submit-button";
 import { requireUser } from "@/lib/auth";
 import { getCalendarFeedToken } from "@/lib/db/calendar";
 import { getHealthSyncToken } from "@/lib/db/health";
+import { getDailyProfile } from "@/lib/db/daily-flow";
 import { getProfile } from "@/lib/db/profile";
 import { safeRead } from "@/lib/db/safe-read";
 import { AppearanceToggle } from "./appearance-toggle";
 import { AppleCalendarCard } from "./apple-calendar-card";
 import { AppleHealthCard } from "./apple-health-card";
+import { DailyScoreSettingsForm } from "./daily-score-settings-form";
 import { ReminderSettingsForm } from "./reminder-settings-form";
 import { logout } from "./actions";
 import { SettingsForm } from "./settings-form";
 
-export default async function SettingsPage() {
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ dailyScore?: string }>;
+}) {
   const { supabase, user } = await requireUser();
-  const [profile, feedToken, healthToken, headerList] = await Promise.all([
+  const [profile, dailyProfile, feedToken, healthToken, headerList, params] = await Promise.all([
     getProfile(supabase, user.id),
+    safeRead(getDailyProfile(supabase, user.id), null, "daily profile"),
     safeRead(getCalendarFeedToken(supabase, user.id), null, "calendar feed"),
     safeRead(getHealthSyncToken(supabase, user.id), null, "health sync"),
     headers(),
+    searchParams,
   ]);
   const host = headerList.get("x-forwarded-host") ?? headerList.get("host") ?? "localhost:3000";
   const protocol = headerList.get("x-forwarded-proto") ?? (host.startsWith("localhost") || host.startsWith("127.") ? "http" : "https");
@@ -87,6 +95,9 @@ export default async function SettingsPage() {
           <p className="text-sm leading-6 text-zinc-400">Save your profile to calculate calorie and macro targets.</p>
         )}
         </SettingsSection>
+        <SettingsSection icon={<SlidersHorizontal className="size-5" />} id="daily-score" open={params.dailyScore === "1"} title="Daily Score">
+          <DailyScoreSettingsForm dailyProfile={dailyProfile} />
+        </SettingsSection>
         <SettingsSection icon={<CalendarDays className="size-5" />} title="Apple Calendar">
           <AppleCalendarCard feedPath={feedToken ? `/api/calendar/feed/${feedToken.token}` : null} origin={origin} />
         </SettingsSection>
@@ -118,17 +129,20 @@ function SettingsSection({
   children,
   icon,
   id,
+  open,
   title,
 }: {
   children: ReactNode;
   icon: ReactNode;
   id?: string;
+  open?: boolean;
   title: string;
 }) {
   return (
     <details
       className="apple-row group"
       id={id}
+      open={open}
     >
       <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3">
         <span className="flex min-w-0 items-center gap-3">

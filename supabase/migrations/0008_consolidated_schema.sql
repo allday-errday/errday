@@ -307,6 +307,10 @@ create table if not exists public.nutrition_targets (
 create table if not exists public.daily_profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
   default_day_type text not null default 'rest' check (default_day_type in ('rest', 'gym')),
+  daily_score_insights text[] not null default array['calories', 'steps', 'sleep'] check (
+    cardinality(daily_score_insights) = 3
+    and daily_score_insights <@ array['calories', 'protein', 'carbs', 'steps', 'water', 'sleep']::text[]
+  ),
   sleep_goal_hours numeric not null default 8 check (sleep_goal_hours > 0 and sleep_goal_hours <= 24),
   water_goal_ml integer not null default 2500 check (water_goal_ml > 0),
   suggested_bedtime time not null default '22:30',

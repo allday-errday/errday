@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { localDayRange, todayDateString } from "@/lib/dates";
+import { localDateString, localDayRange, shiftDateString, todayDateString } from "@/lib/dates";
 import type {
   DailyDaySetting,
   DailyDaySettingInsert,
@@ -130,4 +130,42 @@ export async function getTodayWaterTotal(
   const logs = await getTodayWaterLogs(supabase, userId, date);
 
   return logs.reduce((sum, log) => sum + log.amount_ml, 0);
+}
+
+export async function getDailyActivityStreak(
+  supabase: SupabaseClient,
+  userId: string,
+  today = todayDateString(),
+) {
+  const start = localDayRange(shiftDateString(today, -90)).startIso;
+  const [foodResult, waterResult] = await Promise.all([
+    supabase
+      .from("food_logs")
+      .select("logged_at")
+      .eq("user_id", userId)
+      .gte("logged_at", start),
+    supabase
+      .from("water_logs")
+      .select("logged_at")
+      .eq("user_id", userId)
+      .gte("logged_at", start),
+  ]);
+
+  if (foodResult.error) throw foodResult.error;
+  if (waterResult.error) throw waterResult.error;
+
+  const activeDates = new Set(
+    [...(foodResult.data ?? []), ...(waterResult.data ?? [])].map((log) =>
+      localDateString(new Date(log.logged_at)),
+    ),
+  );
+  let streak = 0;
+  let date = today;
+
+  while (activeDates.has(date)) {
+    streak += 1;
+    date = shiftDateString(date, -1);
+  }
+
+  return streak;
 }

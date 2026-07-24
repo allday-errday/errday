@@ -1,6 +1,6 @@
 "use client";
 
-import { Droplets } from "lucide-react";
+import { Droplets, GlassWater } from "lucide-react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "@/components/toaster";
 import { logWater } from "../actions";
@@ -45,17 +45,17 @@ export function WaterLogButtons() {
   );
 
   return (
-    <section className="apple-group p-4">
+    <section className="apple-group p-3">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="grid size-9 place-items-center rounded-lg bg-cyan-300/10 text-cyan-200">
-            <Droplets aria-hidden="true" className="size-5" />
+        <div className="flex items-center gap-2.5">
+          <span className="grid size-8 place-items-center rounded-lg bg-cyan-300/10 text-cyan-200">
+            <Droplets aria-hidden="true" className="size-4" />
           </span>
-          <h2 className="text-lg font-bold text-white">Water</h2>
+          <h2 className="text-base font-bold text-white">Water</h2>
         </div>
         <form
           action={formAction}
-          className="flex items-center divide-x divide-[var(--border)] text-sm font-semibold"
+          className="flex items-center gap-1.5 text-sm font-semibold"
           onSubmit={(event) => {
             if (lockRef.current || isPending) {
               event.preventDefault();
@@ -66,14 +66,15 @@ export function WaterLogButtons() {
         >
           {[250, 500].map((amount) => (
             <button
-              className="min-h-10 px-3 first:pl-0 last:pr-0 text-[var(--accent-strong)] transition hover:text-white disabled:cursor-not-allowed disabled:opacity-45"
+              className="flex min-h-9 items-center gap-1.5 rounded-lg bg-[var(--surface-2)] px-2.5 text-sm font-semibold text-zinc-200 transition hover:text-white disabled:cursor-not-allowed disabled:opacity-45"
               disabled={isLocked}
               key={amount}
               name="amount_ml"
               type="submit"
               value={amount}
             >
-              +{amount} ml
+              <GlassWater aria-hidden="true" className={amount === 500 ? "size-4" : "size-3.5"} />
+              {amount} ml
             </button>
           ))}
         </form>

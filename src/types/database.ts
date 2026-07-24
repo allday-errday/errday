@@ -306,6 +306,7 @@ export type HabitLogInsert = Omit<HabitLog, "id" | "created_at">;
 export interface DailyProfile {
   user_id: string;
   default_day_type: DayType;
+  daily_score_insights: string[];
   sleep_goal_hours: number;
   water_goal_ml: number;
   suggested_bedtime: string;
