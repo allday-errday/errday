@@ -56,12 +56,12 @@ function FoodLogRow({ log }: { log: FoodLogWithItem }) {
 
   return (
     <article className="relative overflow-hidden border-b border-[var(--border)] last:border-b-0">
-      <div className="absolute inset-y-0 right-0 flex items-center bg-red-500/15 pl-3">
-        <form action={removeFoodLog}>
+      <div className="absolute inset-y-0 right-0 w-20">
+        <form action={removeFoodLog} className="h-full">
           <input name="id" type="hidden" value={log.id} />
           <button
             aria-label={`Delete ${foodName(log)}`}
-            className="flex h-full min-w-20 flex-col items-center justify-center gap-1 bg-red-500/20 px-3 text-xs font-semibold text-red-300"
+            className="flex h-full w-full flex-col items-center justify-center gap-1 bg-red-600 px-3 text-xs font-semibold text-white"
             type="submit"
           >
             <Trash2 aria-hidden="true" className="size-4" />
@@ -118,21 +118,19 @@ function FoodLogEditor({ log, onClose }: { log: FoodLogWithItem; onClose: () => 
   return (
     <form action={formAction} className="grid gap-3 border-t border-[var(--border)] bg-[var(--surface-2)]/50 p-4">
       <input name="id" type="hidden" value={log.id} />
+      <p className="text-sm font-semibold text-white">{foodName(log)}</p>
       <label className="grid gap-1.5 text-sm font-medium text-zinc-300">
-        Name
+        Amount (g)
         <input
           className="min-h-11 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
-          defaultValue={foodName(log)}
-          name="display_name"
-          required
+          defaultValue={Math.round(Number(log.servings) * 100)}
+          min="1"
+          name="grams"
+          step="1"
+          type="number"
         />
       </label>
-      <div className="grid grid-cols-2 gap-2">
-        <NumberField defaultValue={log.calories} label="Calories" name="calories" />
-        <NumberField defaultValue={Number(log.protein_g)} label="Protein (g)" name="protein_g" />
-        <NumberField defaultValue={Number(log.carbs_g)} label="Carbs (g)" name="carbs_g" />
-        <NumberField defaultValue={Number(log.fat_g)} label="Fat (g)" name="fat_g" />
-      </div>
+      <p className="text-sm text-zinc-500">Calories and macros update automatically.</p>
       <FormMessage state={state} />
       <div className="flex gap-2">
         <button className="min-h-11 rounded-lg px-3 text-sm font-semibold text-zinc-400" onClick={onClose} type="button">
@@ -141,22 +139,6 @@ function FoodLogEditor({ log, onClose }: { log: FoodLogWithItem; onClose: () => 
         <SubmitButton className="ml-auto" cooldownMs={0} pendingLabel="Saving...">Save changes</SubmitButton>
       </div>
     </form>
-  );
-}
-
-function NumberField({ defaultValue, label, name }: { defaultValue: number; label: string; name: string }) {
-  return (
-    <label className="grid gap-1.5 text-sm font-medium text-zinc-300">
-      {label}
-      <input
-        className="min-h-11 rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 text-base text-white outline-none focus:border-[var(--accent)]"
-        defaultValue={defaultValue}
-        min="0"
-        name={name}
-        step="0.1"
-        type="number"
-      />
-    </label>
   );
 }
 

@@ -11,6 +11,7 @@ import {
   createFoodLog,
   deleteFoodEntry,
   deleteFoodLog,
+  getFoodLog,
   getFoodItem,
   getFoodItemByExternalId,
   listFoodLogsForDay,
@@ -303,32 +304,32 @@ export async function editFoodLog(
 ): Promise<ActionState> {
   const { supabase, user } = await requireUser();
   const id = formString(formData, "id");
-  const displayName = formString(formData, "display_name");
-  const calories = integerValue(formData, "calories");
-  const proteinG = numberValue(formData, "protein_g");
-  const carbsG = numberValue(formData, "carbs_g");
-  const fatG = numberValue(formData, "fat_g");
+  const grams = numberValue(formData, "grams");
 
-  const validationError =
-    validateNonNegative(calories, "Calories") ??
-    validateNonNegative(proteinG, "Protein") ??
-    validateNonNegative(carbsG, "Carbs") ??
-    validateNonNegative(fatG, "Fat");
-
-  if (!id || !displayName || calories === null || validationError) {
+  if (!id || grams === null || grams <= 0 || grams > 5_000) {
     return {
       status: "error",
-      message: validationError ?? "Name and calories are required.",
+      message: "Enter an amount between 1 and 5,000 g.",
     };
   }
 
   try {
+    const currentLog = await getFoodLog(supabase, user.id, id);
+    if (!currentLog) {
+      return { status: "error", message: "Food entry not found." };
+    }
+    const currentGrams = Number(currentLog.servings) * 100;
+    if (currentGrams <= 0) {
+      return { status: "error", message: "This food cannot be resized." };
+    }
+    const scale = grams / currentGrams;
+
     await updateFoodLog(supabase, user.id, id, {
-      calories,
-      carbs_g: carbsG ?? 0,
-      display_name: displayName,
-      fat_g: fatG ?? 0,
-      protein_g: proteinG ?? 0,
+      calories: Math.round(currentLog.calories * scale),
+      carbs_g: Number(currentLog.carbs_g) * scale,
+      fat_g: Number(currentLog.fat_g) * scale,
+      protein_g: Number(currentLog.protein_g) * scale,
+      servings: grams / 100,
     });
   } catch (error) {
     return {
