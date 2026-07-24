@@ -253,6 +253,15 @@ select optgroup {
   isolation: auto;
 }
 
+.errday-loading-mark {
+  animation: errdayLoadingMark 1.8s ease-in-out infinite;
+}
+
+.errday-loading-progress {
+  animation: errdayLoadingProgress 1.35s ease-in-out infinite;
+  transform-origin: left;
+}
+
 /* Keep the interface flat: accent color may signal state, never cast a glow. */
 [class*="shadow-"][class*="accent"],
 [class*="shadow-"][class*="signal"] {
@@ -313,6 +322,17 @@ select optgroup {
   }
 }
 
+@keyframes errdayLoadingMark {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes errdayLoadingProgress {
+  0% { transform: scaleX(0.2); opacity: 0.55; }
+  60% { transform: scaleX(0.82); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0.55; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .errday-orbit {
     animation: none;
@@ -324,6 +344,11 @@ select optgroup {
       opacity: 1;
       transform: none;
     }
+  }
+
+  .errday-loading-mark,
+  .errday-loading-progress {
+    animation: none;
   }
 }
 
