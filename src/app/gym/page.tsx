@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { History, Plus } from "lucide-react";
 import { ExerciseRow } from "@/components/gym/exercise-row";
+import { PageHeader } from "@/components/page-header";
 import { WorkoutTimer } from "@/components/gym/workout-timer";
 import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/dates";
@@ -40,23 +42,21 @@ export default async function GymPage() {
 
   return (
     <div className="mx-auto max-w-[1120px]">
-      <header className="mb-6 flex items-start justify-between gap-4 sm:mb-7 sm:items-center">
-        <div>
-          <h1 className="text-3xl font-bold leading-tight text-[var(--text)] sm:text-5xl">Gym</h1>
-        </div>
-        <Link
-          className="grid size-11 place-items-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-zinc-300 transition hover:bg-[var(--surface-2)]"
-          href="/gym/history"
-          aria-label="Workout history"
-        >
-          <svg aria-hidden="true" className="size-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
-            <path d="M3 3v5h5" /><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8" /><path d="M12 7v5l3 2" />
-          </svg>
-        </Link>
-      </header>
+      <PageHeader
+        title="Gym"
+        trailing={
+          <Link
+            aria-label="Workout history"
+            className="grid size-10 place-items-center rounded-full bg-[var(--surface-2)] text-[var(--accent)] transition hover:bg-[var(--surface-3)]"
+            href="/gym/history"
+          >
+            <History className="size-5" />
+          </Link>
+        }
+      />
 
       {activeSession ? (
-        <section className="mb-7 border-y border-[var(--border)] py-5 sm:py-7">
+        <section className="apple-group mb-7 p-5 sm:p-7">
           <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <div className="max-w-xl">
               <p className="text-sm font-bold text-zinc-400">Workout in progress</p>
@@ -76,7 +76,7 @@ export default async function GymPage() {
           </div>
         </section>
       ) : (
-        <section className="mb-7 border-y border-[var(--border)] py-5 sm:py-7">
+        <section className="apple-group mb-7 p-5 sm:p-7">
           <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
             <div className="max-w-xl">
               <h2 className="text-2xl font-bold leading-tight text-white sm:text-3xl">Workout</h2>
@@ -86,12 +86,12 @@ export default async function GymPage() {
                 className="flex min-h-12 w-full items-center justify-center gap-3 rounded-lg bg-[var(--accent)] px-6 text-sm font-bold text-[var(--on-accent)] transition sm:w-auto"
                 type="submit"
               >
-                <span className="text-xl">+</span>
+                <Plus className="size-5" />
                 Start workout
               </button>
             </form>
           </div>
-          <div className="mt-5 grid grid-cols-3 divide-x divide-[var(--border)] border-t border-[var(--border)] pt-4">
+          <div className="mt-5 grid grid-cols-3 divide-x divide-[var(--border)] pt-1">
             <SnapshotMetric label="Workouts" value={`${weeklyWorkouts}`} />
             <SnapshotMetric label="Sets" value={`${weeklySets}`} />
             <SnapshotMetric label="Volume" value={`${Math.round(weeklyVolume).toLocaleString("de-CH")} kg`} />
@@ -99,7 +99,8 @@ export default async function GymPage() {
         </section>
       )}
 
-      <section className="border-t border-[var(--border)] pt-5 sm:pt-6">
+      <section>
+        <p className="apple-section-title">Activity</p>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold text-white">Recent workouts</h2>
           <Link className="text-sm font-semibold text-[var(--accent)]" href="/gym/history">View all</Link>
@@ -107,7 +108,7 @@ export default async function GymPage() {
         {workouts.length === 0 ? (
           <p className="text-sm leading-6 text-zinc-400">No workouts yet.</p>
         ) : (
-          <div className="space-y-3">
+          <div className="apple-group">
             {workouts.map((workout) => (
               <ExerciseRow
                 href={`/gym/workout/${workout.id}`}

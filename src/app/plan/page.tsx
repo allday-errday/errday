@@ -15,17 +15,17 @@ export default async function PlanPage() {
   return (
     <div className="max-w-2xl">
       <PageHeader title="Plan" />
-      <nav aria-label="Plan tools" className="border-y border-[var(--border)]">
+      <nav aria-label="Plan tools" className="apple-group">
         {destinations.map((destination) => {
           const Icon = destination.icon;
 
           return (
             <Link
-              className="flex min-h-20 items-center gap-4 border-b border-[var(--border)] last:border-b-0"
+              className="apple-row flex min-h-16 items-center gap-4 px-4 transition hover:bg-[var(--surface-2)]"
               href={destination.href}
               key={destination.href}
             >
-              <span className="grid size-10 place-items-center rounded-lg bg-[var(--surface-2)] text-[var(--accent)]">
+              <span className="grid size-9 place-items-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
                 <Icon aria-hidden="true" className="size-5" />
               </span>
               <span className="flex-1 text-base font-semibold text-white">{destination.label}</span>

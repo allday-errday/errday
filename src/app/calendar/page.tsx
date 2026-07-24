@@ -2,6 +2,7 @@ import { requireUser } from "@/lib/auth";
 import { todayDateString } from "@/lib/dates";
 import { listCalendarEvents } from "@/lib/db/calendar";
 import { safeRead } from "@/lib/db/safe-read";
+import { PageHeader } from "@/components/page-header";
 import { CalendarView } from "./calendar-view";
 
 function normalizeMonth(raw: string | undefined) {
@@ -37,7 +38,7 @@ export default async function CalendarPage({
 
   return (
     <div>
-      <h1 className="mb-6 text-3xl font-bold text-white sm:text-4xl">Calendar</h1>
+      <PageHeader title="Calendar" />
       <CalendarView events={events} month={month} today={todayDateString()} />
     </div>
   );

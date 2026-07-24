@@ -117,12 +117,12 @@ export function WeekDatePicker({ date, today }: WeekDatePickerProps) {
                 {label}
               </span>
               <span
-                className={`mt-1 grid size-10 place-items-center rounded-full border text-sm font-bold transition sm:size-12 sm:text-base ${
+                className={`mt-1 grid size-10 place-items-center rounded-full text-sm font-bold transition sm:size-12 sm:text-base ${
                   isActive
-                    ? "border-[var(--accent)] bg-[var(--accent)] text-[var(--on-accent)]"
+                    ? "bg-[var(--accent)] text-[var(--on-accent)]"
                     : isFuture
-                      ? "border-white/[0.06] text-zinc-700"
-                      : "border-dashed border-white/20 bg-white/[0.025] text-zinc-300 hover:border-[var(--accent)]/65 hover:bg-[var(--accent-soft)] hover:text-white"
+                      ? "text-zinc-500"
+                      : "text-zinc-300 hover:bg-[var(--surface-2)] hover:text-white"
                 }`}
               >
                 {dayNumber}

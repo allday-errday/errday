@@ -143,26 +143,26 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
 
   return (
     <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(20rem,1fr)]">
-      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm shadow-black/20 sm:p-5">
+      <section className="apple-group p-4 sm:p-5">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-lg font-bold text-white">{monthLabel(month)}</h2>
           <div className="flex items-center gap-1.5">
             <Link
               aria-label="Previous month"
-              className="grid size-9 place-items-center rounded-full border border-[var(--border)] bg-white/[0.03] text-zinc-400 transition hover:border-white/20 hover:text-white"
+              className="grid size-9 place-items-center rounded-full bg-[var(--surface-2)] text-zinc-400 transition hover:text-white"
               href={`/calendar?month=${shiftMonth(month, -1)}`}
             >
               <ChevronLeft className="size-4" />
             </Link>
             <Link
-              className="rounded-full border border-[var(--border)] bg-white/[0.03] px-3 py-2 text-xs font-bold text-zinc-400 transition hover:border-white/20 hover:text-white"
+              className="rounded-full bg-[var(--surface-2)] px-3 py-2 text-xs font-semibold text-zinc-400 transition hover:text-white"
               href="/calendar"
             >
               Today
             </Link>
             <Link
               aria-label="Next month"
-              className="grid size-9 place-items-center rounded-full border border-[var(--border)] bg-white/[0.03] text-zinc-400 transition hover:border-white/20 hover:text-white"
+              className="grid size-9 place-items-center rounded-full bg-[var(--surface-2)] text-zinc-400 transition hover:text-white"
               href={`/calendar?month=${shiftMonth(month, 1)}`}
             >
               <ChevronRight className="size-4" />
@@ -187,10 +187,10 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
             return (
               <button
                 aria-label={`${date}, ${dayEvents.length} events`}
-                className={`relative flex min-h-12 flex-col items-center justify-center gap-1 rounded-xl border text-sm transition sm:min-h-16 ${
+                className={`relative flex min-h-12 flex-col items-center justify-center gap-1 rounded-lg text-sm transition sm:min-h-16 ${
                   isSelected
-                    ? "border-[var(--accent)]/60 bg-[var(--accent-soft)] font-bold text-white"
-                    : "border-transparent hover:border-white/15 hover:bg-white/[0.04]"
+                    ? "bg-[var(--accent-soft)] font-semibold text-white"
+                    : "hover:bg-[var(--surface-2)]"
                 } ${inMonth ? "text-zinc-200" : "text-zinc-600"}`}
                 key={date}
                 onClick={() => setSelectedDate(date)}
@@ -223,7 +223,7 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
         </div>
       </section>
 
-      <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-sm shadow-black/20">
+      <section className="apple-group p-5">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-[var(--accent)]">
@@ -234,7 +234,7 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
             </h2>
           </div>
           <button
-            className="flex min-h-10 items-center gap-1.5 rounded-full bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)] shadow-lg shadow-[var(--accent)]/20 transition hover:brightness-110"
+            className="flex min-h-10 items-center gap-1.5 rounded-full bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--on-accent)] transition hover:brightness-110"
             onClick={openCreate}
             type="button"
           >
@@ -254,7 +254,7 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
 
         <div className="mt-4 space-y-2">
           {selectedEvents.length === 0 && !formOpen ? (
-            <p className="rounded-xl border border-dashed border-white/12 px-4 py-6 text-center text-sm leading-6 text-zinc-500">
+            <p className="rounded-lg bg-[var(--surface-2)] px-4 py-6 text-center text-sm leading-6 text-zinc-500">
               Nothing planned yet.
             </p>
           ) : (
@@ -262,7 +262,7 @@ export function CalendarView({ events, month, today }: CalendarViewProps) {
               const meta = categoryMeta[event.category];
               return (
                 <article
-                  className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/70 p-4"
+                  className="rounded-lg bg-[var(--surface-2)] p-4"
                   key={event.id}
                 >
                   <div className="flex items-start justify-between gap-3">
@@ -357,7 +357,7 @@ function EventForm({
   return (
     <form
       action={formAction}
-      className="mt-4 grid gap-3 rounded-xl border border-[var(--accent)]/30 bg-[var(--surface-2)]/60 p-4"
+      className="mt-4 grid gap-3 rounded-lg bg-[var(--surface-2)] p-4"
     >
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-white">

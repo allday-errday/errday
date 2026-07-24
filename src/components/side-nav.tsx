@@ -14,7 +14,7 @@ export function SideNav() {
   }
 
   return (
-    <header className="errday-top-nav z-30 border-b border-[var(--border)] bg-[var(--nav-bg)] backdrop-blur-xl">
+    <header className="errday-top-nav z-30 hidden border-b border-[var(--border)] bg-[var(--nav-bg)] backdrop-blur-xl lg:block">
       <div className="mx-auto grid min-h-16 max-w-[1280px] grid-cols-[1fr_auto] items-center gap-x-4 px-4 py-3 sm:min-h-20 sm:px-8 sm:py-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-x-8 lg:px-12 lg:py-0">
         <BrandLogo className="justify-self-start" href="/today" markClassName="size-10 sm:size-11" wordmarkClassName="text-lg sm:text-xl" />
 
@@ -28,7 +28,7 @@ export function SideNav() {
                 aria-current={isActive ? "page" : undefined}
                 className={`relative flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold transition lg:w-full lg:px-2 ${
                   isActive
-                    ? "bg-[var(--accent)] text-[var(--on-accent)]"
+                    ? "bg-[var(--accent-soft)] text-[var(--accent)]"
                     : "text-zinc-400 hover:bg-white/[0.05] hover:text-white"
                 }`}
                 href={item.href}

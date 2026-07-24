@@ -1,3 +1,5 @@
+import { Flame } from "lucide-react";
+import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { formatDate, todayDateString } from "@/lib/dates";
 import { listJournalEntries } from "@/lib/db/journal";
@@ -23,14 +25,14 @@ export default async function JournalPage() {
 
   return (
     <div>
-      <header className="mb-6 flex flex-wrap items-end justify-between gap-3">
-        <h1 className="text-2xl font-bold text-white sm:text-3xl">Journal</h1>
-        {streak > 0 ? (
-          <span className="flex min-h-10 items-center gap-2 rounded-full border border-[var(--accent)]/40 bg-[var(--accent-soft)] px-4 text-sm font-bold text-[var(--accent-strong)]">
-            🔥 {streak}-day streak
+      <PageHeader
+        title="Journal"
+        trailing={streak > 0 ? (
+          <span className="flex min-h-10 items-center gap-2 rounded-full bg-[var(--accent-soft)] px-3 text-sm font-semibold text-[var(--accent-strong)]">
+            <Flame className="size-4" /> {streak} days
           </span>
         ) : null}
-      </header>
+      />
 
       <JournalCheckin
         defaultContent={todayEntry?.content ?? ""}
@@ -41,14 +43,12 @@ export default async function JournalPage() {
       />
 
       <section className="mt-8">
-        <h2 className="mb-4 text-lg font-bold text-white sm:text-xl">
-          Previous entries
-        </h2>
+        <p className="apple-section-title">Previous entries</p>
         {past.length > 0 ? (
-          <div className="space-y-2.5">
+          <div className="apple-group">
             {past.map((entry) => (
               <article
-              className="group flex gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 transition duration-200 hover:border-[var(--accent)]/30"
+                className="apple-row group flex gap-4 px-4 py-3 transition hover:bg-[var(--surface-2)]"
                 key={entry.id}
               >
                 <span
@@ -95,7 +95,7 @@ function MetaDots({
   if (!energy && !stress) return null;
 
   return (
-    <span className="flex shrink-0 gap-2 text-[0.68rem] font-bold uppercase tracking-wide text-zinc-500">
+    <span className="flex shrink-0 gap-2 text-xs font-semibold text-zinc-500">
       {energy ? <span>⚡ {energy}/5</span> : null}
       {stress ? <span>〰 {stress}/5</span> : null}
     </span>

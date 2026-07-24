@@ -5,6 +5,7 @@ import { safeRead } from "@/lib/db/safe-read";
 import { listSleepLogs } from "@/lib/db/sleep";
 import { SleepForm } from "./sleep-form";
 import { SleepSession } from "./sleep-session";
+import { PageHeader } from "@/components/page-header";
 
 export default async function SleepPage() {
   const { supabase, user } = await requireUser();
@@ -17,16 +18,13 @@ export default async function SleepPage() {
 
   return (
     <div>
-      <header className="mb-6">
-        <h1 className="text-3xl font-bold text-white sm:text-4xl">
-          Sleep
-        </h1>
-      </header>
+      <PageHeader title="Sleep" />
 
       <SleepSession goalHours={goalHours} suggestedBedtime={suggestedBedtime} />
 
-      <details className="group mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
-        <summary className="flex cursor-pointer list-none items-center justify-between font-semibold text-white">
+      <p className="apple-section-title">History</p>
+      <details className="apple-group group mt-2">
+        <summary className="apple-row flex cursor-pointer list-none items-center justify-between px-4 font-semibold text-white">
           Log a night manually
           <span className="text-zinc-500 transition group-open:rotate-180">
             <svg aria-hidden="true" className="size-5" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24">
@@ -34,25 +32,25 @@ export default async function SleepPage() {
             </svg>
           </span>
         </summary>
-        <div className="mt-4">
+        <div className="border-t border-[var(--border)] p-4">
           <SleepForm />
         </div>
       </details>
 
-      <section className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
+      <section className="apple-group mt-5 p-4">
         <h2 className="text-lg font-semibold text-white">Last 7 nights</h2>
         {logs.length === 0 ? (
           <p className="mt-3 text-sm leading-6 text-zinc-400">
             No sleep tracked yet.
           </p>
         ) : (
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 overflow-hidden rounded-lg bg-[var(--surface-2)]">
             {logs.map((log) => {
               const hours = Number(log.sleep_hours);
               const pct = Math.max(6, Math.min(100, (hours / goalHours) * 100));
               return (
                 <div
-                  className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/70 p-4"
+                  className="border-b border-[var(--border)] p-4 last:border-b-0"
                   key={log.id}
                 >
                   <div className="flex items-center justify-between">

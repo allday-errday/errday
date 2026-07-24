@@ -28,7 +28,7 @@ export function BarcodeScanButton() {
         />
       ) : null}
       <button
-        className="flex min-h-10 items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-3 text-sm font-bold text-zinc-300 transition hover:border-[var(--accent)]/50 hover:text-white active:scale-95"
+        className="flex min-h-12 w-full items-center gap-3 px-4 text-sm font-semibold text-[var(--accent)] transition hover:bg-[var(--surface-2)]"
         onClick={() => setScannerOpen(true)}
         type="button"
       >

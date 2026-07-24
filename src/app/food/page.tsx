@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Search } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { todayDateString } from "@/lib/dates";
@@ -27,43 +27,54 @@ export default async function FoodPage() {
 
   return (
     <div>
-      <PageHeader title="Food" />
-
-      <section className="mb-5 border-y border-[var(--border)] py-4">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <h2 className="font-bold text-white">Add food</h2>
-            <p className="mt-1 text-sm text-zinc-500">Search or scan a product</p>
-          </div>
+      <PageHeader
+        title="Food"
+        trailing={
           <Link
-            className="flex min-h-11 items-center gap-2 rounded-lg bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)]"
+            aria-label="Add food"
+            className="grid size-10 place-items-center rounded-full bg-[var(--accent)] text-[var(--on-accent)]"
             href="/food/search"
           >
-            <Plus className="size-4" />
-            Add
+            <Plus className="size-5" />
           </Link>
-        </div>
-        <div className="mt-3">
+        }
+      />
+
+      <section className="apple-group mb-6">
+        <Link className="apple-row flex items-center gap-3 px-4 transition hover:bg-[var(--surface-2)]" href="/food/search">
+          <Search className="size-5 text-zinc-500" />
+          <span className="flex-1 text-base text-white">Search food</span>
+          <ChevronRight className="size-5 text-zinc-500" />
+        </Link>
+        <div className="apple-row flex items-center">
           <BarcodeScanButton />
         </div>
       </section>
 
-      <section className="mb-5 rounded-lg border border-[var(--border)] bg-[var(--bg-soft)] p-4">
+      <p className="apple-section-title">Today</p>
+      <section className="apple-group mb-6 p-4">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="text-sm font-bold text-zinc-400">Today</p>
-            <p className="mt-1 text-4xl font-bold text-white">{totals.calories}<span className="ml-1 text-lg font-bold text-zinc-500">kcal</span></p>
+            <p className="text-sm text-zinc-500">Calories</p>
+            <p className="mt-1 text-4xl font-bold text-white">{totals.calories}<span className="ml-1 text-lg font-semibold text-zinc-500">kcal</span></p>
           </div>
+          <Link
+            className="text-sm font-semibold text-[var(--accent)]"
+            href="/food/search"
+          >
+            Add
+          </Link>
         </div>
-        <div className="mt-5 grid grid-cols-3 divide-x divide-[var(--border)] border-t border-[var(--border)] pt-4">
+        <div className="mt-5 grid grid-cols-3 divide-x divide-[var(--border)] pt-1">
           <Metric label="Protein" value={`${Math.round(totals.proteinG)} g`} />
           <Metric label="Carbs" value={`${Math.round(totals.carbsG)} g`} />
           <Metric label="Fat" value={`${Math.round(totals.fatG)} g`} />
         </div>
       </section>
 
-      <details className="border-y border-[var(--border)]">
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4">
+      <p className="apple-section-title">Library</p>
+      <details className="apple-group group">
+        <summary className="apple-row flex cursor-pointer list-none items-center justify-between gap-3 px-4">
           <span>
             <span className="block font-bold text-white">Saved foods</span>
           </span>

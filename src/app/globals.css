@@ -3,20 +3,20 @@
 :root {
   color-scheme: dark;
 
-  --bg: #15171c;
-  --nav-bg: rgb(21 23 28 / 0.98);
-  --bg-soft: #1b1e25;
-  --surface: rgba(255, 255, 255, 0.045);
-  --surface-2: rgba(255, 255, 255, 0.075);
-  --surface-3: rgba(255, 255, 255, 0.11);
-  --border: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.19);
+  --bg: #121214;
+  --nav-bg: rgb(18 18 20 / 0.96);
+  --bg-soft: #1c1c1e;
+  --surface: #1c1c1e;
+  --surface-2: #2c2c2e;
+  --surface-3: #3a3a3c;
+  --border: rgba(235, 235, 245, 0.14);
+  --border-strong: rgba(235, 235, 245, 0.22);
 
-  --text: #f3f4f7;
-  --text-muted: #a4abb8;
-  --text-subtle: #7b8290;
+  --text: #f5f5f7;
+  --text-muted: #aeaeb2;
+  --text-subtle: #8e8e93;
 
-  --accent: #8b82f6;
+  --accent: #a49bff;
   --accent-strong: color-mix(in srgb, var(--accent) 76%, white);
   --accent-soft: color-mix(in srgb, var(--accent) 16%, transparent);
   /* Text/icons sitting on accent or signal fills — same in both modes. */
@@ -42,6 +42,12 @@
   --input: var(--border);
   --ring: var(--accent);
   --radius: 0.9rem;
+  --color-white: #f5f5f7;
+  --color-zinc-100: #f5f5f7;
+  --color-zinc-200: #d1d1d6;
+  --color-zinc-300: #c7c7cc;
+  --color-zinc-400: #aeaeb2;
+  --color-zinc-500: #8e8e93;
 }
 
 /* Light mode mirrors the dark design: same accent, same layout, surfaces
@@ -52,18 +58,18 @@
 :root[data-mode="light"] {
   color-scheme: light;
 
-  --bg: #f3f4f8;
-  --nav-bg: rgb(243 244 248 / 0.98);
-  --bg-soft: #eaecf2;
-  --surface: rgba(18, 21, 30, 0.04);
-  --surface-2: rgba(18, 21, 30, 0.065);
-  --surface-3: rgba(18, 21, 30, 0.1);
-  --border: rgba(18, 21, 30, 0.12);
-  --border-strong: rgba(18, 21, 30, 0.22);
+  --bg: #f2f2f7;
+  --nav-bg: rgb(242 242 247 / 0.96);
+  --bg-soft: #f2f2f7;
+  --surface: #ffffff;
+  --surface-2: #e5e5ea;
+  --surface-3: #d1d1d6;
+  --border: rgba(60, 60, 67, 0.18);
+  --border-strong: rgba(60, 60, 67, 0.32);
 
-  --text: #1b1e27;
-  --text-muted: #545b69;
-  --text-subtle: #737a88;
+  --text: #1c1c1e;
+  --text-muted: #636366;
+  --text-subtle: #8e8e93;
 
   --accent-strong: color-mix(in srgb, var(--accent) 72%, #1b1e27);
   --popover: #ffffff;
@@ -131,7 +137,10 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family:
-    var(--font-manrope),
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "SF Pro Text",
     ui-sans-serif,
     system-ui,
     -apple-system,
@@ -160,15 +169,13 @@ body {
   top: max(env(safe-area-inset-top), var(--errday-native-safe-top, 0px));
 }
 
-.errday-app-content-with-nav {
-  padding-top: 4rem;
-}
+.errday-app-content-with-nav { padding-top: 0; }
 
 .scanner-top-controls {
   padding: calc(max(env(safe-area-inset-top), var(--errday-native-safe-top, 0px)) + 1rem) 1rem 1rem;
 }
 
-@media (min-width: 40rem) {
+@media (min-width: 64rem) {
   .errday-app-content-with-nav {
     padding-top: 5rem;
   }
@@ -180,7 +187,27 @@ body::before {
 
 .flow-hero,
 .brand-hero {
-  background: var(--bg-soft);
+  background: var(--surface);
+}
+
+.apple-group {
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: var(--surface);
+}
+
+.apple-row {
+  min-height: 3.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.apple-row:last-child { border-bottom: 0; }
+
+.apple-section-title {
+  margin: 1.5rem 0 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 400;
 }
 
 a {

@@ -36,7 +36,6 @@ export function BottomNav() {
                 <NavIcon className="size-5" name={item.icon} />
               </span>
               <span>{item.label}</span>
-              <span className={`absolute inset-x-5 top-0 h-0.5 ${isActive ? "bg-[var(--accent)]" : "bg-transparent"}`} />
             </Link>
           );
         })}

@@ -43,7 +43,7 @@ export function BrandLogo({
   className = "",
   href,
   markClassName = "size-11",
-  showTagline = true,
+  showTagline = false,
   tagline = "All day. Errday.",
   wordmarkClassName = "text-xl",
 }: BrandLogoProps) {

@@ -43,7 +43,7 @@ export default async function SettingsPage() {
     <div>
       <PageHeader title="Profile" />
 
-      <section className="mb-6 border-y border-[var(--border)] py-5">
+      <section className="apple-group mb-6 p-4">
         <div className="flex items-center gap-3">
           <span className="grid size-11 place-items-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
             <UserRound className="size-5" />
@@ -53,26 +53,29 @@ export default async function SettingsPage() {
             <p className="mt-1 text-sm text-zinc-500">Your account</p>
           </div>
         </div>
-        <div className="mt-5 grid grid-cols-3 divide-x divide-[var(--border)] border-t border-[var(--border)] pt-4">
+        <div className="mt-5 grid grid-cols-3 divide-x divide-[var(--border)] pt-4">
           <ProfileValue label="Goal" value={goalLabel(profile?.goal)} />
           <ProfileValue label="Weight" value={formatWeight(profile?.current_weight_kg)} />
           <ProfileValue label="Target" value={formatWeight(profile?.target_weight_kg)} />
         </div>
       </section>
 
-      <SettingsSection icon={<SlidersHorizontal className="size-5" />} title="Appearance">
-        <AppearanceToggle />
-      </SettingsSection>
+      <p className="apple-section-title">Preferences</p>
+      <section className="apple-group">
+        <SettingsSection icon={<SlidersHorizontal className="size-5" />} title="Appearance">
+          <AppearanceToggle />
+        </SettingsSection>
+        <SettingsSection icon={<UserRound className="size-5" />} title="Body profile">
+          <SettingsForm profile={profile} />
+        </SettingsSection>
+      </section>
 
-      <SettingsSection icon={<UserRound className="size-5" />} title="Body profile">
-        <SettingsForm profile={profile} />
-      </SettingsSection>
-
-      <SettingsSection icon={<Bell className="size-5" />} id="reminder-settings" title="Reminders">
-        <ReminderSettingsForm profile={profile} />
-      </SettingsSection>
-
-      <SettingsSection icon={<Target className="size-5" />} title="Targets">
+      <p className="apple-section-title">Tracking</p>
+      <section className="apple-group">
+        <SettingsSection icon={<Bell className="size-5" />} id="reminder-settings" title="Reminders">
+          <ReminderSettingsForm profile={profile} />
+        </SettingsSection>
+        <SettingsSection icon={<Target className="size-5" />} title="Targets">
         {profile?.calorie_target ? (
           <div className="grid grid-cols-2 gap-3">
             <Metric label="Calories" value={`${profile.calorie_target} kcal`} />
@@ -83,29 +86,30 @@ export default async function SettingsPage() {
         ) : (
           <p className="text-sm leading-6 text-zinc-400">Save your profile to calculate calorie and macro targets.</p>
         )}
-      </SettingsSection>
+        </SettingsSection>
+        <SettingsSection icon={<CalendarDays className="size-5" />} title="Apple Calendar">
+          <AppleCalendarCard feedPath={feedToken ? `/api/calendar/feed/${feedToken.token}` : null} origin={origin} />
+        </SettingsSection>
+        <SettingsSection icon={<HeartPulse className="size-5" />} title="Apple Watch & Health">
+          <AppleHealthCard origin={origin} token={healthToken?.token ?? null} />
+        </SettingsSection>
+      </section>
 
-      <SettingsSection icon={<CalendarDays className="size-5" />} title="Apple Calendar">
-        <AppleCalendarCard feedPath={feedToken ? `/api/calendar/feed/${feedToken.token}` : null} origin={origin} />
-      </SettingsSection>
-
-      <SettingsSection icon={<HeartPulse className="size-5" />} title="Apple Watch & Health">
-        <AppleHealthCard origin={origin} token={healthToken?.token ?? null} />
-      </SettingsSection>
-
-      <SettingsSection icon={<MoreHorizontal className="size-5" />} title="Extras">
-        <div className="divide-y divide-[var(--border)] border-y border-[var(--border)]">
-          <ProfileLink href="/recap" label="Monthly recap" />
-          <ProfileLink href="/coach" label="Coach" />
-        </div>
-      </SettingsSection>
-
-      <SettingsSection icon={<LogOut className="size-5" />} title="Account">
+      <p className="apple-section-title">More</p>
+      <section className="apple-group">
+        <SettingsSection icon={<MoreHorizontal className="size-5" />} title="Extras">
+          <div className="divide-y divide-[var(--border)]">
+            <ProfileLink href="/recap" label="Monthly recap" />
+            <ProfileLink href="/coach" label="Coach" />
+          </div>
+        </SettingsSection>
+        <SettingsSection icon={<LogOut className="size-5" />} title="Account">
         <p className="break-all text-sm text-zinc-400">{user.email}</p>
         <form action={logout} className="mt-4">
           <SubmitButton pendingLabel="Logging out..." variant="danger">Log out</SubmitButton>
         </form>
-      </SettingsSection>
+        </SettingsSection>
+      </section>
     </div>
   );
 }
@@ -123,10 +127,10 @@ function SettingsSection({
 }) {
   return (
     <details
-      className="group border-b border-[var(--border)]"
+      className="apple-row group"
       id={id}
     >
-      <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 py-3">
+      <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3">
         <span className="flex min-w-0 items-center gap-3">
           <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-[var(--surface-2)] text-[var(--accent)]">
             {icon}
@@ -135,7 +139,7 @@ function SettingsSection({
         </span>
         <ChevronDown className="size-5 shrink-0 text-zinc-500 transition group-open:rotate-180" />
       </summary>
-      <div className="pb-5 pt-2">{children}</div>
+      <div className="border-t border-[var(--border)] px-4 pb-5 pt-4">{children}</div>
     </details>
   );
 }
@@ -172,7 +176,7 @@ function formatWeight(value: number | string | null | undefined) {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-2)]/70 p-3">
+    <div className="rounded-lg bg-[var(--surface-2)] p-3">
       <p className="text-xs text-zinc-500">{label}</p>
       <p className="mt-1 font-bold text-white">{value}</p>
     </div>

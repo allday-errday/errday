@@ -2,7 +2,7 @@ import { logWater } from "../actions";
 
 export function WaterLogButtons() {
   return (
-    <section className="border-y border-[var(--border)] py-4">
+    <section className="apple-group p-4">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="grid size-9 place-items-center rounded-lg bg-cyan-300/10 text-cyan-200">
@@ -12,7 +12,7 @@ export function WaterLogButtons() {
           </span>
           <h2 className="text-lg font-bold text-white">Water</h2>
         </div>
-        <div className="flex items-center divide-x divide-[var(--border)] text-sm font-bold">
+        <div className="flex items-center divide-x divide-[var(--border)] text-sm font-semibold">
           {[250, 500].map((amount) => (
             <form action={logWater} className="first:pr-3 last:pl-3" key={amount}>
               <input name="amount_ml" type="hidden" value={amount} />
