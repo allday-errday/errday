@@ -1,6 +1,6 @@
 "use client";
 
-import { LoaderCircle, Sparkles } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import type { MealSlot } from "@/types/database";
 import type { NormalizedFoodProduct } from "@/lib/food-search/types";
@@ -68,7 +68,7 @@ export function AiEstimateSection({
     return (
       <section className="mt-6">
         <p className="mb-3 px-1 text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
-          AI estimates · double-check the numbers
+          Quick estimate · double-check the numbers
         </p>
         <div className="space-y-3">
           {foods.map((food, index) => (
@@ -88,8 +88,7 @@ export function AiEstimateSection({
     return (
       <section className="mb-5 border-t border-[var(--border)] pt-5">
         <div className="mb-3 flex items-center gap-2">
-          <Sparkles className="size-4 text-[var(--accent)]" />
-          <h2 className="font-extrabold text-white">AI estimate</h2>
+          <h2 className="font-extrabold text-white">Quick estimate</h2>
         </div>
         <form
           className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]"
@@ -111,7 +110,7 @@ export function AiEstimateSection({
             disabled={loading}
             type="submit"
           >
-            {loading ? <LoaderCircle className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+            {loading ? <LoaderCircle className="size-4 animate-spin" /> : null}
             Estimate
           </button>
         </form>
@@ -128,12 +127,8 @@ export function AiEstimateSection({
         onClick={() => void generate(query)}
         type="button"
       >
-        {loading ? (
-          <LoaderCircle className="size-4 animate-spin text-[var(--accent)]" />
-        ) : (
-          <Sparkles className="size-4 text-[var(--accent)]" />
-        )}
-        {loading ? "Estimating…" : "Generate results using AI"}
+        {loading ? <LoaderCircle className="size-4 animate-spin text-[var(--accent)]" /> : null}
+        {loading ? "Estimating…" : "Estimate nutrition"}
       </button>
       {error ? (
         <p className="mt-2 text-center text-sm text-amber-300">{error}</p>

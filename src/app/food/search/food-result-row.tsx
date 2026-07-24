@@ -7,7 +7,7 @@ import type { NormalizedFoodProduct } from "@/lib/food-search/types";
 import { logFoodProduct } from "./actions";
 
 const sourceLabels: Record<string, string> = {
-  ai_estimate: "AI estimate",
+  ai_estimate: "Quick estimate",
   errday_products: "Errday product",
   open_food_facts: "Open Food Facts",
   swiss_nutrition: "Swiss database",

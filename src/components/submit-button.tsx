@@ -17,7 +17,7 @@ export function SubmitButton({
 
   const classes = {
     primary:
-      "bg-white text-[var(--bg)] shadow-[0_14px_35px_-18px_rgba(255,255,255,0.7)] hover:bg-[var(--accent-strong)] disabled:bg-white/40 disabled:text-black/50",
+      "bg-[var(--accent)] text-[var(--on-accent)] hover:bg-[var(--accent-strong)] disabled:bg-white/40 disabled:text-black/50",
     secondary:
       "border border-[var(--border-strong)] bg-[var(--surface-2)] text-zinc-100 hover:bg-[var(--surface-3)] disabled:text-zinc-500",
     danger:
@@ -26,7 +26,7 @@ export function SubmitButton({
 
   return (
     <button
-      className={`min-h-12 rounded-xl px-5 text-sm font-extrabold transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:transform-none ${classes[variant]}`}
+      className={`min-h-12 rounded-lg px-5 text-sm font-extrabold transition disabled:cursor-not-allowed ${classes[variant]}`}
       disabled={pending}
       type="submit"
     >

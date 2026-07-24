@@ -54,14 +54,14 @@ export function JournalCheckin({
       <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-8">
         <div className="max-w-xl">
           <p className="text-2xl font-extrabold leading-snug text-white sm:text-3xl">
-            {hasToday ? "Today is captured." : "Write a reflection."}
+            {hasToday ? "Today is saved." : "Write a note."}
           </p>
           <button
             className="mt-5 min-h-12 rounded-lg bg-[var(--accent)] px-5 text-sm font-extrabold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)] active:scale-[0.98]"
             onClick={() => setIsComposing(true)}
             type="button"
           >
-            {hasToday ? "Open reflection" : "Write now"}
+            {hasToday ? "Open entry" : "Write"}
           </button>
         </div>
       </section>
@@ -79,7 +79,7 @@ export function JournalCheckin({
 
         <div className="flex items-start justify-between gap-3">
           <p className="eyebrow">
-            {hasToday ? "Today" : "Reflection"}
+            {hasToday ? "Today" : "Journal"}
           </p>
           <button
             aria-label="New prompt"
@@ -105,7 +105,7 @@ export function JournalCheckin({
           className="mt-4 min-h-44 w-full resize-none bg-transparent text-lg leading-8 text-[var(--text)] outline-none focus-visible:outline-none placeholder:text-zinc-600"
           defaultValue={defaultContent}
           name="content"
-          placeholder="Let it out — no one else can read this..."
+          placeholder="Write what is on your mind"
         />
 
         <div className="mt-6 space-y-5">
@@ -133,7 +133,7 @@ export function JournalCheckin({
           <FormMessage state={state} />
           <div className="grid">
             <SubmitButton pendingLabel="Saving...">
-              {hasToday ? "Update today's entry" : "Save reflection"}
+              {hasToday ? "Update entry" : "Save entry"}
             </SubmitButton>
           </div>
         </div>

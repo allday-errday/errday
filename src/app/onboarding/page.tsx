@@ -26,16 +26,14 @@ export default async function OnboardingPage() {
     <div className="mx-auto grid min-h-dvh w-full max-w-xl content-start gap-8 px-4 py-10 sm:py-14">
       <BrandLogo href="/today" showTagline={false} />
       <div>
-        <p className="eyebrow">Welcome to Errday</p>
-        <h1 className="mt-3 text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-          Let&apos;s set up your day.
+        <h1 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+          Set up your profile
         </h1>
         <p className="mt-3 text-sm leading-6 text-zinc-400">
-          A few quick taps — then Errday knows your targets and Today is
-          ready for you.
+          This takes a minute.
         </p>
       </div>
-      <div className="card p-5 sm:p-6">
+      <div className="border-t border-[var(--border)] pt-6">
         <OnboardingForm />
       </div>
     </div>

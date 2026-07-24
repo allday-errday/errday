@@ -8,7 +8,7 @@ const tools = [
 export function DailyTools() {
   return (
     <section className="mt-6 border-t border-[var(--border)] pt-5">
-      <h2 className="text-lg font-extrabold text-white">Daily check-in</h2>
+      <h2 className="text-lg font-extrabold text-white">More</h2>
       <div className="mt-2 divide-y divide-[var(--border)] border-y border-[var(--border)]">
         {tools.map((tool) => (
           <Link

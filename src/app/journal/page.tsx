@@ -42,7 +42,7 @@ export default async function JournalPage() {
 
       <section className="mt-8">
         <h2 className="mb-4 text-lg font-extrabold text-white sm:text-xl">
-          Past reflections
+          Previous entries
         </h2>
         {past.length > 0 ? (
           <div className="space-y-2.5">

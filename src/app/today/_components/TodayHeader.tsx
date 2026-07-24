@@ -11,11 +11,11 @@ export function TodayHeader({
         <h1 className="text-3xl font-extrabold leading-none text-white sm:text-4xl">
           {isToday ? (
             <>
-              Own today<span className="text-[var(--accent)]">.</span>
+              Today<span className="text-[var(--accent)]">.</span>
             </>
           ) : (
             <>
-              Looking back<span className="text-[var(--accent)]">.</span>
+              Previous day<span className="text-[var(--accent)]">.</span>
             </>
           )}
         </h1>

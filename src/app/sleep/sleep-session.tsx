@@ -140,20 +140,20 @@ export function SleepSession({ goalHours, suggestedBedtime }: SleepSessionProps)
     return (
       <Shell
         icon="moon"
-        title="Ready for bed?"
+        title="Sleep"
         subtitle={
           suggestedBedtime
             ? `Suggested bedtime ${suggestedBedtime.slice(0, 5)} · ${goalHours}h goal`
             : `${goalHours}h sleep goal`
         }
       >
-        <Ring progress={0} label="15:00" hint="wind-down" />
+        <Ring progress={0} label="15:00" hint="before sleep" />
         <button
           className="mt-8 min-h-14 w-full max-w-xs rounded-full bg-[var(--accent)] text-base font-bold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)]"
           onClick={startWinddown}
           type="button"
         >
-          Start wind-down
+          Start sleep timer
         </button>
       </Shell>
     );
@@ -166,8 +166,8 @@ export function SleepSession({ goalHours, suggestedBedtime }: SleepSessionProps)
     return (
       <Shell
         icon="moon"
-        title="Winding down"
-        subtitle="Your 15-minute wind-down has started."
+        title="Getting ready"
+        subtitle="Your sleep timer starts in 15 minutes."
       >
         <Ring
           progress={elapsed / WINDDOWN_SECONDS}

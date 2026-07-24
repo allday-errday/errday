@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronDown, Plus, Sparkles } from "lucide-react";
+import { ChevronDown, Plus } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { requireUser } from "@/lib/auth";
 import { todayDateString } from "@/lib/dates";
@@ -43,15 +43,8 @@ export default async function FoodPage() {
             Add
           </Link>
         </div>
-        <div className="mt-3 flex items-center gap-4">
+        <div className="mt-3">
           <BarcodeScanButton />
-          <Link
-            className="flex min-h-10 items-center gap-2 text-sm font-bold text-zinc-400 transition hover:text-white"
-            href="/food/search?ai=1"
-          >
-            <Sparkles className="size-4 text-[var(--accent)]" />
-            Estimate with AI
-          </Link>
         </div>
       </section>
 

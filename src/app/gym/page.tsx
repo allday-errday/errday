@@ -80,7 +80,6 @@ export default async function GymPage() {
           <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
             <div className="max-w-xl">
               <h2 className="text-2xl font-black leading-tight text-white sm:text-3xl">Workout</h2>
-              <p className="mt-1 text-sm leading-6 text-zinc-500">Start when you are ready.</p>
             </div>
             <form action={startEmptyWorkout}>
               <button

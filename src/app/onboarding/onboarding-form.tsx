@@ -9,9 +9,9 @@ import { initialActionState } from "@/lib/forms";
 import { completeOnboarding } from "./actions";
 
 const goals = [
-  { value: "lose", label: "Lose weight", detail: "Steady deficit, keep muscle", emoji: "🔥" },
-  { value: "maintain", label: "Maintain", detail: "Hold weight, build habits", emoji: "⚖️" },
-  { value: "gain", label: "Build up", detail: "Lean surplus, gain strength", emoji: "💪" },
+  { value: "lose", label: "Lose weight", detail: "A steady calorie deficit" },
+  { value: "maintain", label: "Maintain", detail: "Keep your current weight" },
+  { value: "gain", label: "Build up", detail: "Gain weight and strength" },
 ];
 
 const activityLevels = [
@@ -32,7 +32,7 @@ const questions = [
   "How active are you?",
   "What's your sex?",
   "When were you born?",
-  "Your body right now",
+  "Your details",
 ];
 
 export function OnboardingForm() {
@@ -94,7 +94,6 @@ export function OnboardingForm() {
               <ChoiceCard
                 active={goal === option.value}
                 detail={option.detail}
-                emoji={option.emoji}
                 key={option.value}
                 label={option.label}
                 onClick={() => pick(setGoal, option.value)}
@@ -170,10 +169,7 @@ export function OnboardingForm() {
             <SubmitButton pendingLabel="Calculating your targets...">
               Set up my day
             </SubmitButton>
-            <p className="text-center text-xs leading-5 text-zinc-500">
-              Errday calculates your calorie and macro targets from this — you
-              can change everything later in Settings.
-            </p>
+            <p className="text-center text-xs leading-5 text-zinc-500">You can change this later in Profile.</p>
           </div>
         ) : null}
       </div>
@@ -247,7 +243,7 @@ function BirthdateStep({
   }
 
   const boxClassName =
-    "min-h-16 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] text-center text-2xl font-extrabold text-white outline-none transition placeholder:text-zinc-600 focus:border-[var(--accent)]";
+    "min-h-16 w-full rounded-lg border border-[var(--border)] bg-[var(--surface-2)] text-center text-2xl font-extrabold text-white outline-none transition placeholder:text-zinc-600 focus:border-[var(--accent)]";
 
   return (
     <div className="grid gap-5">
@@ -324,7 +320,7 @@ function ChoiceCard({
 }) {
   return (
     <button
-      className={`rounded-2xl border p-4 transition duration-200 active:scale-[0.98] ${
+      className={`rounded-lg border p-4 transition ${
         centered ? "text-center" : "flex items-center gap-4 text-left"
       } ${
         active

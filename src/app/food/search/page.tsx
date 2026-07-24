@@ -191,7 +191,7 @@ export default async function FoodSearchPage({
           <section className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-5">
             <h2 className="font-bold text-white">No product found</h2>
             <p className="mt-2 text-sm leading-6 text-zinc-500">
-              Try another name or estimate it with AI.
+              Try another name or add it manually.
             </p>
           </section>
         </>

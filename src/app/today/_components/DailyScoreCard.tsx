@@ -16,7 +16,7 @@ export function DailyScoreCard({ result }: DailyScoreCardProps) {
     <section className="flow-hero relative overflow-hidden rounded-xl border border-white/10 p-5 sm:p-8">
       <div className="flex h-full flex-col gap-6">
         <div>
-          <p className="text-sm font-extrabold text-white">Daily flow</p>
+          <p className="text-sm font-extrabold text-white">Today</p>
           <p className="mt-1 text-sm text-zinc-500">Today so far</p>
         </div>
 
@@ -25,7 +25,7 @@ export function DailyScoreCard({ result }: DailyScoreCardProps) {
             <p className="text-6xl font-extrabold leading-none text-white sm:text-7xl">
               {result.score}<span className="ml-2 text-2xl font-bold text-zinc-500">/100</span>
             </p>
-            <p className="mt-3 text-sm font-semibold text-zinc-400">Flow score</p>
+            <p className="mt-3 text-sm font-semibold text-zinc-400">Daily score</p>
           </div>
           <CircularScoreProgress score={result.score} showValue={false} />
         </div>

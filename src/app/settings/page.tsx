@@ -34,22 +34,22 @@ export default async function SettingsPage() {
 
       <section className="mb-6 border-y border-[var(--border)] py-4">
         <p className="text-sm font-extrabold text-white">{user.email}</p>
-        <p className="mt-1 text-sm text-zinc-500">Account, goals and preferences</p>
+        <p className="mt-1 text-sm text-zinc-500">Account</p>
       </section>
 
-      <SettingsSection description="Theme and display preference on this device." title="Appearance">
+      <SettingsSection description="Theme" title="Appearance">
         <AppearanceToggle />
       </SettingsSection>
 
-      <SettingsSection description="Body data, goal and activity level used for your targets." title="Body profile">
+      <SettingsSection description="Goal and body details" title="Body profile">
         <SettingsForm profile={profile} />
       </SettingsSection>
 
-      <SettingsSection description="Food, supplements, gym, sleep and journal nudges." id="reminder-settings" tone="accent" title="Reminders">
+      <SettingsSection description="Food, gym, sleep and journal" id="reminder-settings" tone="accent" title="Reminders">
         <ReminderSettingsForm profile={profile} />
       </SettingsSection>
 
-      <SettingsSection description="Calories and macros calculated from your body profile." title="Targets">
+      <SettingsSection description="Calories and macros" title="Targets">
         {profile?.calorie_target ? (
           <div className="grid grid-cols-2 gap-3">
             <Metric label="Calories" value={`${profile.calorie_target} kcal`} />
@@ -62,15 +62,15 @@ export default async function SettingsPage() {
         )}
       </SettingsSection>
 
-      <SettingsSection description="Subscribe your iPhone Calendar to Errday events." title="Apple Calendar">
+      <SettingsSection description="Your Errday events" title="Apple Calendar">
         <AppleCalendarCard feedPath={feedToken ? `/api/calendar/feed/${feedToken.token}` : null} origin={origin} />
       </SettingsSection>
 
-      <SettingsSection description="Bring Apple Watch steps, energy and sleep into Today through Apple Health." title="Apple Watch & Health">
+      <SettingsSection description="Steps, energy and sleep" title="Apple Watch & Health">
         <AppleHealthCard origin={origin} token={healthToken?.token ?? null} />
       </SettingsSection>
 
-      <SettingsSection description="Sleep, reflection, planning and recap." title="Daily tools">
+      <SettingsSection description="Sleep, journal, calendar and recap" title="Daily tools">
         <div className="grid gap-2 sm:grid-cols-2">
           <Link className="flex min-h-11 items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface-2)] px-4 text-sm font-bold text-white" href="/sleep">
             Sleep <span className="text-[var(--accent)]">›</span>
