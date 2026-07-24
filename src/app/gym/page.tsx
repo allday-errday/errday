@@ -2,6 +2,7 @@ import Link from "next/link";
 import { History, Plus } from "lucide-react";
 import { ExerciseRow } from "@/components/gym/exercise-row";
 import { PageHeader } from "@/components/page-header";
+import { SubmitButton } from "@/components/submit-button";
 import { WorkoutTimer } from "@/components/gym/workout-timer";
 import { requireUser } from "@/lib/auth";
 import { formatDate } from "@/lib/dates";
@@ -82,13 +83,13 @@ export default async function GymPage() {
               <h2 className="text-2xl font-bold leading-tight text-white sm:text-3xl">Workout</h2>
             </div>
             <form action={startEmptyWorkout}>
-              <button
-                className="flex min-h-12 w-full items-center justify-center gap-3 rounded-lg bg-[var(--accent)] px-6 text-sm font-bold text-[var(--on-accent)] transition sm:w-auto"
-                type="submit"
+              <SubmitButton
+                className="flex w-full items-center justify-center gap-3 px-6 sm:w-auto"
+                pendingLabel="Starting…"
               >
                 <Plus className="size-5" />
                 Start workout
-              </button>
+              </SubmitButton>
             </form>
           </div>
           <div className="mt-5 grid grid-cols-3 divide-x divide-[var(--border)] pt-1">

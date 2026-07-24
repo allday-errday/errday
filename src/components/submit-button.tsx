@@ -1,19 +1,33 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 
 type SubmitButtonProps = {
   children: React.ReactNode;
   pendingLabel?: string;
   variant?: "primary" | "secondary" | "danger";
-};
+} & Omit<React.ComponentProps<"button">, "children" | "disabled" | "type">;
 
 export function SubmitButton({
   children,
+  className = "",
   pendingLabel = "Saving...",
   variant = "primary",
+  onClick,
+  ...buttonProps
 }: SubmitButtonProps) {
   const { pending } = useFormStatus();
+  const [isCoolingDown, setIsCoolingDown] = useState(false);
+  const cooldownTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (cooldownTimer.current !== null) {
+        window.clearTimeout(cooldownTimer.current);
+      }
+    };
+  }, []);
 
   const classes = {
     primary:
@@ -26,8 +40,22 @@ export function SubmitButton({
 
   return (
     <button
-      className={`min-h-12 rounded-lg px-5 text-sm font-bold transition disabled:cursor-not-allowed ${classes[variant]}`}
-      disabled={pending}
+      {...buttonProps}
+      className={`min-h-12 rounded-lg px-5 text-sm font-bold transition disabled:cursor-not-allowed ${classes[variant]} ${className}`}
+      disabled={pending || isCoolingDown}
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        const form = event.currentTarget.form;
+        if (form && !form.checkValidity()) return;
+        setIsCoolingDown(true);
+        if (cooldownTimer.current !== null) {
+          window.clearTimeout(cooldownTimer.current);
+        }
+        cooldownTimer.current = window.setTimeout(() => {
+          setIsCoolingDown(false);
+        }, 3_000);
+      }}
       type="submit"
     >
       {pending ? pendingLabel : children}

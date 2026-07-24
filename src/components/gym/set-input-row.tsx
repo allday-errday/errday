@@ -3,6 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { FormMessage } from "@/components/form-message";
 import { SET_LOGGED_EVENT } from "@/components/gym/rest-timer";
+import { SubmitButton } from "@/components/submit-button";
 import { initialActionState } from "@/lib/forms";
 import { saveWorkoutSet } from "@/app/gym/actions";
 
@@ -62,13 +63,13 @@ export function SetInputRow({
           placeholder="0"
           type="number"
         />
-        <button
+        <SubmitButton
           aria-label="Add set"
-          className="grid size-10 place-items-center rounded-full bg-[var(--accent)] text-xs font-bold text-[var(--on-accent)] transition hover:bg-[var(--accent-strong)] sm:size-12 sm:text-sm"
-          type="submit"
+          className="grid size-10 min-h-0 place-items-center rounded-full p-0 text-xs sm:size-12 sm:text-sm"
+          pendingLabel="…"
         >
           OK
-        </button>
+        </SubmitButton>
       </div>
       <FormMessage state={state} />
     </form>

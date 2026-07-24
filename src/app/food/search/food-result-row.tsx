@@ -2,6 +2,7 @@
 
 import { Flame, Minus, Plus, X } from "lucide-react";
 import { useState } from "react";
+import { SubmitButton } from "@/components/submit-button";
 import type { MealSlot } from "@/types/database";
 import type { NormalizedFoodProduct } from "@/lib/food-search/types";
 import { logFoodProduct } from "./actions";
@@ -214,12 +215,9 @@ export function FoodResultRow({
             </div>
           ) : null}
 
-          <button
-            className="min-h-12 rounded-lg bg-[var(--accent)] px-4 text-sm font-bold text-[var(--on-accent)] transition hover:brightness-110"
-            type="submit"
-          >
+          <SubmitButton pendingLabel="Logging…">
             Log{kcalForGrams !== null ? ` · ${kcalForGrams} kcal` : ""}
-          </button>
+          </SubmitButton>
         </form>
       ) : null}
     </article>
