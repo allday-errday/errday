@@ -10,7 +10,7 @@ export function CircularScoreProgress({
   showValue = true,
 }: CircularScoreProgressProps) {
   const radius = 52;
-  const stroke = 10;
+  const stroke = 11;
   const circumference = 2 * Math.PI * radius;
   const progress = Math.max(0, Math.min(100, score));
   const offset = circumference - (progress / 100) * circumference;
@@ -27,7 +27,7 @@ export function CircularScoreProgress({
           cy="68"
           fill="none"
           r={radius}
-          stroke="rgba(255, 255, 255, 0.1)"
+          stroke="rgba(255, 255, 255, 0.22)"
           strokeWidth={stroke}
         />
         <circle

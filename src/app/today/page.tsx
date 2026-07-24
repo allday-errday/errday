@@ -6,7 +6,6 @@ import { getHealthMetricsForDay } from "@/lib/db/health";
 import { safeRead } from "@/lib/db/safe-read";
 import { getTodayDashboard } from "@/lib/db/today";
 import { DailyScoreCard } from "./_components/DailyScoreCard";
-import { DailyTools } from "./_components/DailyTools";
 import { TodayHeader } from "./_components/TodayHeader";
 import { WaterLogButtons } from "./_components/WaterLogButtons";
 import { WeekDatePicker } from "./_components/WeekDatePicker";
@@ -63,7 +62,6 @@ export default async function TodayPage({
         <DailyScoreCard result={scoreResult} />
       </div>
       {isToday ? <div className="mt-5 max-w-4xl"><WaterLogButtons /></div> : null}
-      {isToday ? <DailyTools /> : null}
     </div>
   );
 }

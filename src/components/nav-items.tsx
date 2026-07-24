@@ -1,21 +1,17 @@
 import {
-  CalendarDays,
   Dumbbell,
   Home,
-  Moon,
-  NotebookPen,
+  LayoutGrid,
   type LucideIcon,
   UserRound,
   Utensils,
 } from "lucide-react";
 
 export type NavIconName =
-  | "calendar"
   | "food"
   | "gym"
-  | "journal"
+  | "plan"
   | "profile"
-  | "sleep"
   | "today";
 
 export type NavItem = {
@@ -28,9 +24,7 @@ export const navItems: NavItem[] = [
   { href: "/today", icon: "today", label: "Today" },
   { href: "/gym", icon: "gym", label: "Gym" },
   { href: "/food", icon: "food", label: "Food" },
-  { href: "/sleep", icon: "sleep", label: "Sleep" },
-  { href: "/journal", icon: "journal", label: "Journal" },
-  { href: "/calendar", icon: "calendar", label: "Calendar" },
+  { href: "/plan", icon: "plan", label: "Plan" },
   { href: "/settings", icon: "profile", label: "Profile" },
 ];
 
@@ -42,12 +36,10 @@ export function NavIcon({
   className?: string;
 }) {
   const icons: Record<NavIconName, LucideIcon> = {
-    calendar: CalendarDays,
     food: Utensils,
     gym: Dumbbell,
-    journal: NotebookPen,
+    plan: LayoutGrid,
     profile: UserRound,
-    sleep: Moon,
     today: Home,
   };
   const Icon = icons[name];

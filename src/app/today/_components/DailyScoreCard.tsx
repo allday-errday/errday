@@ -13,7 +13,7 @@ export function DailyScoreCard({ result }: DailyScoreCardProps) {
   ];
 
   return (
-    <section className="flow-hero relative overflow-hidden rounded-xl border border-white/10 p-5 sm:p-8">
+    <section className="flow-hero relative overflow-hidden rounded-xl p-5 sm:p-8">
       <div className="flex h-full flex-col gap-6">
         <div>
           <p className="text-sm font-bold text-white">Today</p>
@@ -30,9 +30,9 @@ export function DailyScoreCard({ result }: DailyScoreCardProps) {
           <CircularScoreProgress score={result.score} showValue={false} />
         </div>
 
-        <div className="grid grid-cols-3 divide-x divide-white/10 border-t border-white/10 pt-5">
+        <div className="grid grid-cols-3 gap-3 pt-2">
           {signals.map((signal) => (
-            <div className="px-3 first:pl-0 last:pr-0" key={signal.label}>
+            <div key={signal.label}>
               <p className="text-xs font-bold text-zinc-500">{signal.label}</p>
               <p className="mt-1 text-lg font-bold text-white sm:text-xl">
                 {Math.round(signal.value)}%

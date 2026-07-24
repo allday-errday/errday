@@ -64,7 +64,7 @@ export default async function SettingsPage() {
         <AppearanceToggle />
       </SettingsSection>
 
-      <SettingsSection defaultOpen icon={<UserRound className="size-5" />} title="Body profile">
+      <SettingsSection icon={<UserRound className="size-5" />} title="Body profile">
         <SettingsForm profile={profile} />
       </SettingsSection>
 
@@ -112,13 +112,11 @@ export default async function SettingsPage() {
 
 function SettingsSection({
   children,
-  defaultOpen = false,
   icon,
   id,
   title,
 }: {
   children: ReactNode;
-  defaultOpen?: boolean;
   icon: ReactNode;
   id?: string;
   title: string;
@@ -126,7 +124,6 @@ function SettingsSection({
   return (
     <details
       className="group border-b border-[var(--border)]"
-      open={defaultOpen}
       id={id}
     >
       <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-4 py-3">
