@@ -3,10 +3,9 @@
 import { Droplets } from "lucide-react";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "@/components/toaster";
-import {
-  initialWaterLogState,
-  logWater,
-} from "../actions";
+import { logWater } from "../actions";
+
+const initialWaterLogState = { completedAt: null, error: null };
 
 export function WaterLogButtons() {
   const [state, formAction, isPending] = useActionState(

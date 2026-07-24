@@ -10,16 +10,6 @@ import type { DayType } from "@/types/database";
 const dayTypes: DayType[] = ["rest", "gym"];
 const waterAmounts = [250, 500];
 
-export type WaterLogState = {
-  completedAt: number | null;
-  error: string | null;
-};
-
-export const initialWaterLogState: WaterLogState = {
-  completedAt: null,
-  error: null,
-};
-
 export async function setTodayDayType(formData: FormData) {
   const { supabase, user } = await requireUser();
   const dayType = formString(formData, "day_type") as DayType;
@@ -33,9 +23,9 @@ export async function setTodayDayType(formData: FormData) {
 }
 
 export async function logWater(
-  _previousState: WaterLogState,
+  _previousState: { completedAt: number | null; error: string | null },
   formData: FormData,
-): Promise<WaterLogState> {
+): Promise<{ completedAt: number | null; error: string | null }> {
   try {
     const { supabase, user } = await requireUser();
     const amountMl = integerValue(formData, "amount_ml");
