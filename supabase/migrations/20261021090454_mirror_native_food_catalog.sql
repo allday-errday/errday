@@ -200,4 +200,3 @@ revoke all on function public.search_food_catalog(text, text, integer)
   from public, anon;
 grant execute on function public.search_food_catalog(text, text, integer)
   to authenticated, service_role;
-
