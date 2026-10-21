@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDisplayName</key>
+	<string>Errday</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.errday.native</string>
+			<key>CFBundleURLSchemes</key>
+			<array><string>errday</string></array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>strava</string>
+	</array>
+		<key>NSCameraUsageDescription</key>
+		<string>Errday uses the camera to scan food barcodes and take meal photos. Meal photos are sent to OpenAI only after you choose Scan Food.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Errday shows the Apple Health data you choose to share, including activity, body, hearing, mobility, nutrition, sleep, vitals, medications and health records, in your private overview.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Errday saves the weight, water, nutrition and completed workouts you track to Apple Health so your records stay consistent.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Errday uses the microphone only while you record a Voice Log.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Errday converts your Voice Log into editable text so the assistant can analyse what you ate.</string>
+	<key>NSHealthClinicalHealthRecordsShareUsageDescription</key>
+	<string>Errday displays the clinical records you choose to share, such as allergies, conditions, medications, lab results and procedures, only in your private health overview.</string>
+	<key>UILaunchScreen</key>
+	<dict/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+</dict>
+</plist>

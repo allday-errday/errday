@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-18T22:34:45Z",
+  "status": "parallel preview; not connected to the app or Supabase",
+  "products": 86704,
+  "barcodedProducts": 85458,
+  "genericProducts": 1216,
+  "completeMacros": 84523,
+  "partialMacros": 2181,
+  "retailerTaggedProducts": 23945,
+  "sourceProducts": {
+    "open_food_facts": 85458,
+    "swiss_food_composition": 1246
+  },
+  "sourceRows": {
+    "openFoodFacts": 103613,
+    "swissFoodComposition": 1646
+  },
+  "inserted": {
+    "openFoodFacts": 85458,
+    "swissFoodComposition": 1246
+  },
+  "sourceAudit": {
+    "openFoodFacts": {
+      "sourceRows": 103613,
+      "rejectedNoNutrition": 12698,
+      "rejectedName": 4617,
+      "complete": 83291,
+      "retailerTagged": 23945,
+      "partial": 2167,
+      "rejectedBarcode": 840
+    },
+    "swissFoodComposition": {
+      "sourceRows": 1646,
+      "complete": 1232,
+      "partial": 14,
+      "rejectedNameOrID": 400
+    }
+  },
+  "audit": {
+    "openFoodFactsCSV": "https://mirabelle.openfoodfacts.org/products.csv?sql=select+%22code%22%2C%22product_name%22%2C%22brands%22%2C%22stores%22%2C%22countries_tags%22%2C%22quantity%22%2C%22last_modified_t%22%2C%22energy-kcal_100g%22%2C%22energy-kj_100g%22%2C%22energy_100g%22%2C%22proteins_100g%22%2C%22carbohydrates_100g%22%2C%22fat_100g%22%2C%22fiber_100g%22%2C%22sugars_100g%22%2C%22sodium_100g%22%2C%22salt_100g%22+from+%5Ball%5D+where+countries_tags+like+%27%25en%3Aswitzerland%25%27&_size=max&_stream=on",
+    "openFoodFactsCount": "https://mirabelle.openfoodfacts.org/products.json?sql=select+count%28%2A%29+as+total+from+%5Ball%5D+where+countries_tags+like+%27%25en%3Aswitzerland%25%27&_shape=objects",
+    "openFoodFactsCSV_SHA256": "7f3aef34a4bd909a490da1fb16ce9803eb09f2b83862c1c74313df8faeda4c22",
+    "swissFoodCompositionURL": "https://naehrwertdaten.ch/wp-content/uploads/2026/07/Swiss_food_composition_database.xlsx",
+    "swissFoodCompositionSHA256": "323bae2eecd639d2c3b3bf3797d30b1426ccb0253fb62810f522778b38089196"
+  },
+  "currentCatalogComparison": {
+    "currentProducts": 23826,
+    "currentSearchableBarcodes": 24145,
+    "previewBarcodesAlreadyInCurrent": 23945,
+    "previewBarcodesNewToCurrent": 61513
+  },
+  "databaseBytes": 45121536,
+  "databaseSHA256": "f73724a2f4eb7bfd25f02dd9a4526aad4580fef390f1aa37d87d90027733322a"
+}

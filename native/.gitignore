@@ -1,0 +1,8 @@
+Config/Local.plist
+.build/
+DerivedData/
+.*.log
+**/xcuserdata/
+Packages/ErrdayCore/.build/
+
+__pycache__/
