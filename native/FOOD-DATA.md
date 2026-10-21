@@ -35,9 +35,9 @@ Nährwerte gelten pro 100 g/ml des verkauften Produkts. Die Einheit wird aus vor
 
 Mahlzeiten speichern einen eigenen Snapshot von Produkt, Menge, Einheit und persönlichen Korrekturen. Neue Katalogversionen verändern historische Einträge nicht. Korrekturen werden nicht an Open Food Facts gesendet. Vorhandene Mahlzeiten ohne diese Zusatzdaten bleiben lesbar.
 
-## Vollständiger Quellenexport
+## Legacy-JSON-Fallback
 
-Bereinigt am 6. Oktober 2026: **22’768 Produkte**, davon 10’185 mit Coop-, 11’201 mit Migros- und 1’475 mit Denner-Zuordnung. Überschneidungen sind möglich. 22’586 Produkte enthalten alle vier Basisnährwerte, 182 sind teilweise ausgefüllt. Vom bisherigen Bestand mit 26’063 Barcodes wurden 2’055 Datensätze ohne Nährwerte entfernt und 1’240 Doppeleinträge vereinigt. Insgesamt bleiben 24’008 Barcodes über Hauptnummern und Aliase suchbar.
+Der ältere JSON-Fallback wurde am 6. Oktober 2026 bereinigt: **22’768 Produkte**, davon 10’185 mit Coop-, 11’201 mit Migros- und 1’475 mit Denner-Zuordnung. Überschneidungen sind möglich. 22’586 Produkte enthalten alle vier Basisnährwerte, 182 sind teilweise ausgefüllt. Vom bisherigen Bestand mit 26’063 Barcodes wurden 2’055 Datensätze ohne Nährwerte entfernt und 1’240 Doppeleinträge vereinigt. Insgesamt bleiben 24’008 Barcodes über Hauptnummern und Aliase suchbar. Diese Zahlen beschreiben nur den Fallback; die App verwendet normalerweise den oben dokumentierten SQLite-Katalog.
 
 Der vollständige [Mirabelle-CSV-Export](https://mirabelle.openfoodfacts.org/products) wird separat gegen eine COUNT-Abfrage derselben Quelle geprüft. Der neue Export umfasst 27’040 Kandidaten, davon 26’011 eindeutige verwendbare Produkte; 52 ergänzende Produkte bleiben aus früheren Abrufen erhalten.
 
@@ -67,7 +67,7 @@ Das Skript lädt den vollständigen CSV-Datenstrom ohne Seitenlimit und prüft d
 
 Das frühere `import_food_catalog.py` bleibt für begrenzte API-Abrufe erhalten. Der vollständige Export ist der bevorzugte Weg; ein kleinerer API-Import wird standardmässig abgelehnt, damit er den grossen Katalog nicht versehentlich ersetzt.
 
-Kein Scraping der Händler-Websites, keine produktive Supabase-Migration und keine AI-Anfragen. Der native Kamerascanner liest Barcodes lokal; alternativ sind Barcodes eintippbar. Fotoerkennung und KI-Texterfassung sind noch nicht verbunden.
+Kein Scraping der Händler-Websites. Der native Kamerascanner und die primäre Suche arbeiten lokal; alternativ sind Barcodes eintippbar. Der verifizierte Katalog wird zusätzlich read-only für angemeldete Nutzer in Supabase gespiegelt. Schreibzugriff bleibt auf die Service-Rolle beschränkt.
 
 ## Wiederholbarkeit
 

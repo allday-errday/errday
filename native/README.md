@@ -33,7 +33,7 @@ Foto-KI, Watch-App, Widgets, dynamische Erholungsbenachrichtigungen und Cloud-Sy
 
 ## Lebensmittel
 
-**22’768 Produkte**, 24’008 suchbare Barcodes inklusive Aliase. 2’055 nährwertlose Einträge entfernt, 1’240 Doppeleinträge vereinigt. 22’586 vollständige und 182 teilweise vorhandene Nährwertprofile. Zuordnungen: Coop 10’185, Migros 11’201, Denner 1’475; Überschneidungen möglich.
+**86’704 Lebensmittel**, davon 85’458 Produkte mit Barcode und 1’246 Einträge der offiziellen Schweizer Nährwertdatenbank. 84’391 Produkte enthalten alle vier Basisnährwerte, 2’313 sind teilweise ausgefüllt. Händlerzuordnungen: Coop 10’545, Migros 11’966, Denner 1’526; Überschneidungen sind möglich. Der Import entfernt unmögliche Einzelwerte, ohne sonst brauchbare Produkte zu verlieren, und die Suche bevorzugt echte Namens- vor reinen Markentreffern. Der ältere JSON-Katalog bleibt als Fallback erhalten.
 
 Quelle: Open Food Facts, ODbL 1.0; kein offizielles Live-Sortiment der Händler. [FOOD-DATA.md](FOOD-DATA.md) dokumentiert Zuordnung, Import, Ausschlüsse und Lizenz. [DESIGN-IMPLEMENTATION.md](DESIGN-IMPLEMENTATION.md) dokumentiert Designumfang und bewusste Grenzen.
 
@@ -45,7 +45,7 @@ Quelle: Open Food Facts, ODbL 1.0; kein offizielles Live-Sortiment der Händler.
 
 Der externe SwiftPM-Testordner vermeidet Signierprobleme durch Finder-/Synchronisierungsattribute. Debug verwendet die aktive Architektur, damit App und lokale Packages auf demselben Simulator-Ziel gebaut werden.
 
-Am 7. Oktober 2026 im Simulator geprüft: Start/Einrichtung überspringen, vier Hauptseiten, Lebensmittel erfassen und Tageswerte, Trainingsplan und Übung erstellen, Training starten, Satz abhaken, Pause und Abschluss. Core-Tests prüfen zusätzlich Migration alter Einträge, Persistenz, Portionen, Rotation und Barcode-Aliase. Kamera und reale Health-/Watch-Messwerte benötigen die Prüfung auf einem echten iPhone. Keine produktiven Datenbankänderungen.
+Am 7. Oktober 2026 im Simulator geprüft: Start/Einrichtung überspringen, vier Hauptseiten, Lebensmittel erfassen und Tageswerte, Trainingsplan und Übung erstellen, Training starten, Satz abhaken, Pause und Abschluss. Core-Tests prüfen zusätzlich Migration alter Einträge, Persistenz, Portionen, Rotation und Barcode-Aliase. Kamera und reale Health-/Watch-Messwerte benötigen die Prüfung auf einem echten iPhone.
 
 
 ## KI-Prüfung am 7. Oktober 2026
