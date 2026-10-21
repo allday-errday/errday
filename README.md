@@ -104,6 +104,20 @@ supabase/migrations/0009_calendar.sql
 
 Apply migrations manually in order through the Supabase SQL Editor. Copy the full SQL file contents, paste into a new SQL Editor query, and run it.
 
+### Security deployment requirements
+
+Apply every migration through `20261021120000_security_hardening.sql`. Then, in
+the hosted Supabase project, enable the **Before User Created** Auth hook and
+select the Postgres function `public.hook_require_signup_authorization`. The
+checked-in `supabase/config.toml` enables the same hook for local Supabase.
+Without the hosted hook, direct calls to the public Supabase signup endpoint can
+bypass the application's `ALLOWED_SIGNUP_EMAILS` check.
+
+The server deployment must define `SUPABASE_SERVICE_ROLE_KEY`; signup
+authorization, trusted product imports, and durable AI quotas fail closed when
+it is unavailable. Set a separate high-entropy `ADMIN_IMPORT_SECRET` to use the
+USDA importer, then call it with `POST` and `Authorization: Bearer <secret>`.
+
 ## Apple Calendar sync
 
 Errday publishes a private ICS feed that the iPhone Calendar app can subscribe to.

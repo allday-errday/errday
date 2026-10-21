@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-18T22:34:45Z",
-  "status": "parallel preview; not connected to the app or Supabase",
+  "generatedAt": "2026-10-21T09:47:57Z",
+  "status": "bundled with the native app and mirrored to Supabase",
   "products": 86704,
   "barcodedProducts": 85458,
   "genericProducts": 1216,
-  "completeMacros": 84523,
-  "partialMacros": 2181,
+  "completeMacros": 84391,
+  "partialMacros": 2313,
   "retailerTaggedProducts": 23945,
   "sourceProducts": {
     "open_food_facts": 85458,
@@ -50,6 +50,17 @@
     "previewBarcodesAlreadyInCurrent": 23945,
     "previewBarcodesNewToCurrent": 61513
   },
-  "databaseBytes": 45121536,
-  "databaseSHA256": "f73724a2f4eb7bfd25f02dd9a4526aad4580fef390f1aa37d87d90027733322a"
+  "databaseBytes": 46526464,
+  "databaseSHA256": "48f546499ef2ae18b730b069a32c0716b51558ddc68ae5005bb766e908c70e5b",
+  "qualityAdjustments": {
+    "clearedOutlierFields": 157,
+    "clearedOutlierCalories": 126,
+    "normalizedTextFields": 476,
+    "clearedOutlierSodium": 6,
+    "clearedOutlierFat": 6,
+    "clearedOutlierProtein": 6,
+    "clearedOutlierFiber": 2,
+    "clearedOutlierCarbs": 9,
+    "clearedOutlierSugar": 2
+  }
 }

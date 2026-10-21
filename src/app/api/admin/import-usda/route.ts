@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { requireUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -41,9 +40,35 @@ function clamp(value: number, max: number) {
   return Math.max(0, Math.min(max, Math.round(value * 10) / 10));
 }
 
-export async function GET(request: Request) {
-  const { user } = await requireUser();
-  if (!user) {
+function hasImportAccess(request: Request) {
+  const secret = process.env.ADMIN_IMPORT_SECRET?.trim();
+  return Boolean(
+    secret && request.headers.get("authorization") === `Bearer ${secret}`,
+  );
+}
+
+function positiveInteger(value: string | null, fallback: number) {
+  const parsed = value === null ? fallback : Number(value);
+  return Number.isSafeInteger(parsed) && parsed >= 1 && parsed <= 100_000
+    ? parsed
+    : null;
+}
+
+export function GET() {
+  return new Response("Method Not Allowed", {
+    headers: { Allow: "POST" },
+    status: 405,
+  });
+}
+
+export async function POST(request: Request) {
+  if (!process.env.ADMIN_IMPORT_SECRET?.trim()) {
+    return NextResponse.json(
+      { error: "Admin import is not configured." },
+      { status: 503 },
+    );
+  }
+  if (!hasImportAccess(request)) {
     return new Response("Unauthorized", { status: 401 });
   }
 
@@ -54,8 +79,15 @@ export async function GET(request: Request) {
 
   const url = new URL(request.url);
   const dataType = url.searchParams.get("type") === "foundation" ? "Foundation" : "SR Legacy";
-  const from = Math.max(1, Number(url.searchParams.get("from") ?? "1"));
-  const to = Math.min(from + 9, Number(url.searchParams.get("to") ?? String(from + 9)));
+  const from = positiveInteger(url.searchParams.get("from"), 1);
+  const requestedTo = positiveInteger(url.searchParams.get("to"), (from ?? 1) + 9);
+  if (from === null || requestedTo === null || requestedTo < from) {
+    return NextResponse.json(
+      { error: "from and to must be positive integers with to >= from." },
+      { status: 400 },
+    );
+  }
+  const to = Math.min(from + 9, requestedTo);
 
   const admin = createAdminClient();
   let imported = 0;

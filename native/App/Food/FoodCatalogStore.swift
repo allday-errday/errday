@@ -73,27 +73,45 @@ actor FoodCatalogLoader {
 
     private func searchSQLite(_ text: String, retailer: FoodRetailer?, limit: Int, database: OpaquePointer) throws -> [FoodProduct] {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        let baseSelect = """
+        let projection = """
             select p.barcode, p.id, p.name, p.brand, p.unit,
                    p.calories, p.protein, p.carbs, p.fat, p.fiber, p.sugar, p.sodium,
                    p.source_updated_at, p.fetched_at,
                    coalesce(group_concat(distinct pr.retailer || ':' || pr.evidence), '')
-            from products p
-            left join product_retailers pr on pr.product_id = p.id
             """
         let retailerClause = "(? = '' or exists (select 1 from product_retailers filter where filter.product_id = p.id and filter.retailer = ?))"
         let sql: String
         let ftsQuery: String?
         if trimmed.isEmpty {
-            sql = baseSelect + " where " + retailerClause + " group by p.id order by p.name collate nocase, p.id limit ?"
+            sql = projection + """
+                from products p
+                left join product_retailers pr on pr.product_id = p.id
+                where \(retailerClause)
+                group by p.id
+                order by p.name collate nocase, p.id
+                limit ?
+                """
             ftsQuery = nil
         } else {
             guard let query = Self.ftsQuery(from: trimmed) else { return [] }
-            sql = baseSelect + """
-                 where (p.barcode = ? or p.id in (select product_id from product_search where product_search match ?))
-                   and \(retailerClause)
+            sql = """
+                with matched as (
+                    select product_id as id
+                    from product_search
+                    where product_search match ?
+                    union
+                    select id from products where barcode = ?
+                )
+                """ + projection + """
+                 from matched
+                 join products p on p.id = matched.id
+                 left join product_retailers pr on pr.product_id = p.id
+                 where \(retailerClause)
                  group by p.id
                  order by case when p.barcode = ? then 0 else 1 end,
+                          case when lower(p.name) = lower(?) then 0 else 1 end,
+                          case when lower(p.name) like lower(?) || '%' then 0 else 1 end,
+                          case when instr(lower(p.name), lower(?)) > 0 then 0 else 1 end,
                           case when p.calories is not null and p.protein is not null and p.carbs is not null and p.fat is not null then 0 else 1 end,
                           p.name collate nocase, p.id
                  limit ?
@@ -109,12 +127,15 @@ actor FoodCatalogLoader {
 
         let retailerValue = retailer?.rawValue ?? ""
         if let ftsQuery {
-            bind(trimmed, at: 1, to: statement)
-            bind(ftsQuery, at: 2, to: statement)
+            bind(ftsQuery, at: 1, to: statement)
+            bind(trimmed, at: 2, to: statement)
             bind(retailerValue, at: 3, to: statement)
             bind(retailerValue, at: 4, to: statement)
             bind(trimmed, at: 5, to: statement)
-            sqlite3_bind_int(statement, 6, Int32(max(0, limit)))
+            bind(trimmed, at: 6, to: statement)
+            bind(trimmed, at: 7, to: statement)
+            bind(trimmed, at: 8, to: statement)
+            sqlite3_bind_int(statement, 9, Int32(max(0, limit)))
         } else {
             bind(retailerValue, at: 1, to: statement)
             bind(retailerValue, at: 2, to: statement)

@@ -39,6 +39,16 @@ OFF_COLUMNS = [
 ]
 RETAILERS = ("coop", "migros", "denner")
 USER_AGENT = "Errday/0.2 (Swiss food catalogue prototype; https://www.errday.ch)"
+MINIMUM_OFF_SOURCE_ROWS = 10_000
+NUTRIENT_MAXIMUMS = {
+    "calories": 900.0,
+    "protein": 100.0,
+    "carbs": 100.0,
+    "fat": 100.0,
+    "fiber": 100.0,
+    "sugar": 100.0,
+    "sodium": 50_000.0,
+}
 
 
 def utc_now() -> str:
@@ -70,6 +80,17 @@ def source_urls() -> tuple[str, str]:
     return csv_url, count_url
 
 
+def verified_off_count(payload: dict, minimum: int = MINIMUM_OFF_SOURCE_ROWS) -> int:
+    if not payload.get("ok") or payload.get("truncated") or not payload.get("rows"):
+        raise ValueError("Open Food Facts count query was not independently verified")
+    total = int(payload["rows"][0]["total"])
+    if total < minimum:
+        raise ValueError(
+            f"Open Food Facts count unexpectedly fell to {total:,}; refusing to replace the catalog"
+        )
+    return total
+
+
 def ensure_sources(cache: Path, reuse: bool) -> tuple[Path, Path, Path, dict]:
     cache.mkdir(parents=True, exist_ok=True)
     off_csv = cache / "open-food-facts-switzerland.csv"
@@ -81,8 +102,7 @@ def ensure_sources(cache: Path, reuse: bool) -> tuple[Path, Path, Path, dict]:
             print(f"Downloading {path.name} …", flush=True)
             download(url, path)
     count = json.loads(off_count.read_text())
-    if not count.get("ok") or count.get("truncated") or not count.get("rows"):
-        raise ValueError("Open Food Facts count query was not independently verified")
+    verified_off_count(count)
     audit = {
         "openFoodFactsCSV": csv_url,
         "openFoodFactsCount": count_url,
@@ -99,6 +119,24 @@ def number(value: object) -> float | None:
         return parsed if math.isfinite(parsed) and parsed >= 0 else None
     except (TypeError, ValueError):
         return None
+
+
+def clean_text(value: object) -> str:
+    return " ".join(str(value or "").split())
+
+
+def sanitize_nutrition(
+    nutrients: dict[str, float | None], counts: Counter | None = None
+) -> dict[str, float | None]:
+    result = dict(nutrients)
+    for nutrient, maximum in NUTRIENT_MAXIMUMS.items():
+        value = result.get(nutrient)
+        if value is not None and value > maximum:
+            result[nutrient] = None
+            if counts is not None:
+                counts["clearedOutlierFields"] += 1
+                counts["clearedOutlier" + nutrient.title()] += 1
+    return result
 
 
 def iso_timestamp(value: object) -> str | None:
@@ -128,21 +166,32 @@ def retailer_evidence(stores_value: str, brands_value: str) -> dict[str, str]:
     return evidence
 
 
-def nutrition_from_off(row: dict[str, str]) -> dict[str, float | None]:
+def nutrition_from_off(
+    row: dict[str, str], counts: Counter | None = None
+) -> dict[str, float | None]:
     calories = number(row.get("energy-kcal_100g"))
+    if calories is not None and calories > NUTRIENT_MAXIMUMS["calories"]:
+        calories = None
+        if counts is not None:
+            counts["clearedOutlierFields"] += 1
+            counts["clearedOutlierCalories"] += 1
     if calories is None:
         kj = number(row.get("energy-kj_100g"))
         if kj is None:
             kj = number(row.get("energy_100g"))
         if kj is not None:
-            calories = kj / 4.184
+            converted = kj / 4.184
+            if converted <= NUTRIENT_MAXIMUMS["calories"]:
+                calories = converted
+                if counts is not None:
+                    counts["recoveredCaloriesFromKilojoules"] += 1
     sodium = number(row.get("sodium_100g"))
     if sodium is not None:
         sodium *= 1000
     else:
         salt = number(row.get("salt_100g"))
         sodium = salt * 400 if salt is not None else None
-    return {
+    return sanitize_nutrition({
         "calories": calories,
         "protein": number(row.get("proteins_100g")),
         "carbs": number(row.get("carbohydrates_100g")),
@@ -150,7 +199,7 @@ def nutrition_from_off(row: dict[str, str]) -> dict[str, float | None]:
         "fiber": number(row.get("fiber_100g")),
         "sugar": number(row.get("sugars_100g")),
         "sodium": sodium,
-    }
+    }, counts)
 
 
 def unit_from_quantity(quantity: str) -> str:
@@ -166,14 +215,14 @@ def open_food_facts_rows(path: Path, expected_count: int, fetched_at: str, count
         for row in reader:
             counts["sourceRows"] += 1
             code = barcode(row.get("code"))
-            name = (row.get("product_name") or "").strip()
+            name = clean_text(row.get("product_name"))
             if code is None:
                 counts["rejectedBarcode"] += 1
                 continue
             if not name:
                 counts["rejectedName"] += 1
                 continue
-            nutrients = nutrition_from_off(row)
+            nutrients = nutrition_from_off(row, counts)
             if not any(value is not None for value in nutrients.values()):
                 counts["rejectedNoNutrition"] += 1
                 continue
@@ -186,7 +235,7 @@ def open_food_facts_rows(path: Path, expected_count: int, fetched_at: str, count
                 "id": "gtin:" + code,
                 "barcode": code,
                 "name": name,
-                "brand": (row.get("brands") or "").strip(),
+                "brand": clean_text(row.get("brands")),
                 "category": None,
                 "unit": unit_from_quantity(row.get("quantity") or ""),
                 **nutrients,
@@ -284,11 +333,14 @@ def swiss_food_composition_rows(path: Path, fetched_at: str, counts: Counter | N
         for row in rows[header_position + 1:]:
             counts["sourceRows"] += 1
             source_id = row[indexes["id"]].strip() if len(row) > indexes["id"] else ""
-            name = row[indexes["name"]].strip() if len(row) > indexes["name"] else ""
+            name = clean_text(row[indexes["name"]]) if len(row) > indexes["name"] else ""
             if not source_id or not name:
                 counts["rejectedNameOrID"] += 1
                 continue
-            nutrients = {key: number(row[index]) if len(row) > index else None for key, index in indexes.items() if key in nutrient_headers}
+            nutrients = sanitize_nutrition(
+                {key: number(row[index]) if len(row) > index else None for key, index in indexes.items() if key in nutrient_headers},
+                counts,
+            )
             if not any(value is not None for value in nutrients.values()):
                 counts["rejectedNoNutrition"] += 1
                 continue
@@ -300,7 +352,7 @@ def swiss_food_composition_rows(path: Path, fetched_at: str, counts: Counter | N
                 "barcode": None,
                 "name": name,
                 "brand": "" if sheet_name == "Generic Foods" else "Swiss Food Composition Database",
-                "category": row[indexes["category"]].strip() if len(row) > indexes["category"] else None,
+                "category": clean_text(row[indexes["category"]]) if len(row) > indexes["category"] else None,
                 "unit": "g",
                 **nutrients,
                 "source_id": "swiss_food_composition",
@@ -414,7 +466,7 @@ def build_database(output: Path, off_csv: Path, off_count: Path, blv_xlsx: Path,
         raise FileExistsError(f"Refusing to overwrite {output}; pass --replace-preview to rebuild this preview")
     output.parent.mkdir(parents=True, exist_ok=True)
     count_payload = json.loads(off_count.read_text())
-    expected = int(count_payload["rows"][0]["total"])
+    expected = verified_off_count(count_payload)
     generated_at = utc_now()
     temporary = output.with_suffix(output.suffix + ".tmp")
     if temporary.exists():
@@ -439,7 +491,7 @@ def build_database(output: Path, off_csv: Path, off_count: Path, blv_xlsx: Path,
         report = {
             "schemaVersion": 1,
             "generatedAt": generated_at,
-            "status": "parallel preview; not connected to the app or Supabase",
+            "status": "bundled with the native app and mirrored to Supabase",
             "products": connection.execute("select count(*) from products").fetchone()[0],
             "barcodedProducts": connection.execute("select count(*) from products where barcode is not null").fetchone()[0],
             "genericProducts": connection.execute("select count(*) from products where is_generic = 1").fetchone()[0],

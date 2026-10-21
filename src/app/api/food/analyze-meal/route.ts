@@ -6,9 +6,10 @@ import {
   mealAnalysisSchema,
 } from "@/lib/ai/meal-analysis";
 import { todayDateString } from "@/lib/dates";
+import { checkDistributedRateLimit } from "@/lib/security/distributed-rate-limit";
 import {
-  checkRateLimit,
   rateLimitHeaders,
+  type RateLimitResult,
 } from "@/lib/security/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 
@@ -55,7 +56,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const limit = checkRateLimit(`meal-analyze:${user.id}`, 20, 10 * 60);
+  let limit: RateLimitResult;
+  try {
+    limit = await checkDistributedRateLimit(
+      `meal-analyze:${user.id}`,
+      20,
+      10 * 60,
+    );
+  } catch (error) {
+    console.error("AI rate limit unavailable", error);
+    return NextResponse.json(
+      { error: "The AI is temporarily unavailable." },
+      { status: 503 },
+    );
+  }
   if (!limit.allowed) {
     return NextResponse.json(
       { error: "Too many meal analyses. Try again in a few minutes." },

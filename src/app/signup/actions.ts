@@ -1,6 +1,8 @@
 "use server";
 
+import { randomBytes } from "node:crypto";
 import { redirect } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import type { ActionState } from "@/lib/forms";
 import { formString } from "@/lib/forms";
@@ -56,10 +58,29 @@ export async function signup(
     };
   }
 
+  const signupAuthorizationToken = randomBytes(32).toString("base64url");
+  try {
+    const admin = createAdminClient();
+    const { error } = await admin.rpc("authorize_signup_email", {
+      p_email: email,
+      p_token: signupAuthorizationToken,
+    });
+    if (error) throw error;
+  } catch (error) {
+    console.error("Could not authorize signup", error);
+    return {
+      status: "error",
+      message: "Signups are temporarily unavailable.",
+    };
+  }
+
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
+    options: {
+      data: { signup_authorization_token: signupAuthorizationToken },
+    },
   });
 
   if (error) {

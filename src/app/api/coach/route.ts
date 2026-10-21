@@ -6,7 +6,11 @@ import {
 } from "ai";
 import { buildCoachTools, modelSupportsTools } from "@/lib/ai/coach-tools";
 import { getCoachModel, isCoachAvailable } from "@/lib/ai/provider";
-import { checkAiCoachRateLimit, rateLimitHeaders } from "@/lib/ai/rate-limit";
+import {
+  checkAiCoachRateLimit,
+  rateLimitHeaders,
+  type AiRateLimitResult,
+} from "@/lib/ai/rate-limit";
 import { todayDateString } from "@/lib/dates";
 import { createClient } from "@/lib/supabase/server";
 
@@ -54,7 +58,16 @@ export async function POST(request: Request) {
     return Response.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const rateLimit = checkAiCoachRateLimit(`coach:${user.id}`);
+  let rateLimit: AiRateLimitResult;
+  try {
+    rateLimit = await checkAiCoachRateLimit(`coach:${user.id}`);
+  } catch (error) {
+    console.error("AI rate limit unavailable", error);
+    return Response.json(
+      { error: "The coach is temporarily unavailable." },
+      { status: 503 },
+    );
+  }
   if (!rateLimit.allowed) {
     return Response.json(
       {

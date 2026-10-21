@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { validateNutrition, type NutritionInput } from "./validate";
 
 export type CanonicalProduct = {
@@ -36,7 +37,7 @@ export function normalizeBarcode(raw: string) {
  *    confidence score. The app never renders raw source data.
  */
 export async function lookupBarcode(
-  supabase: SupabaseClient,
+  reader: SupabaseClient,
   barcodeInput: string,
 ): Promise<BarcodeLookupResult> {
   const barcode = normalizeBarcode(barcodeInput);
@@ -44,7 +45,7 @@ export async function lookupBarcode(
     return { status: "invalid_barcode" };
   }
 
-  const existing = await findOwnProduct(supabase, barcode);
+  const existing = await findOwnProduct(reader, barcode);
   if (existing) {
     return { status: "found", product: existing };
   }
@@ -57,7 +58,11 @@ export async function lookupBarcode(
     return { status: "not_found" };
   }
 
-  const product = await storeCanonicalProduct(supabase, barcode, off.payload);
+  const product = await storeCanonicalProduct(
+    createAdminClient(),
+    barcode,
+    off.payload,
+  );
   if (!product) {
     return { status: "error", message: "Could not store the product." };
   }
@@ -188,22 +193,22 @@ async function storeCanonicalProduct(
 
   const { data: product, error: productError } = await supabase
     .from("products")
-    .upsert(
-      {
-        barcode,
-        name,
-        brand: offString(payload, "brands"),
-        category: offString(payload, "categories")?.split(",")[0]?.trim() ?? null,
-        image_url: offString(payload, "image_front_url") ?? offString(payload, "image_url"),
-        country: "CH",
-        status: validation.plausible ? "unverified" : "pending",
-        primary_source: "open_food_facts",
-      },
-      { onConflict: "barcode" },
-    )
+    .insert({
+      barcode,
+      name,
+      brand: offString(payload, "brands"),
+      category: offString(payload, "categories")?.split(",")[0]?.trim() ?? null,
+      image_url: offString(payload, "image_front_url") ?? offString(payload, "image_url"),
+      country: "CH",
+      status: validation.plausible ? "unverified" : "pending",
+      primary_source: "open_food_facts",
+    })
     .select("id, status")
     .single();
 
+  if (productError?.code === "23505") {
+    return findOwnProduct(supabase, barcode);
+  }
   if (productError || !product) {
     return null;
   }

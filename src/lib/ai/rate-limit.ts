@@ -1,10 +1,10 @@
 import "server-only";
 
 import {
-  checkRateLimit,
   rateLimitHeaders,
   type RateLimitResult,
 } from "@/lib/security/rate-limit";
+import { checkDistributedRateLimit } from "@/lib/security/distributed-rate-limit";
 
 export type AiRateLimitResult = RateLimitResult;
 
@@ -19,14 +19,14 @@ function readIntegerEnv(name: string, fallback: number) {
   return Number.isFinite(value) && value >= 0 ? value : fallback;
 }
 
-export function checkAiCoachRateLimit(key: string, now = Date.now()): AiRateLimitResult {
+export async function checkAiCoachRateLimit(key: string): Promise<AiRateLimitResult> {
   const limit = readIntegerEnv("AI_COACH_RATE_LIMIT_REQUESTS", defaultLimit);
   const windowSeconds = Math.max(
     1,
     readIntegerEnv("AI_COACH_RATE_LIMIT_WINDOW_SECONDS", defaultWindowSeconds),
   );
 
-  return checkRateLimit(key, limit, windowSeconds, now);
+  return checkDistributedRateLimit(key, limit, windowSeconds);
 }
 
 export { rateLimitHeaders };

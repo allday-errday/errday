@@ -27,6 +27,15 @@ TABLES = (
     ),
     ("product_retailers", "food_catalog_retailers", "product_id,retailer"),
 )
+NUTRIENT_LIMITS = {
+    "calories": 900,
+    "protein": 100,
+    "carbs": 100,
+    "fat": 100,
+    "fiber": 100,
+    "sugar": 100,
+    "sodium": 50_000,
+}
 
 
 def parse_args() -> argparse.Namespace:
@@ -131,6 +140,14 @@ def validate(connection: sqlite3.Connection, database: Path, report: dict[str, A
         raise RuntimeError("report product count does not match SQLite")
     if report.get("databaseSHA256") != database_hash:
         raise RuntimeError("report SHA-256 does not match SQLite")
+    for nutrient, maximum in NUTRIENT_LIMITS.items():
+        outliers = connection.execute(
+            f"select count(*) from products where {nutrient} > ?", (maximum,)
+        ).fetchone()[0]
+        if outliers:
+            raise RuntimeError(
+                f"catalog contains {outliers} out-of-range {nutrient} values"
+            )
     return counts
 
 

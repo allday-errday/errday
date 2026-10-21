@@ -2,7 +2,11 @@ import { generateText } from "ai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCoachModel, isCoachAvailable } from "@/lib/ai/provider";
-import { checkRateLimit } from "@/lib/security/rate-limit";
+import { checkDistributedRateLimit } from "@/lib/security/distributed-rate-limit";
+import {
+  rateLimitHeaders,
+  type RateLimitResult,
+} from "@/lib/security/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -34,11 +38,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
-  const limit = checkRateLimit(`ai-food:${user.id}`, 20, 10 * 60);
+  let limit: RateLimitResult;
+  try {
+    limit = await checkDistributedRateLimit(`ai-food:${user.id}`, 20, 10 * 60);
+  } catch (error) {
+    console.error("AI rate limit unavailable", error);
+    return NextResponse.json(
+      { error: "The AI is temporarily unavailable." },
+      { status: 503 },
+    );
+  }
   if (!limit.allowed) {
     return NextResponse.json(
       { error: "Too many AI estimates. Try again in a few minutes." },
-      { status: 429 },
+      { headers: rateLimitHeaders(limit), status: 429 },
     );
   }
 

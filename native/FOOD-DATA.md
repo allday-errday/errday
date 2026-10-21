@@ -2,13 +2,19 @@
 
 ## Paralleler kostenloser Katalog-Prototyp
 
-Der neue Prototyp liegt getrennt unter `Artifacts/FoodCatalogV2/` und ist **nicht mit der App oder Supabase verbunden**. Der bestehende Katalog unter `App/Resources/food-catalog.json` bleibt unverändert. Der Prototyp kombiniert den vollständigen, mit einer separaten Zählabfrage geprüften Schweiz-Export von Open Food Facts mit der offiziellen Swiss Food Composition Database. Er speichert Herkunft, Lizenz, Abrufzeitpunkt, Quelldatum, Händlernachweis und Datenvertrauen pro Produkt.
+Der erweiterte Katalog liegt unter `Artifacts/FoodCatalogV2/`, wird als `App/Resources/food-catalog-v2.sqlite` mit der nativen App gebündelt und in die geschützten `food_catalog_*`-Tabellen von Supabase gespiegelt. Der bestehende JSON-Katalog bleibt als App-Fallback erhalten. Der erweiterte Katalog kombiniert den vollständigen, mit einer separaten Zählabfrage geprüften Schweiz-Export von Open Food Facts mit der offiziellen Swiss Food Composition Database. Er speichert Herkunft, Lizenz, Abrufzeitpunkt, Quelldatum, Händlernachweis und Datenvertrauen pro Produkt.
 
 Stand 19. Oktober 2026 enthält die SQLite-Vorschau 86’704 suchbare Lebensmittel: 85’458 Produkte von Open Food Facts und 1’246 Einträge aus der Schweizer Nährwertdatenbank. 85’458 Einträge besitzen einen Barcode, davon sind 61’513 noch nicht über eine Hauptnummer oder einen Alias im aktuellen App-Katalog auffindbar. Die Datenbank hat die Integritätsprüfung bestanden; der vollständige Bericht mit Prüfsummen liegt in `Artifacts/FoodCatalogV2/report.json`.
+
+Beim Import werden unmögliche Werte pro 100 g beziehungsweise 100 ml verworfen (über 900 kcal, über 100 g je Makronährstoff oder über 50 g Natrium). Ein ansonsten brauchbares Produkt bleibt erhalten; nur das fehlerhafte Feld wird geleert. Wenn ein fehlerhafter kcal-Wert vorliegt, aber eine plausible Energieangabe in kJ vorhanden ist, werden die kcal daraus wiederhergestellt. Der Importbericht zählt sämtliche Korrekturen je Feld.
 
 Neu erstellen (bestehende Vorschau bewusst ersetzen):
 
 `python3 scripts/build_free_swiss_food_catalog.py --cache /tmp/errday-food-v2 --reuse-downloads --replace-preview --output Artifacts/FoodCatalogV2/catalog-v2.sqlite --report Artifacts/FoodCatalogV2/report.json`
+
+Der Builder verweigert einen Neuaufbau, wenn die unabhängig abgefragte Open-Food-Facts-Zeilenanzahl unerwartet unter 10’000 fällt. Damit kann eine leere oder vorübergehend fehlerhafte Exportantwort den verifizierten Katalog nicht ersetzen. Eine bestehende verifizierte Momentaufnahme kann ohne erneuten Download atomar nach den aktuellen Qualitätsregeln bereinigt werden:
+
+`python3 scripts/refine_food_catalog.py --database Artifacts/FoodCatalogV2/catalog-v2.sqlite --report Artifacts/FoodCatalogV2/report.json`
 
 Ohne `--replace-preview` verweigert das Skript das Überschreiben. Als zusätzliche Sicherung akzeptiert es den Pfad des aktuellen App-Katalogs nicht. Es ändert weder App-Ressourcen noch eine entfernte Datenbank.
 

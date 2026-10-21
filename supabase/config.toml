@@ -1,0 +1,5 @@
+project_id = "errday"
+
+[auth.hook.before_user_created]
+enabled = true
+uri = "pg-functions://postgres/public/hook_require_signup_authorization"
