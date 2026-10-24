@@ -36,7 +36,7 @@ struct FoodOverviewCarousel: View {
             ?? health.value("weight", on: date)
     }
     private var activityCalories: Double {
-        health.foodActivityCalories(on: date, weightKG: activityWeight)
+        health.foodGoalAddition(on: date, weightKG: activityWeight, data: records.data)
     }
     private var calorieGoal: Double? {
         records.data.calorieGoal.map { $0 + activityCalories }
@@ -425,8 +425,9 @@ struct FoodOverviewCarousel: View {
     }
 
     private var weightProgressCard: some View {
-        Button { onLogWeight?() } label: {
-            HStack(spacing: 16) {
+        HStack(spacing: 16) {
+            Button { onLogWeight?() } label: {
+            HStack(spacing: 12) {
                 Image(systemName: "scalemass")
                     .font(.system(size: 22, weight: .semibold)).foregroundStyle(ErrdayTheme.accent)
                     .frame(width: 42, height: 42).background(ErrdayTheme.raised, in: Circle())
@@ -443,17 +444,21 @@ struct FoodOverviewCarousel: View {
                         Text("Apple Health").font(.system(size: 9)).foregroundStyle(ErrdayTheme.quiet)
                     }
                 }
-                Spacer(minLength: 8)
+            }
+            .contentShape(Rectangle())
+            }.buttonStyle(.plain).disabled(onLogWeight == nil)
+            Spacer(minLength: 8)
+            NavigationLink { NutritionGoalsView() } label: {
                 VStack(alignment: .trailing, spacing: 5) {
                     Text("Goal \(weightGoal.decimal) kg").font(.system(size: 12, weight: .semibold))
                     Text(weightGoalSummary).font(.system(size: 11)).foregroundStyle(ErrdayTheme.secondary)
                         .multilineTextAlignment(.trailing).lineLimit(2)
+                    Label("Edit goal", systemImage: "pencil").font(.system(size: 11)).foregroundStyle(ErrdayTheme.accent)
                 }
-            }
-            .padding(14).frame(maxWidth: .infinity, minHeight: 106)
-            .errdaySurface()
+                .frame(minHeight: 44).contentShape(Rectangle())
+            }.buttonStyle(.plain).accessibilityLabel("Edit weight and nutrition goals")
         }
-        .buttonStyle(.plain).disabled(onLogWeight == nil)
+        .padding(14).frame(maxWidth: .infinity, minHeight: 106).errdaySurface()
     }
 
     private var weightGoalSummary: String {

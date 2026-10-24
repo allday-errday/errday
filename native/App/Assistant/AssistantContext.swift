@@ -54,7 +54,7 @@ enum AssistantContext {
             let weight = records.weightEntries(on: .now).first?.kilograms
                 ?? records.data.profile?.weight
                 ?? health.value("weight", on: .now)
-            let activityCalories = health.foodActivityCalories(on: .now, weightKG: weight)
+            let activityCalories = health.foodGoalAddition(on: .now, weightKG: weight, data: records.data)
             result["logged_entries"] = .number(Double(meals.count))
             result["days_with_entries"] = .number(Double(Set(meals.map { calendar.startOfDay(for: $0.date) }).count))
             result["base_calorie_goal"] = optional(records.data.calorieGoal)

@@ -72,12 +72,16 @@ struct AppShell: View {
                 onboarding = records.data.profile?.onboardingComplete != true
                 await healthSync()
                 await RoutineReminderScheduler.refreshIfAuthorized(for: records.data)
+                await RoutineReminderScheduler.refreshPlannedGymSessions(for: records.data)
             }
             .onChange(of: scenePhase) { _, phase in
                 guard phase == .active else { return }
                 streakDate = .now
                 records.load()
-                Task { await RoutineReminderScheduler.refreshIfAuthorized(for: records.data) }
+                Task {
+                    await RoutineReminderScheduler.refreshIfAuthorized(for: records.data)
+                    await RoutineReminderScheduler.refreshPlannedGymSessions(for: records.data)
+                }
             }
             .onChange(of: records.data) { _, _ in Task { await healthSync() } }
             .onChange(of: healthRequested) { _, requested in if requested { Task { await healthSync() } } }
@@ -112,7 +116,17 @@ struct AppShell: View {
                                 ToolbarItem(placement: .topBarLeading) { BrandHeader() }
                             }
                             ToolbarItem(placement: .topBarTrailing) {
-                                AppHeaderStatus(streak: records.foodStreak(on: streakDate)) { assistantPresented = true }
+                                AppHeaderStatus(streak: dailyGoalStreak)
+                            }
+                            ToolbarItem(placement: .topBarTrailing) {
+                                Button { assistantPresented = true } label: {
+                                    Image(systemName: "sparkles")
+                                        .font(.system(size: 17, weight: .semibold))
+                                        .foregroundStyle(ErrdayTheme.accent)
+                                        .frame(width: 44, height: 44)
+                                }
+                                .accessibilityLabel("Assistant")
+                                .accessibilityIdentifier("header.assistant")
                             }
                         }
                 }
@@ -166,14 +180,28 @@ struct AppShell: View {
     }
 
     private var healthRequested: Bool { health.hasRequested }
+    private var dailyGoalStreak: Int {
+        records.foodStreak(on: streakDate) { date in
+            let weight = records.weightEntries(on: date).first?.kilograms
+                ?? records.data.profile?.weight
+                ?? health.value("weight", on: date)
+            return health.foodGoalAddition(on: date, weightKG: weight, data: records.data)
+        }
+    }
     private func healthSync() async {
         await health.sync(records.data)
         updateWidgetActivity()
     }
     private func updateWidgetActivity() {
-        let weight = records.weightEntries(on: .now).first?.kilograms
-            ?? records.data.profile?.weight
-            ?? health.value("weight", on: .now)
-        records.updateWidgetActivity(health.foodActivityCalories(on: .now, weightKG: weight))
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today) ?? today
+        let entries = [yesterday, today].map { date in
+            let weight = records.weightEntries(on: date).first?.kilograms
+                ?? records.data.profile?.weight
+                ?? health.value("weight", on: date)
+            return (date: date, calories: health.foodActivityCalories(on: date, weightKG: weight))
+        }
+        records.updateWidgetActivity(entries)
     }
 }

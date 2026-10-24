@@ -64,6 +64,7 @@ struct HomeView: View {
                 WeeklyRecapLink(weekStart: days(inWeek: weekOffset)[0])
                 FoodOverviewCarousel(date: selectedDate, onLogWater: { quickAction = .water }, onLogWeight: { quickAction = .weight })
             }
+            MealPlanSection(date: selectedDate)
             VStack(spacing: 12) {
                 SectionHeading(title: "Recently added")
                 if let analysis {
@@ -309,7 +310,7 @@ struct HomeView: View {
                 ?? records.data.profile?.weight
                 ?? health.value("weight", on: date)
             let adjustedCalories = records.data.calorieGoal.map {
-                $0 + health.foodActivityCalories(on: date, weightKG: weight)
+                $0 + health.foodGoalAddition(on: date, weightKG: weight, data: records.data)
             }
             include(meals.reduce(0) { $0 + $1.calories }, goal: adjustedCalories)
             include(meals.reduce(0) { $0 + $1.protein }, goal: records.data.proteinGoal)
@@ -370,7 +371,7 @@ struct NutritionSummary: View {
             ?? health.value("weight", on: date)
     }
     private var activityCalories: Double {
-        health.foodActivityCalories(on: date, weightKG: activityWeight)
+        health.foodGoalAddition(on: date, weightKG: activityWeight, data: records.data)
     }
     private var calorieGoal: Double? {
         records.data.calorieGoal.map { $0 + activityCalories }

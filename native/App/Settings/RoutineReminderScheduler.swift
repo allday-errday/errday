@@ -51,6 +51,22 @@ enum RoutineReminderScheduler {
         await refresh(for: data, now: now)
     }
 
+    static func refreshPlannedGymSessions(for data: PersonalData, now: Date = .now) async {
+        let status = await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
+        guard status == .authorized || status == .provisional || status == .ephemeral else { return }
+        let center = UNUserNotificationCenter.current()
+        let existing = await center.pendingNotificationRequests().map(\.identifier).filter { $0.contains(".preworkout.") }
+        center.removePendingNotificationRequests(withIdentifiers: existing)
+        for session in data.plannedGymSessions ?? [] where session.remindersEnabled {
+            let reminderDate = session.startAt.addingTimeInterval(-Double(session.preWorkoutMinutes * 60))
+            guard reminderDate > now else { continue }
+            await add(center: center, id: identifier(for: "preworkout", date: reminderDate),
+                      title: "Pre-workout meal",
+                      body: "You planned (session.workoutName) at (session.startAt.formatted(date: .omitted, time: .shortened)). Have a light carb- and protein-focused meal now.",
+                      date: reminderDate)
+        }
+    }
+
     static func refresh(for data: PersonalData, now: Date = .now) async {
         guard isEnabled else { return }
         let center = UNUserNotificationCenter.current()
@@ -64,6 +80,16 @@ enum RoutineReminderScheduler {
             let completed = data.checklist(on: day)?.completed ?? []
             let hydration = data.hydration(on: day).reduce(0) { $0 + $1.millilitres }
             let hydrationGoal = data.hydrationGoalMillilitres ?? 3_500
+
+            for session in (data.plannedGymSessions ?? []).filter({ Calendar.current.isDate($0.date, inSameDayAs: day) && $0.remindersEnabled }) {
+                let reminderDate = session.startAt.addingTimeInterval(-Double(session.preWorkoutMinutes * 60))
+                guard reminderDate > now else { continue }
+                await add(center: center,
+                          id: identifier(for: "preworkout", date: reminderDate),
+                          title: "Pre-workout meal",
+                          body: "You planned (session.workoutName) at (session.startAt.formatted(date: .omitted, time: .shortened)). Have a light carb- and protein-focused meal now.",
+                          date: reminderDate)
+            }
 
             if !isToday || hydration < hydrationGoal {
                 for hour in [8, 12, 18, 23] {

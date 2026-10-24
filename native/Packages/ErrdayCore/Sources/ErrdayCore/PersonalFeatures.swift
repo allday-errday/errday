@@ -95,11 +95,11 @@ public struct NutritionEstimate: Equatable, Sendable {
         let recommendedMin = weightKG * 0.0025
         let recommendedMax = weightKG * 0.005
         let requestedGain = min(max(weeklyGainKG ?? recommendedMin, 0.05), 1.0)
-        // Off-season literature recommends roughly 10–20% above maintenance and
-        // 0.25–0.5% bodyweight gain per week. Keep the starting surplus inside a
-        // conservative 5–20% even when the requested rate is more aggressive.
+        // Start conservatively at 5–10% and review observed weight trends.
+        // Helms et al. (2023), doi:10.1186/s40798-023-00651-y, found faster
+        // weight gain was more consistently associated with increased skinfolds.
         let requestedRate = requestedGain / weightKG
-        let surplusFraction = min(max((requestedRate / 0.005) * 0.20, 0.05), 0.20)
+        let surplusFraction = min(max((requestedRate / 0.005) * 0.10, 0.05), 0.10)
         let target = maintenance * (1 + surplusFraction)
         let surplus = target - maintenance
         // Use the upper end of the evidence-based range as a simple muscle-gain

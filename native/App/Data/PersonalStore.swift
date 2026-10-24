@@ -3,6 +3,14 @@ import Foundation
 import Observation
 import WidgetKit
 
+enum WidgetTrackingDay {
+    static func key(_ metric: String, for date: Date, calendar: Calendar = .current) -> String {
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        let day = "\(components.year ?? 0)-\(components.month ?? 0)-\(components.day ?? 0)"
+        return "widget.day.\(day).\(metric)"
+    }
+}
+
 @MainActor @Observable
 final class PersonalStore {
     private(set) var data = PersonalData()
@@ -48,6 +56,7 @@ final class PersonalStore {
             }
             if loaded.hydrationGoalMillilitres == nil { loaded.hydrationGoalMillilitres = 3_500 }
             if loaded.weightGoalKilograms == nil { loaded.weightGoalKilograms = 90 }
+            if loaded.calorieReviewStartedAt == nil { loaded.calorieReviewStartedAt = .now }
             enrichMissingFoodNutrition(in: &loaded)
             data = loaded; try repository.save(loaded); isLoaded = true; errorMessage = nil; updateWidgetSummary()
             WorkoutLiveActivityCoordinator.shared.schedule(for: loaded)
@@ -61,6 +70,12 @@ final class PersonalStore {
     func update(_ change: (inout PersonalData) -> Void) -> Bool {
         guard isLoaded else { return false }
         var next = data; change(&next)
+        if next.calorieGoal != data.calorieGoal || next.proteinGoal != data.proteinGoal
+            || next.carbsGoal != data.carbsGoal || next.fatGoal != data.fatGoal
+            || next.profile?.weeklyGainGoalKG != data.profile?.weeklyGainGoalKG
+            || next.profile?.goal != data.profile?.goal || next.weightGoalKilograms != data.weightGoalKilograms {
+            next.calorieReviewStartedAt = .now
+        }
         do {
             try repository.save(next)
             let restJustCompleted = data.activeWorkout != nil && next.activeWorkout != nil
@@ -98,11 +113,13 @@ final class PersonalStore {
     }
 
     @discardableResult
-    func saveRestedCheckIn(feeling: RestedFeeling, note: String?, on date: Date) -> Bool {
+    func saveRestedCheckIn(feeling: RestedFeeling, note: String?, on date: Date,
+                          energy: Int? = nil, soreness: Int? = nil, stress: Int? = nil, sleepQuality: Int? = nil) -> Bool {
         guard Calendar.current.startOfDay(for: date) <= Calendar.current.startOfDay(for: .now) else { return false }
         let trimmed = note?.trimmingCharacters(in: .whitespacesAndNewlines)
         let entry = RestedCheckIn(date: Calendar.current.startOfDay(for: date), feeling: feeling,
-                                  note: trimmed?.isEmpty == false ? trimmed : nil)
+                                  note: trimmed?.isEmpty == false ? trimmed : nil,
+                                  energy: energy, soreness: soreness, stress: stress, sleepQuality: sleepQuality)
         return update { data in
             var entries = data.restedCheckIns ?? []
             entries.removeAll { Calendar.current.isDate($0.date, inSameDayAs: date) }
@@ -110,7 +127,12 @@ final class PersonalStore {
             data.restedCheckIns = entries
         }
     }
-    func foodStreak(on date: Date = .now) -> Int { data.foodLoggingStreak(on: date) }
+    func foodStreak(
+        on date: Date = .now,
+        calorieAdjustment: (Date) -> Double = { _ in 0 }
+    ) -> Int {
+        data.dailyGoalStreak(on: date, calorieAdjustment: calorieAdjustment)
+    }
     var trackingDays: Int {
         guard let first = data.meals.map(\.date).min() else { return 0 }
         return max(1, (Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: first), to: Calendar.current.startOfDay(for: .now)).day ?? 0) + 1)
@@ -149,8 +171,8 @@ final class PersonalStore {
     }
 
     @discardableResult
-    func logWeight(_ kilograms: Double, at date: Date = .now) -> Bool {
-        let entry = WeightEntry(date: date, kilograms: kilograms)
+    func logWeight(_ kilograms: Double, at date: Date = .now, isMorning: Bool? = nil) -> Bool {
+        let entry = WeightEntry(date: date, kilograms: kilograms, isMorning: isMorning)
         guard entry.isValid, date <= .now.addingTimeInterval(300) else { return false }
         return update { data in
             var entries = data.weightEntries ?? []
@@ -170,6 +192,13 @@ final class PersonalStore {
                 data.profile?.weight = latest.kilograms
             }
         }
+    }
+
+    @discardableResult
+    func applyCalorieReview() -> Bool {
+        var applied = false
+        let saved = update { applied = $0.applyCalorieReview() }
+        return saved && applied
     }
 
     func completedChecklistItems(on date: Date) -> Set<DailyChecklistItem> {
@@ -208,25 +237,37 @@ final class PersonalStore {
     }
 
     private func updateWidgetSummary() {
-        let meals = data.meals(on: .now)
         let defaults = UserDefaults(suiteName: "group.com.errday.native")
-        func completeTotal(_ keyPath: KeyPath<MealEntry, Double?>) -> Double? {
-            if meals.isEmpty { return 0 }
-            guard meals.allSatisfy({ $0[keyPath: keyPath] != nil }) else { return nil }
-            return meals.compactMap { $0[keyPath: keyPath] }.reduce(0, +)
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+        let yesterday = calendar.date(byAdding: .day, value: -1, to: today) ?? today
+
+        func writeSummary(for date: Date) {
+            let meals = data.meals(on: date)
+            func completeTotal(_ keyPath: KeyPath<MealEntry, Double?>) -> Double? {
+                if meals.isEmpty { return 0 }
+                guard meals.allSatisfy({ $0[keyPath: keyPath] != nil }) else { return nil }
+                return meals.compactMap { $0[keyPath: keyPath] }.reduce(0, +)
+            }
+            func setOptional(_ value: Double?, metric: String) {
+                let key = WidgetTrackingDay.key(metric, for: date, calendar: calendar)
+                if let value { defaults?.set(value, forKey: key) }
+                else { defaults?.removeObject(forKey: key) }
+            }
+
+            defaults?.set(meals.reduce(0) { $0 + $1.calories }, forKey: WidgetTrackingDay.key("calories", for: date, calendar: calendar))
+            defaults?.set(meals.reduce(0) { $0 + $1.protein }, forKey: WidgetTrackingDay.key("protein", for: date, calendar: calendar))
+            defaults?.set(meals.reduce(0) { $0 + $1.carbs }, forKey: WidgetTrackingDay.key("carbs", for: date, calendar: calendar))
+            defaults?.set(meals.reduce(0) { $0 + $1.fat }, forKey: WidgetTrackingDay.key("fat", for: date, calendar: calendar))
+            setOptional(completeTotal(\.fiber), metric: "fiber")
+            setOptional(completeTotal(\.sugar), metric: "sugar")
+            setOptional(completeTotal(\.sodium), metric: "sodium")
         }
-        func setOptional(_ value: Double?, forKey key: String) {
-            if let value { defaults?.set(value, forKey: key) }
-            else { defaults?.removeObject(forKey: key) }
-        }
-        defaults?.set(meals.reduce(0) { $0 + $1.calories }, forKey: "widget.calories")
-        defaults?.set(meals.reduce(0) { $0 + $1.protein }, forKey: "widget.protein")
-        defaults?.set(meals.reduce(0) { $0 + $1.carbs }, forKey: "widget.carbs")
-        defaults?.set(meals.reduce(0) { $0 + $1.fat }, forKey: "widget.fat")
-        setOptional(completeTotal(\.fiber), forKey: "widget.fiber")
-        setOptional(completeTotal(\.sugar), forKey: "widget.sugar")
-        setOptional(completeTotal(\.sodium), forKey: "widget.sodium")
+
+        writeSummary(for: yesterday)
+        writeSummary(for: today)
         defaults?.set(data.calorieGoal ?? 0, forKey: "widget.calorieGoal")
+        defaults?.set(data.addsActivityCalories == true, forKey: "widget.addsActivityCalories")
         defaults?.set(data.proteinGoal ?? 0, forKey: "widget.proteinGoal")
         defaults?.set(data.carbsGoal ?? 0, forKey: "widget.carbsGoal")
         defaults?.set(data.fatGoal ?? 0, forKey: "widget.fatGoal")
@@ -237,9 +278,14 @@ final class PersonalStore {
         WidgetCenter.shared.reloadTimelines(ofKind: "ErrdayLockScreenNutritionWidget")
     }
 
-    func updateWidgetActivity(_ calories: Double) {
+    func updateWidgetActivity(_ entries: [(date: Date, calories: Double)]) {
         let defaults = UserDefaults(suiteName: "group.com.errday.native")
-        defaults?.set(max(0, calories), forKey: "widget.activityCalories")
+        for entry in entries {
+            defaults?.set(
+                max(0, entry.calories),
+                forKey: WidgetTrackingDay.key("activityCalories", for: entry.date)
+            )
+        }
         WidgetCenter.shared.reloadTimelines(ofKind: "ErrdayNutritionWidget")
         WidgetCenter.shared.reloadTimelines(ofKind: "ErrdayLockScreenNutritionWidget")
     }

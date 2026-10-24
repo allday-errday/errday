@@ -67,14 +67,33 @@ public struct WeightEntry: Codable, Identifiable, Equatable, Sendable {
     public var id: UUID
     public var date: Date
     public var kilograms: Double
+    /// User-confirmed morning measurement, including measurements entered later.
+    /// Older entries fall back to their recorded local time.
+    public var isMorning: Bool?
 
-    public init(id: UUID = UUID(), date: Date = .now, kilograms: Double) {
+    public init(id: UUID = UUID(), date: Date = .now, kilograms: Double, isMorning: Bool? = nil) {
         self.id = id
         self.date = date
         self.kilograms = kilograms
+        self.isMorning = isMorning
     }
 
     public var isValid: Bool { kilograms.isFinite && (20...400).contains(kilograms) }
+}
+
+public struct PlannedGymSession: Codable, Identifiable, Equatable, Sendable {
+    public var id: UUID
+    public var date: Date
+    public var startAt: Date
+    public var workoutName: String
+    public var preWorkoutMinutes: Int
+    public var remindersEnabled: Bool
+
+    public init(id: UUID = UUID(), date: Date, startAt: Date, workoutName: String = "Gym session",
+                preWorkoutMinutes: Int = 60, remindersEnabled: Bool = true) {
+        self.id = id; self.date = date; self.startAt = startAt; self.workoutName = workoutName
+        self.preWorkoutMinutes = preWorkoutMinutes; self.remindersEnabled = remindersEnabled
+    }
 }
 
 public enum DailyChecklistItem: String, Codable, CaseIterable, Identifiable, Sendable {
@@ -223,6 +242,9 @@ public struct PersonalData: Codable, Equatable, Sendable {
     public var carbsGoal: Double?
     public var fatGoal: Double?
     public var calorieGoal: Double?
+    /// Calculated plans already include usual movement. Only explicitly enabled
+    /// manual base targets receive an additional activity allowance.
+    public var addsActivityCalories: Bool?
     public var proteinGoal: Double?
     public var fiberGoal: Double?
     public var sugarGoal: Double?
@@ -235,6 +257,10 @@ public struct PersonalData: Codable, Equatable, Sendable {
     public var hydration: [HydrationEntry]?
     /// Manual weigh-ins, kept optional so existing local data decodes unchanged.
     public var weightEntries: [WeightEntry]?
+    public var calorieReviewStartedAt: Date?
+    public var calorieAdjustments: [CalorieAdjustment]?
+    /// Planned gym sessions stay optional so older local profiles decode unchanged.
+    public var plannedGymSessions: [PlannedGymSession]?
     /// Subjective rest check-ins stay in the local profile; optional for older saves.
     public var restedCheckIns: [RestedCheckIn]?
     /// Per-day routine checks. Optional so existing profiles decode unchanged.
@@ -242,6 +268,11 @@ public struct PersonalData: Codable, Equatable, Sendable {
     /// Prevents the checklist from marking days before the feature was enabled as incomplete.
     public var dailyChecklistStartedAt: Date?
     public init() {}
+
+    public func calorieActivityAddition(_ estimatedCalories: Double) -> Double {
+        guard addsActivityCalories == true, estimatedCalories.isFinite else { return 0 }
+        return min(max(0, estimatedCalories), 2_000)
+    }
 
     public func meals(on date: Date, calendar: Calendar = .current) -> [MealEntry] {
         meals.filter { calendar.isDate($0.date, inSameDayAs: date) }

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ActivityBreakdownSheet: View {
+    @Environment(PersonalStore.self) private var records
     @Environment(HealthStore.self) private var health
     @Environment(\.dismiss) private var dismiss
 
@@ -12,7 +13,7 @@ struct ActivityBreakdownSheet: View {
     private var gymCalories: Double? { health.gymCalories(on: date, weightKG: weightKG) }
     private var hasEstimate: Bool { walkingCalories != nil || gymCalories != nil }
     private var uncappedCalories: Double { (walkingCalories ?? 0) + (gymCalories ?? 0) }
-    private var foodGoalAddition: Double { health.foodActivityCalories(on: date, weightKG: weightKG) }
+    private var foodGoalAddition: Double { health.foodGoalAddition(on: date, weightKG: weightKG, data: records.data) }
 
     var body: some View {
         NavigationStack {
@@ -30,7 +31,10 @@ struct ActivityBreakdownSheet: View {
                                     .font(.system(size: 14))
                                     .foregroundStyle(ErrdayTheme.secondary)
                             }
-                            if uncappedCalories > foodGoalAddition {
+                            if records.data.addsActivityCalories != true {
+                                Text("Your daily target already includes your usual steps and training. These estimates are shown separately to avoid counting movement twice.")
+                                    .font(.system(size: 12)).foregroundStyle(ErrdayTheme.secondary)
+                            } else if uncappedCalories > foodGoalAddition {
                                 Text("The daily food-goal addition is capped at 2,000 kcal.")
                                     .font(.system(size: 12))
                                     .foregroundStyle(ErrdayTheme.secondary)

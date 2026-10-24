@@ -143,6 +143,9 @@ final class HealthStore {
         let gym = gymCalories(on: date, weightKG: weightKG) ?? 0
         return min(max(0, walking + gym), 2_000)
     }
+    func foodGoalAddition(on date: Date, weightKG: Double?, data: PersonalData) -> Double {
+        data.calorieActivityAddition(foodActivityCalories(on: date, weightKG: weightKG))
+    }
     func gymCalories(days: Int, endingOn date: Date, weightKG: Double?) -> Double? {
         let calendar = Calendar.current
         let end = calendar.startOfDay(for: date)

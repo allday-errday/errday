@@ -163,11 +163,14 @@ struct WeightLogSheet: View {
     @State private var value = ""
     @State private var date: Date
     @State private var showError = false
+    @State private var isMorning = Calendar.current.component(.hour, from: .now) < 12
+    @State private var morningSelectionChanged = false
 
-    init(date: Date = .now) {
+    init(date: Date = .now, morning: Bool? = nil) {
         let calendar = Calendar.current
         let initial = calendar.isDateInToday(date) ? Date.now : calendar.date(bySettingHour: 12, minute: 0, second: 0, of: date) ?? date
         _date = State(initialValue: min(initial, .now))
+        _isMorning = State(initialValue: morning ?? (calendar.component(.hour, from: initial) < 12))
     }
 
     var body: some View {
@@ -181,6 +184,12 @@ struct WeightLogSheet: View {
                         DatePicker("Measured at", selection: $date, in: ...Date.now, displayedComponents: [.date, .hourAndMinute])
                             .labelsHidden().datePickerStyle(.compact)
                     }
+                    Toggle("Morning weigh-in", isOn: Binding(
+                        get: { isMorning },
+                        set: { isMorning = $0; morningSelectionChanged = true }
+                    ))
+                    Text("For the two-week calorie check, weigh after the bathroom and before breakfast. Mark this if you're entering a morning measurement later.")
+                        .font(.caption).foregroundStyle(ErrdayTheme.secondary)
                     if showError { Text("Enter a valid weight between 20 and 400 kg.").font(.caption).foregroundStyle(.orange) }
                 }
                 SuccessActionButton(
@@ -194,9 +203,12 @@ struct WeightLogSheet: View {
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
         }
         .presentationDetents([.medium, .large])
+        .onChange(of: date) { _, newDate in
+            if !morningSelectionChanged { isMorning = Calendar.current.component(.hour, from: newDate) < 12 }
+        }
     }
     private func save() -> Bool {
-        guard let kilograms = FoodInput.number(value), records.logWeight(kilograms, at: date) else {
+        guard let kilograms = FoodInput.number(value), records.logWeight(kilograms, at: date, isMorning: isMorning) else {
             showError = true
             return false
         }
@@ -231,6 +243,9 @@ struct WeightHistoryView: View {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text("\(entry.kilograms.decimal) kg").font(.system(size: 16, weight: .semibold))
                                 Text(entry.date.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(ErrdayTheme.secondary)
+                                if entry.isMorning ?? (Calendar.current.component(.hour, from: entry.date) < 12) {
+                                    Text("Morning weigh-in").font(.caption).foregroundStyle(ErrdayTheme.secondary)
+                                }
                             }
                             Spacer()
                             Button(role: .destructive) { _ = records.deleteWeight(entry.id) } label: { Image(systemName: "trash") }

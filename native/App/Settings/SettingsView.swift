@@ -176,7 +176,6 @@ struct ProfileEditor: View {
 
 struct NutritionGoalsView: View {
     @Environment(PersonalStore.self) private var records
-    @Environment(HealthStore.self) private var health
     @State private var calories = ""
     @State private var protein = ""
     @State private var carbs = ""
@@ -188,11 +187,19 @@ struct NutritionGoalsView: View {
     @State private var trainingDays = 3
     @State private var dailySteps = ""
     @State private var saved = false
-    private var valid: Bool { [calories, protein, carbs, fat, fiber, sugar, sodium].allSatisfy { $0.isEmpty || FoodInput.number($0).map { $0 >= 0 } == true } }
+    @State private var targetWeight = ""
+    @State private var weightGoalSaved = false
+    private var valid: Bool { [calories, protein, carbs, fat, fiber, sugar, sodium].allSatisfy { $0.isEmpty || FoodInput.number($0).map { $0.isFinite && $0 >= 0 } == true } }
+    private var validWeightGoal: Bool { FoodInput.number(targetWeight).map { (35...350).contains($0) } == true }
+    private var macroCalories: Double? {
+        guard let protein = FoodInput.number(protein), let carbs = FoodInput.number(carbs), let fat = FoodInput.number(fat) else { return nil }
+        return protein * 4 + carbs * 4 + fat * 9
+    }
     private var estimate: NutritionEstimate? {
         guard let profile = records.data.profile,
               let age = profile.age, let height = profile.height, let weight = profile.weight,
-              let gain = FoodInput.number(weeklyGain), let steps = Int(dailySteps) else { return nil }
+              let gain = FoodInput.number(weeklyGain), (0.05...1).contains(gain),
+              let steps = Int(dailySteps), (0...50_000).contains(steps) else { return nil }
         return NutritionEstimate.muscleGain(age: age, heightCM: height, weightKG: weight,
                                             metabolicReference: profile.metabolicReference ?? "male",
                                             activityLevel: profile.activityLevel ?? "active",
@@ -200,15 +207,28 @@ struct NutritionGoalsView: View {
                                             trainingDaysPerWeek: trainingDays,
                                             usualDailySteps: steps)
     }
-    private var todayActivityCalories: Double {
-        let weight = records.weightEntries(on: .now).first?.kilograms
-            ?? records.data.profile?.weight
-            ?? health.value("weight", on: .now)
-        return health.foodActivityCalories(on: .now, weightKG: weight)
-    }
     var body: some View {
         ErrdayPage {
-            PageHeading(title: "Nutrition Goals", subtitle: "A starting plan for lean weight gain, adjusted by your activity.")
+            PageHeading(title: "Nutrition Goals", subtitle: "Your weight goal and daily plan for muscle growth.")
+            ErrdayCard {
+                Text("Your goal").font(.headline)
+                Text(records.data.profile?.goal ?? "Build muscle").foregroundStyle(ErrdayTheme.secondary)
+                FoodNumberField(label: "Target weight", unit: "kg", value: $targetWeight)
+                Button(weightGoalSaved ? "Weight goal saved" : "Save weight goal") {
+                    weightGoalSaved = records.update { $0.weightGoalKilograms = FoodInput.number(targetWeight) }
+                }.buttonStyle(PrimaryButtonStyle(secondary: true)).disabled(!validWeightGoal || weightGoalSaved)
+                NavigationLink("Edit profile details") { ProfileEditor() }.font(.system(size: 13))
+            }
+            if let calories = records.data.calorieGoal {
+                ErrdayCard {
+                    Text("Current saved targets").font(.headline)
+                    Text("\(calories.whole) kcal · \(records.data.proteinGoal?.whole ?? "—") g protein · \(records.data.carbsGoal?.whole ?? "—") g carbs · \(records.data.fatGoal?.whole ?? "—") g fat")
+                        .font(.system(size: 14))
+                    Text("Usual steps and training are included. Activity estimates are shown separately.")
+                        .font(.caption).foregroundStyle(ErrdayTheme.secondary)
+                }
+            }
+            ErrdayCard { WeightCalibrationSection() }
             if records.data.profile?.age == nil || records.data.profile?.height == nil || records.data.profile?.weight == nil {
                 ErrdayCard {
                     Text("Complete your profile first").font(.headline)
@@ -221,19 +241,15 @@ struct NutritionGoalsView: View {
                 FoodNumberField(label: "Target weight gain", unit: "kg/week", value: $weeklyGain)
                 ErrdayStepperField(label: "Strength training", valueText: "\(trainingDays) days per week", value: $trainingDays, range: 0...7)
                 FoodNumberField(label: "Usual daily steps", unit: "steps", value: $dailySteps)
-                Text("Choose the activity you normally expect. Walking and gym calories shown in Errday are added to the food goal for each day.")
+                Text("Use your usual steps and training. The calculated target already includes them, so movement calories are not added again.")
                     .font(.caption).foregroundStyle(ErrdayTheme.secondary)
             }
             if let estimate {
                 ErrdayCard {
-                    Text("Calculated targets").font(.headline)
+                    Text("Suggested starting plan").font(.headline)
                     LabeledContent("Maintenance estimate", value: "\(estimate.maintenanceCalories.whole) kcal")
                     LabeledContent("Planned surplus", value: "+\(estimate.surplusCalories.whole) kcal")
-                    LabeledContent("Base daily goal", value: "\(estimate.targetCalories.whole) kcal")
-                    if todayActivityCalories > 0 {
-                        LabeledContent("Additional movement today", value: "+\(todayActivityCalories.whole) kcal")
-                        LabeledContent("Today's goal", value: "\((estimate.targetCalories + todayActivityCalories).whole) kcal")
-                    }
+                    LabeledContent("Daily goal, activity included", value: "\(estimate.targetCalories.whole) kcal")
                     Divider()
                     LabeledContent("Protein", value: "\(estimate.protein.whole) g")
                     LabeledContent("Carbohydrates", value: "\(estimate.carbs.whole) g")
@@ -254,14 +270,28 @@ struct NutritionGoalsView: View {
                     FoodNumberField(label: "Fiber", unit: "g", value: $fiber)
                     FoodNumberField(label: "Sugar reference", unit: "g", value: $sugar)
                     FoodNumberField(label: "Sodium", unit: "mg", value: $sodium)
+                    if let macroCalories, let calorieTarget = FoodInput.number(calories),
+                       abs(macroCalories - calorieTarget) > max(50, calorieTarget * 0.05) {
+                        Text("These macros add up to \(macroCalories.whole) kcal, which differs from your calorie target. Review protein × 4 + carbs × 4 + fat × 9.")
+                            .font(.caption).foregroundStyle(.orange)
+                    }
                     Button("Save Manual Targets") { saveManual() }.buttonStyle(PrimaryButtonStyle(secondary: true)).disabled(!valid)
                 }.padding(.top, 12)
             }.font(.system(size: 14, weight: .semibold))
-            Text("This is an evidence-based starting estimate, not a guarantee or medical prescription. Compare your 7-day average weight for 2–3 weeks and adjust. Product labels usually report total sugar; the calculated sugar reference is based on the free-sugar guideline and is therefore only a reference.")
+            Text("Review your 7-day average weight for 2–3 weeks before adjusting. Protein: about 2 g/kg of current weight; fat: at least 1 g/kg, with remaining calories from carbs. The starting surplus is 5–10%, not a promise of muscle gain. Product labels report total sugar; the free-sugar reference cannot be compared directly with total sugar.")
                 .font(.footnote).foregroundStyle(ErrdayTheme.secondary)
-            Link("Evidence: off-season muscle-gain nutrition", destination: URL(string: "https://pubmed.ncbi.nlm.nih.gov/31247944/")!)
-                .font(.footnote)
+            DisclosureGroup("Why these targets?") {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Protein in the 1.6–2.2 g/kg range supports resistance training. Carbs help supply energy; higher intake alone has not reliably produced more hypertrophy when protein and energy are controlled. A larger surplus can increase fat gain. These are starting estimates that need your weight and training trends.")
+                    Link("Protein meta-analysis", destination: URL(string: "https://pubmed.ncbi.nlm.nih.gov/28698222/")!)
+                    Link("Energy-surplus trial · 2023", destination: URL(string: "https://doi.org/10.1186/s40798-023-00651-y")!)
+                    Link("Carbohydrates & hypertrophy · 2026", destination: URL(string: "https://pubmed.ncbi.nlm.nih.gov/41712097/")!)
+                    Link("Muscle-gain nutrition review", destination: URL(string: "https://pmc.ncbi.nlm.nih.gov/articles/PMC6680710/")!)
+                    Text("The calorie equation uses your age, height, weight and metabolic reference from Edit Profile. Activity factors and the surplus are estimates, not measured energy needs.")
+                }.font(.footnote).padding(.top, 8)
+            }.font(.system(size: 14))
         }.task {
+            targetWeight = FoodInput.text(records.data.weightGoalKilograms ?? 90)
             calories = FoodInput.text(records.data.calorieGoal); protein = FoodInput.text(records.data.proteinGoal); carbs = FoodInput.text(records.data.carbsGoal); fat = FoodInput.text(records.data.fatGoal)
             fiber = FoodInput.text(records.data.fiberGoal); sugar = FoodInput.text(records.data.sugarGoal); sodium = FoodInput.text(records.data.sodiumGoal)
             let profile = records.data.profile
@@ -272,13 +302,14 @@ struct NutritionGoalsView: View {
         .onChange(of: weeklyGain) { saved = false }
         .onChange(of: trainingDays) { saved = false }
         .onChange(of: dailySteps) { saved = false }
+        .onChange(of: targetWeight) { weightGoalSaved = false }
     }
 
     private func paceMessage(_ estimate: NutritionEstimate) -> some View {
         let inRange = estimate.requestedWeeklyGainKG >= estimate.recommendedWeeklyGainMinKG && estimate.requestedWeeklyGainKG <= estimate.recommendedWeeklyGainMaxKG
         return Text(inRange
-                    ? "Your selected pace is within the research-based range of \(estimate.recommendedWeeklyGainMinKG.decimal)–\(estimate.recommendedWeeklyGainMaxKG.decimal) kg per week."
-                    : "For your weight, the research-based starting range is \(estimate.recommendedWeeklyGainMinKG.decimal)–\(estimate.recommendedWeeklyGainMaxKG.decimal) kg per week. The calorie surplus is capped at the conservative upper range.")
+                    ? "A practical starting range is \(estimate.recommendedWeeklyGainMinKG.decimal)–\(estimate.recommendedWeeklyGainMaxKG.decimal) kg/week. Experienced lifters should favor the lower end."
+                    : "Your selected pace is outside the usual \(estimate.recommendedWeeklyGainMinKG.decimal)–\(estimate.recommendedWeeklyGainMaxKG.decimal) kg/week range. Favor the lower end; the surplus stays capped at 10%. Faster gain is not all muscle.")
             .font(.caption).foregroundStyle(inRange ? ErrdayTheme.secondary : .orange)
     }
 
@@ -290,6 +321,7 @@ struct NutritionGoalsView: View {
             profile.activityLevel = NutritionEstimate.resolvedActivityLevel(fallback: profile.activityLevel ?? "active", trainingDaysPerWeek: trainingDays, usualDailySteps: steps)
             data.profile = profile
             data.calorieGoal = estimate.targetCalories; data.proteinGoal = estimate.protein
+            data.addsActivityCalories = false
             data.carbsGoal = estimate.carbs; data.fatGoal = estimate.fat
             data.fiberGoal = estimate.fiber; data.sugarGoal = estimate.freeSugarLimit; data.sodiumGoal = estimate.sodiumLimit
         }
@@ -305,6 +337,7 @@ struct NutritionGoalsView: View {
     private func saveManual() {
         saved = records.update { data in
             data.calorieGoal = FoodInput.number(calories); data.proteinGoal = FoodInput.number(protein); data.carbsGoal = FoodInput.number(carbs); data.fatGoal = FoodInput.number(fat)
+            data.addsActivityCalories = false
             data.fiberGoal = FoodInput.number(fiber); data.sugarGoal = FoodInput.number(sugar); data.sodiumGoal = FoodInput.number(sodium)
         }
     }
@@ -406,6 +439,7 @@ struct OnboardingView: View {
             profile.weeklyGainGoalKG = FoodInput.number(weeklyGain); profile.trainingDaysPerWeek = trainingDays; profile.usualDailySteps = Int(dailySteps)
             profile.activityLevel = NutritionEstimate.resolvedActivityLevel(fallback: activity, trainingDaysPerWeek: trainingDays, usualDailySteps: Int(dailySteps)); data.profile = profile
             data.calorieGoal = selectedCalories
+            data.addsActivityCalories = false
             data.proteinGoal = estimate.protein; data.carbsGoal = selectedCarbs; data.fatGoal = estimate.fat
             data.fiberGoal = estimate.fiber; data.sugarGoal = estimate.freeSugarLimit; data.sodiumGoal = estimate.sodiumLimit
         }) { dismiss() }

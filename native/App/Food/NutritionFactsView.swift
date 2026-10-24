@@ -40,9 +40,9 @@ enum NutritionMetric: String, CaseIterable, Identifiable {
     var color: Color {
         switch self {
         case .calories: ErrdayTheme.foodAccent
-        case .protein: Color(hex: 0xef6671)
-        case .carbs: Color(hex: 0xe59a55)
-        case .fat: Color(hex: 0x4f8ce8)
+        case .protein: ErrdayTheme.proteinAccent
+        case .carbs: ErrdayTheme.carbsAccent
+        case .fat: ErrdayTheme.fatAccent
         case .fiber: Color(hex: 0x5cab74)
         case .sugar: Color(hex: 0xd59636)
         case .sodium: Color(hex: 0x5c82d9)

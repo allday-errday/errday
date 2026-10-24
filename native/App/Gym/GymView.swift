@@ -30,6 +30,8 @@ struct GymView: View {
 
     var body: some View {
         ErrdayPage {
+            RestedOverview(date: .now, accent: ErrdayTheme.gymAccent)
+
             VStack(spacing: 12) {
                 SectionHeading(title: "Your program", actionTitle: "Manage", action: { showProgram = true })
                 programCard
@@ -42,6 +44,8 @@ struct GymView: View {
             }
 
             GymActivityCard(workouts: week, metric: $chartMetric)
+
+            MuscleGainOverview()
 
             VStack(spacing: 12) {
                 SectionHeading(title: "Exercise progress")

@@ -1,6 +1,29 @@
 import SwiftUI
 import WidgetKit
 
+private enum WidgetTrackingDay {
+    static let rolloverHour = 6
+
+    static func effectiveDate(at date: Date = .now, calendar: Calendar = .current) -> Date {
+        let today = calendar.startOfDay(for: date)
+        guard calendar.component(.hour, from: date) < rolloverHour else { return today }
+        return calendar.date(byAdding: .day, value: -1, to: today) ?? today
+    }
+
+    static func nextRollover(after date: Date = .now, calendar: Calendar = .current) -> Date {
+        let today = calendar.startOfDay(for: date)
+        let rollover = calendar.date(bySettingHour: rolloverHour, minute: 0, second: 0, of: today) ?? today
+        if date < rollover { return rollover }
+        return calendar.date(byAdding: .day, value: 1, to: rollover) ?? date.addingTimeInterval(86_400)
+    }
+
+    static func key(_ metric: String, for date: Date, calendar: Calendar = .current) -> String {
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+        let day = "\(components.year ?? 0)-\(components.month ?? 0)-\(components.day ?? 0)"
+        return "widget.day.\(day).\(metric)"
+    }
+}
+
 private struct NutritionEntry: TimelineEntry {
     let date: Date
     let calories: Double
@@ -21,10 +44,12 @@ private struct NutritionEntry: TimelineEntry {
 
 private struct NutritionProvider: TimelineProvider {
     func placeholder(in context: Context) -> NutritionEntry { sample }
-    func getSnapshot(in context: Context, completion: @escaping (NutritionEntry) -> Void) { completion(load()) }
+    func getSnapshot(in context: Context, completion: @escaping (NutritionEntry) -> Void) { completion(load(at: .now)) }
     func getTimeline(in context: Context, completion: @escaping (Timeline<NutritionEntry>) -> Void) {
-        let next = Calendar.current.date(byAdding: .minute, value: 30, to: .now) ?? .now.addingTimeInterval(1800)
-        completion(Timeline(entries: [load()], policy: .after(next)))
+        let now = Date.now
+        let periodicRefresh = Calendar.current.date(byAdding: .minute, value: 30, to: now) ?? now.addingTimeInterval(1800)
+        let next = min(periodicRefresh, WidgetTrackingDay.nextRollover(after: now))
+        completion(Timeline(entries: [load(at: now)], policy: .after(next)))
     }
 
     private var sample: NutritionEntry {
@@ -33,26 +58,31 @@ private struct NutritionProvider: TimelineProvider {
                        fiber: 18, fiberGoal: 32, sugar: 31, sugarGoal: 55, sodium: 1260, sodiumGoal: 2300)
     }
 
-    private func load() -> NutritionEntry {
+    private func load(at date: Date) -> NutritionEntry {
         guard let d = UserDefaults(suiteName: "group.com.errday.native") else {
-            return NutritionEntry(date: .now, calories: 0, calorieGoal: 0,
+            return NutritionEntry(date: date, calories: 0, calorieGoal: 0,
                                   protein: 0, proteinGoal: 0, carbs: 0, carbsGoal: 0,
                                   fat: 0, fatGoal: 0, fiber: nil, fiberGoal: 0,
                                   sugar: nil, sugarGoal: 0, sodium: nil, sodiumGoal: 0)
         }
-        func optionalDouble(_ key: String) -> Double? {
-            d.object(forKey: key) == nil ? nil : d.double(forKey: key)
+        let trackingDate = WidgetTrackingDay.effectiveDate(at: date)
+        func key(_ metric: String) -> String {
+            WidgetTrackingDay.key(metric, for: trackingDate)
+        }
+        func optionalDouble(_ metric: String) -> Double? {
+            let storageKey = key(metric)
+            return d.object(forKey: storageKey) == nil ? nil : d.double(forKey: storageKey)
         }
         return NutritionEntry(
-            date: .now,
-            calories: d.double(forKey: "widget.calories"),
-            calorieGoal: d.double(forKey: "widget.calorieGoal") + d.double(forKey: "widget.activityCalories"),
-            protein: d.double(forKey: "widget.protein"), proteinGoal: d.double(forKey: "widget.proteinGoal"),
-            carbs: d.double(forKey: "widget.carbs"), carbsGoal: d.double(forKey: "widget.carbsGoal"),
-            fat: d.double(forKey: "widget.fat"), fatGoal: d.double(forKey: "widget.fatGoal"),
-            fiber: optionalDouble("widget.fiber"), fiberGoal: d.double(forKey: "widget.fiberGoal"),
-            sugar: optionalDouble("widget.sugar"), sugarGoal: d.double(forKey: "widget.sugarGoal"),
-            sodium: optionalDouble("widget.sodium"), sodiumGoal: d.double(forKey: "widget.sodiumGoal")
+            date: date,
+            calories: d.double(forKey: key("calories")),
+            calorieGoal: d.double(forKey: "widget.calorieGoal") + (d.bool(forKey: "widget.addsActivityCalories") ? d.double(forKey: key("activityCalories")) : 0),
+            protein: d.double(forKey: key("protein")), proteinGoal: d.double(forKey: "widget.proteinGoal"),
+            carbs: d.double(forKey: key("carbs")), carbsGoal: d.double(forKey: "widget.carbsGoal"),
+            fat: d.double(forKey: key("fat")), fatGoal: d.double(forKey: "widget.fatGoal"),
+            fiber: optionalDouble("fiber"), fiberGoal: d.double(forKey: "widget.fiberGoal"),
+            sugar: optionalDouble("sugar"), sugarGoal: d.double(forKey: "widget.sugarGoal"),
+            sodium: optionalDouble("sodium"), sodiumGoal: d.double(forKey: "widget.sodiumGoal")
         )
     }
 }

@@ -40,28 +40,28 @@ private struct WeeklyRecapDetail: View {
     private var summary: WeeklyRecapSummary {
         WeeklyRecapSummary(weekStart: weekStart, records: records)
     }
+    private var previousSummary: WeeklyRecapSummary {
+        WeeklyRecapSummary(weekStart: previousWeekStart, records: records)
+    }
+    private var previousWeekStart: Date {
+        Calendar.current.date(byAdding: .day, value: -7, to: weekStart) ?? weekStart
+    }
     private var sleepHours: [Double] {
-        let calendar = Calendar.current
-        let end = calendar.date(byAdding: .day, value: 7, to: weekStart) ?? weekStart
-        return health.sleep.compactMap { night in
-            let date = calendar.startOfDay(for: night.date)
-            guard date >= weekStart, date < end else { return nil }
-            return night.hours
-        }
+        sleepHours(in: summary)
     }
     private var averageSleep: Double? {
         guard !sleepHours.isEmpty else { return nil }
         return sleepHours.reduce(0, +) / Double(sleepHours.count)
     }
     private var recordedSteps: [Double] {
-        summary.days.filter { !$0.isFuture }.compactMap { health.value("steps", on: $0.date) }
+        recordedSteps(in: summary)
     }
     private var averageSteps: Double? {
         guard !recordedSteps.isEmpty else { return nil }
         return recordedSteps.reduce(0, +) / Double(recordedSteps.count)
     }
     private var completedWorkouts: [Workout] {
-        summary.days.flatMap { records.workouts(on: $0.date) }.filter { $0.finishedAt != nil }
+        completedWorkouts(in: summary)
     }
     private var workoutMinutes: Int {
         Int(completedWorkouts.reduce(0) { total, workout in
@@ -76,6 +76,8 @@ private struct WeeklyRecapDetail: View {
                     Text(summary.dateRange)
                         .font(.system(size: 13))
                         .foregroundStyle(ErrdayTheme.secondary)
+
+                    comparisonCard
 
                     recapSection("Food", symbol: "fork.knife", color: ErrdayTheme.foodAccent, section: .food) {
                         recapRow("Days with food", value: "\(summary.foodDays)")
@@ -116,6 +118,55 @@ private struct WeeklyRecapDetail: View {
         }
         .presentationDetents([.medium, .large], selection: $selectedDetent)
         .presentationDragIndicator(.visible)
+    }
+
+    private var comparisonCard: some View {
+        let priorSleep = average(sleepHours(in: previousSummary))
+        let priorSteps = average(recordedSteps(in: previousSummary))
+        let currentGymPerDay = dailyWorkoutMinutes(in: summary)
+        let priorGymPerDay = dailyWorkoutMinutes(in: previousSummary)
+
+        return ErrdayCard {
+            Text("Compared with previous week")
+                .font(.system(size: 15, weight: .semibold))
+            Text("Food, sleep and steps compare recorded-day averages. Gym time is averaged across elapsed days.")
+                .font(.system(size: 11))
+                .foregroundStyle(ErrdayTheme.secondary)
+            trendRow("Calories", current: summary.averageCalories, previous: previousSummary.averageCalories,
+                     formatter: { "\($0.whole) kcal" }, difference: { signed($0, suffix: " kcal") })
+            trendRow("Sleep", current: averageSleep, previous: priorSleep,
+                     formatter: hourText, difference: signedMinutes)
+            trendRow("Steps", current: averageSteps, previous: priorSteps,
+                     formatter: { $0.whole }, difference: { signed($0, suffix: "") })
+            trendRow("Gym time / day", current: currentGymPerDay, previous: priorGymPerDay,
+                     formatter: { "\(Int($0.rounded())) min" }, difference: { signed($0, suffix: " min") })
+        }
+    }
+
+    private func trendRow(_ title: String, current: Double?, previous: Double?,
+                          formatter: (Double) -> String, difference: (Double) -> String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).foregroundStyle(ErrdayTheme.secondary)
+                if let current, let previous {
+                    Text("\(formatter(current)) vs \(formatter(previous))")
+                        .font(.system(size: 11))
+                        .foregroundStyle(ErrdayTheme.quiet)
+                }
+            }
+            Spacer()
+            if let current, let previous {
+                let delta = current - previous
+                Image(systemName: abs(delta) < 0.5 ? "equal" : (delta > 0 ? "arrow.up.right" : "arrow.down.right"))
+                    .font(.system(size: 10, weight: .semibold))
+                    .accessibilityHidden(true)
+                Text(difference(delta)).fontWeight(.semibold)
+            } else {
+                Text("Not enough data").foregroundStyle(ErrdayTheme.secondary)
+            }
+        }
+        .font(.system(size: 13))
+        .accessibilityElement(children: .combine)
     }
 
     private func recapSection<Content: View>(_ title: String, symbol: String, color: Color, section: RecapSection,
@@ -215,6 +266,45 @@ private struct WeeklyRecapDetail: View {
     private func hourText(_ hours: Double) -> String {
         let minutes = Int((hours * 60).rounded())
         return "\(minutes / 60)h \(minutes % 60)m"
+    }
+
+    private func sleepHours(in summary: WeeklyRecapSummary) -> [Double] {
+        summary.days.filter { !$0.isFuture }.compactMap { day in
+            health.sleep.first { Calendar.current.isDate($0.date, inSameDayAs: day.date) }?.hours
+        }
+    }
+
+    private func recordedSteps(in summary: WeeklyRecapSummary) -> [Double] {
+        summary.days.filter { !$0.isFuture }.compactMap { health.value("steps", on: $0.date) }
+    }
+
+    private func completedWorkouts(in summary: WeeklyRecapSummary) -> [Workout] {
+        summary.days.filter { !$0.isFuture }
+            .flatMap { records.workouts(on: $0.date) }
+            .filter { $0.finishedAt != nil }
+    }
+
+    private func dailyWorkoutMinutes(in summary: WeeklyRecapSummary) -> Double? {
+        let elapsedDays = summary.days.filter { !$0.isFuture }.count
+        guard elapsedDays > 0 else { return nil }
+        let seconds = completedWorkouts(in: summary).reduce(0) { total, workout in
+            total + max(0, (workout.finishedAt ?? workout.startedAt).timeIntervalSince(workout.startedAt))
+        }
+        return seconds / 60 / Double(elapsedDays)
+    }
+
+    private func average(_ values: [Double]) -> Double? {
+        guard !values.isEmpty else { return nil }
+        return values.reduce(0, +) / Double(values.count)
+    }
+
+    private func signed(_ value: Double, suffix: String) -> String {
+        let rounded = Int(value.rounded())
+        return "\(rounded > 0 ? "+" : "")\(rounded)\(suffix)"
+    }
+
+    private func signedMinutes(_ hours: Double) -> String {
+        signed(hours * 60, suffix: " min")
     }
 
     private func recapRow(_ title: String, value: String) -> some View {
